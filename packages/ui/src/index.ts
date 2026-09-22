@@ -196,3 +196,5 @@ export { Carousel, CarouselSlide } from "./components/carousel/Carousel";
 export type { CarouselProps, CarouselSlideProps, CarouselHandle, PerView } from "./components/carousel/Carousel";
 export { IconButton } from "./components/button/IconButton";
 export type { IconButtonProps, IconButtonTone } from "./components/button/IconButton";
+export { SpotlightText } from "./components/animated/SpotlightText";
+export type { SpotlightTextProps } from "./components/animated/SpotlightText";

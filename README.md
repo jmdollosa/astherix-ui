@@ -795,3 +795,21 @@ your app to re-brand without rebuilding:
 ```css
 :root { --ui-primary: #6d28d9; --ui-primary-hover: #5b21b6; --ui-primary-edge: #3b0764; }
 ```
+
+## Animated components
+
+### SpotlightText
+
+Text lit by a moving spotlight — the lit part glows, the rest sits in shadow.
+
+```tsx
+<SpotlightText as="h1" className="text-5xl font-semibold">Get paid faster.</SpotlightText>
+<SpotlightText mode="sweep" tint="linear-gradient(90deg, #fde68a, #f59e0b)">★ Most popular</SpotlightText>
+<SpotlightText mode="reveal" radius={90}>Psst — use code EARLYBIRD.</SpotlightText>
+```
+
+`mode` (`follow` — follows the pointer or finger, drifts when idle; `sweep` — a beam passes every
+few seconds; `reveal` — dark until lit), `as`, `tint` (color or gradient; default the text's own
+color), `radius`, `dim`, `glow`, `smoothing`, `duration`, `pause`. Real, selectable text for
+screen readers; pauses off-screen; fully lit and still with reduced motion.
+
