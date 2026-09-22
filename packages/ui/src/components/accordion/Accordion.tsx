@@ -258,6 +258,13 @@ export function AccordionItem({
   const Heading = `h${headingLevel}` as const;
   const panelRef = React.useRef<HTMLDivElement>(null);
   const [everOpened, setEverOpened] = React.useState(open);
+  // The panel clips its content only while animating or closed; once open, nothing is cut off.
+  const [settled, setSettled] = React.useState(open);
+  React.useEffect(() => {
+    if (!open) return setSettled(false);
+    const t = window.setTimeout(() => setSettled(true), 270);
+    return () => window.clearTimeout(t);
+  }, [open]);
 
   React.useEffect(() => {
     register(value);
@@ -368,7 +375,7 @@ export function AccordionItem({
           id={panelId}
           role="region"
           aria-labelledby={headerId}
-          className="min-h-0 overflow-hidden"
+          className={cn("min-h-0", settled ? "overflow-visible" : "overflow-hidden")}
           {...(!open && !keepMounted ? { hidden: true } : {})}
         >
           <div

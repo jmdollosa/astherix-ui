@@ -1,4 +1,5 @@
 import * as React from "react";
+import { createPortal } from "react-dom";
 import { cn } from "../../lib/cn";
 import { useField, useFieldControlProps } from "../input/Field";
 
@@ -73,6 +74,53 @@ const sizes = {
 
 const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
 const decimals = (n: number) => (String(n).split(".")[1] ?? "").length;
+
+/**
+ * The value bubble. It floats above the page (rendered at the end of <body> with a fixed position)
+ * so accordions, cards and scroll areas that clip their content can't cut it off.
+ */
+function ValueBubble({ anchor, visible, text, lift }: { anchor: HTMLElement | null; visible: boolean; text: string; lift: number }) {
+  const [pos, setPos] = React.useState<{ left: number; top: number } | null>(null);
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
+
+  const place = React.useCallback(() => {
+    if (!anchor) return;
+    const r = anchor.getBoundingClientRect();
+    const next = { left: r.left + r.width / 2, top: r.top + r.height / 2 - lift };
+    setPos((p) => (p && Math.abs(p.left - next.left) < 0.5 && Math.abs(p.top - next.top) < 0.5 ? p : next));
+  }, [anchor, lift]);
+
+  // Follow the thumb while it moves, and when the page scrolls or resizes.
+  React.useLayoutEffect(() => {
+    if (visible) place();
+  });
+  React.useEffect(() => {
+    if (!visible) return;
+    window.addEventListener("scroll", place, true);
+    window.addEventListener("resize", place);
+    return () => {
+      window.removeEventListener("scroll", place, true);
+      window.removeEventListener("resize", place);
+    };
+  }, [visible, place]);
+
+  if (!mounted || !pos) return null;
+  return createPortal(
+    <span
+      aria-hidden="true"
+      className={cn(
+        "ui-glass pointer-events-none fixed z-[70] grid min-w-9 -translate-x-1/2 -translate-y-full place-items-center whitespace-nowrap rounded-full px-2.5 py-1 text-[0.8125rem] font-semibold tabular-nums text-fg",
+        "transition-[opacity,scale] duration-200 ease-[cubic-bezier(0.3,1.4,0.5,1)] motion-reduce:transition-none",
+        visible ? "scale-100 opacity-100" : "scale-75 opacity-0"
+      )}
+      style={{ left: pos.left, top: pos.top }}
+    >
+      {text}
+    </span>,
+    document.body
+  );
+}
 
 export const Slider = React.forwardRef<HTMLDivElement, SliderProps>(function Slider(
   {
@@ -339,19 +387,14 @@ export const Slider = React.forwardRef<HTMLDivElement, SliderProps>(function Sli
                     pressed ? "opacity-0" : "opacity-100"
                   )}
                 />
-                {/* The value bubble: glass, floating above the finger. */}
+                {/* The value bubble: glass, floating above the finger (outside any clipping container). */}
                 {showValue !== "never" && (
-                  <span
-                    aria-hidden="true"
-                    className={cn(
-                      "ui-glass pointer-events-none absolute bottom-full left-1/2 grid min-w-9 -translate-x-1/2 place-items-center whitespace-nowrap rounded-full px-2.5 py-1 text-[0.8125rem] font-semibold tabular-nums text-fg",
-                      "transition-[opacity,translate,scale] duration-200 ease-[cubic-bezier(0.3,1.4,0.5,1)] motion-reduce:transition-none",
-                      bubble ? "opacity-100" : "translate-y-2 scale-75 opacity-0"
-                    )}
-                    style={{ marginBottom: pressed ? g.knob * (g.lens - 1) / 2 + 10 : 8 }}
-                  >
-                    {text}
-                  </span>
+                  <ValueBubble
+                    anchor={thumbRefs.current[i]}
+                    visible={bubble}
+                    text={text}
+                    lift={pressed ? (g.knob * g.lens) / 2 + 10 : g.knob / 2 + 8}
+                  />
                 )}
               </div>
             );
