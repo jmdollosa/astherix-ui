@@ -83,12 +83,22 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
             viewBox="0 0 16 16"
             fill="none"
             aria-hidden="true"
-            className="pointer-events-none relative size-[78%] text-primary-fg opacity-0 peer-checked:opacity-100 peer-indeterminate:opacity-0 peer-checked:[&>path]:animate-[ui-check-draw_180ms_ease-out_both] motion-reduce:peer-checked:[&>path]:animate-none"
+            // Whole-pixel size, and lifted by half the checked box's darker bottom edge so it
+            // sits in the middle of the visible face rather than the whole box.
+            width={size === "sm" ? 12 : 14}
+            height={size === "sm" ? 12 : 14}
+            className="pointer-events-none relative col-start-1 row-start-1 -translate-y-[0.75px] text-primary-fg opacity-0 peer-checked:opacity-100 peer-indeterminate:opacity-0 peer-checked:[&>path]:animate-[ui-check-draw_180ms_ease-out_both] motion-reduce:peer-checked:[&>path]:animate-none"
           >
-            <path d="M3.5 8.5l3 3 6-7" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" pathLength={1} strokeDasharray="1" />
+            <path d="M3.5 8.25l3 3 6-7" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" pathLength={1} strokeDasharray="1" />
           </svg>
           {/* dash for indeterminate */}
-          <span aria-hidden="true" className="pointer-events-none absolute h-[2px] w-[55%] rounded-full bg-primary-fg opacity-0 peer-indeterminate:opacity-100" />
+          <span
+            aria-hidden="true"
+            className={cn(
+              "pointer-events-none relative col-start-1 row-start-1 h-[2px] -translate-y-[0.75px] rounded-full bg-primary-fg opacity-0 peer-indeterminate:opacity-100",
+              size === "sm" ? "w-2" : "w-2.5"
+            )}
+          />
         </span>
         <LabelText label={label} description={description} size={size} disabled={!!control.disabled} />
       </label>
@@ -232,7 +242,10 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(({ value, la
         />
         <span
           aria-hidden="true"
-          className="pointer-events-none relative size-[38%] scale-0 rounded-full bg-primary-fg transition-transform duration-150 ease-out peer-checked:scale-100 motion-reduce:transition-none"
+          className={cn(
+            "pointer-events-none relative -translate-y-[0.75px] scale-0 rounded-full bg-primary-fg transition-transform duration-150 ease-out peer-checked:scale-100 motion-reduce:transition-none",
+            g.size === "sm" ? "size-1.5" : "size-2"
+          )}
         />
       </span>
       <LabelText label={label} description={description} size={g.size} disabled={off} />
