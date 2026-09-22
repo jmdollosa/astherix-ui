@@ -10,10 +10,12 @@ import { SelectPage } from "./pages/SelectPage";
 import { EditorPage } from "./pages/EditorPage";
 import { TabsPage } from "./pages/TabsPage";
 import { PillsPage } from "./pages/PillsPage";
+import { ActivityPage } from "./pages/ActivityPage";
 
 // Add each new component page here; the nav and routing pick it up automatically.
 const pages = [
   { path: "getting-started", title: "Getting started", group: "Guide", Page: GettingStarted },
+  { path: "activity", title: "Activity indicators", group: "Components", Page: ActivityPage },
   { path: "button", title: "Button", group: "Components", Page: ButtonPage },
   { path: "editor", title: "Editor", group: "Components", Page: EditorPage },
   { path: "input", title: "Input", group: "Components", Page: InputPage },
@@ -24,7 +26,7 @@ const pages = [
   { path: "textarea", title: "Textarea", group: "Components", Page: TextareaPage },
 ];
 
-const VERSION = "0.12.0";
+const VERSION = "0.13.0";
 
 function useHashRoute() {
   const read = () => window.location.hash.replace(/^#\/?/, "") || pages[0].path;

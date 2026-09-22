@@ -375,3 +375,90 @@
   }
 }
 
+
+/* Activity indicators */
+@keyframes ui-dot {
+  0%, 80%, 100% {
+    transform: scale(0.55);
+    opacity: 0.35;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes ui-eq {
+  0%, 100% {
+    transform: scaleY(0.3);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+@keyframes ui-beacon {
+  from {
+    transform: scale(0.4);
+    opacity: 0.7;
+  }
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+@keyframes ui-indeterminate {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
+}
+@keyframes ui-shimmer {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -50% 0;
+  }
+}
+@keyframes ui-breathe {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@layer components {
+  .ui-skeleton {
+    background-color: var(--color-secondary-hover);
+    background-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in srgb, var(--color-surface) 70%, transparent) 50%,
+      transparent 100%
+    );
+    background-size: 50% 100%;
+    background-repeat: no-repeat;
+    animation: ui-shimmer 1.5s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ui-skeleton {
+      background-image: none;
+      animation: ui-breathe 2s ease-in-out infinite;
+    }
+  }
+  /* The orbit indicator: a ring with a fading tail, spinning */
+  .ui-orbit-ring {
+    border-radius: 9999px;
+    background: conic-gradient(from 0deg, transparent 0turn 0.35turn, color-mix(in srgb, var(--ai) 30%, transparent) 0.7turn, var(--ai) 0.98turn, transparent 1turn);
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - var(--ai-thickness, 3px)), #000 calc(100% - var(--ai-thickness, 3px) + 0.5px));
+    mask: radial-gradient(farthest-side, transparent calc(100% - var(--ai-thickness, 3px)), #000 calc(100% - var(--ai-thickness, 3px) + 0.5px));
+  }
+}
+@keyframes ui-stripes {
+  from {
+    background-position: 14px 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}

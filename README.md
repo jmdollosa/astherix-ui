@@ -8,6 +8,7 @@ Tailwind v4 + React components for Next.js and Laravel (React + Inertia) apps.
 packages/ui/
   theme.css              Tokens (colors, font, radius), light/dark themes
   src/lib/cn.ts          Class merging helper
+  src/components/activity/ ActivityIndicator, ProgressBar, ProgressRing, Skeleton, ActivitySteps, LoadingOverlay
   src/components/button/ Button
   src/components/editor/ Editor (entry: @jm/ui/editor)
   src/components/input/  Field, Input, Textarea
@@ -75,6 +76,25 @@ Laravel (`resources/views/app.blade.php`, inside `<head>`):
 
 **3. Dark mode** — add the `dark` class to `<html>` (next-themes with `attribute="class"`,
 or the appearance handling in Laravel's starter kit).
+
+## Activity indicators
+
+```tsx
+<ActivityIndicator variant="spinner" | "dots" | "bars" | "pulse" | "orbit" label="Loading invoices" showLabel />
+<ProgressBar label="Uploading" value={pct} showValue striped />
+<ProgressRing value={72} size="xl" label="Storage used" />
+<Skeleton shape="text" lines={3} />
+<ActivitySteps steps={[{ label: "Build", status: "done" }, { label: "Deploy", status: "active" }]} />
+<LoadingOverlay loading={refreshing} label="Refreshing">…</LoadingOverlay>
+```
+
+`ActivityIndicator`: `variant`, `size` (`xs`–`xl`), `tone` (`primary` `neutral` `current` `success`
+`warning` `danger` `info`), `label`, `showLabel`, `labelPosition`. `ProgressBar`: `value` (omit for
+indeterminate), `max`, `label`, `showValue`, `valueText`, `size`, `tone`, `striped`.
+`ProgressRing`: `value`, `max`, `size` (`sm`–`xl`), `tone`, `label`, `valueText`, center `children`.
+`Skeleton`: `shape` (`rect` `circle` `text`), `lines`. `ActivitySteps`: `steps` (`label`,
+`description`, `status`: `done` `active` `pending` `error` `skipped`, `meta`), `orientation`,
+`size`. `LoadingOverlay`: `loading`, `label`, `variant`, `delay`.
 
 ## Button
 
