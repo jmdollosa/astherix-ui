@@ -361,6 +361,22 @@ function of the query), `loadSuggestions`, `minLength`, `debounce`, `maxSuggesti
 `inlineComplete` (faint completion; Tab/→ accepts), `onSelectSuggestion`, `onSubmit`, `recentKey`,
 `maxRecent`, `emptyMessage`, `filter`.
 
+## Slider
+
+```tsx
+<Slider value={fee} onChange={setFee} max={25} formatValue={(v) => `${v}%`} />
+<Slider value={[5000, 60000]} onChange={setRange} max={100000} step={1000} minDistance={5000} />
+<Slider min={1} max={10} marks color="secondary" onValueCommit={save} />
+```
+
+Press the thumb and it becomes a frosted glass lens with a glass value bubble above the finger;
+drag past an end and it stretches, then springs back; crossing marks gives a haptic tick on
+supporting phones. Props: `value` / `defaultValue` (number, or `[low, high]` for a range),
+`onChange`, `onValueCommit` (on release), `min`, `max`, `step`, `marks` (`true`, values, or
+`{ value, label }`), `formatValue`, `showValue` (`active` `always` `never`), `color` (Switch
+palette or any CSS color), `size` (`sm` `md` `lg`), `disabled`, `minDistance`, `haptics`, `name`,
+`thumbLabels`.
+
 ## Select
 
 A searchable dropdown in the spirit of Select2.

@@ -185,3 +185,5 @@ export type {
 } from "./components/sidebar/Sidebar";
 export { Autocomplete } from "./components/input/Autocomplete";
 export type { AutocompleteProps, AutocompleteItem } from "./components/input/Autocomplete";
+export { Slider } from "./components/slider/Slider";
+export type { SliderProps, SliderMark } from "./components/slider/Slider";
