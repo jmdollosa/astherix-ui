@@ -239,3 +239,24 @@
     transform: translateY(6px) scale(0.985);
   }
 }
+
+/*
+ * Experimental: progress loading indicator for Button (loadingIndicator="progress").
+ * Without a `progress` value it creeps toward ~92% and completes when the work ends.
+ * Tweak with --ui-progress-fill, --ui-progress-bar, --ui-progress-height, --ui-progress-duration.
+ */
+@keyframes ui-progress-creep {
+  from {
+    width: 0%;
+  }
+  15% {
+    width: 34%;
+  }
+  45% {
+    width: 66%;
+  }
+  to {
+    width: 92%;
+  }
+}
+

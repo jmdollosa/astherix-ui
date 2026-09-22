@@ -30,13 +30,13 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: "bg-primary text-primary-fg hover:bg-primary-hover [--btn-edge-color:var(--color-primary-edge)] [--ui-orbit-color:#fff]",
+        primary: "bg-primary text-primary-fg hover:bg-primary-hover [--btn-edge-color:var(--color-primary-edge)] [--ui-orbit-color:#fff] [--ui-progress-fill:color-mix(in_srgb,var(--color-primary-fg)_22%,transparent)] [--ui-progress-bar:var(--color-primary-fg)]",
         secondary: [
-          "bg-secondary text-fg hover:bg-secondary-hover [--btn-edge-color:var(--color-border-strong)] [--ui-orbit-color:var(--color-primary)]",
+          "bg-secondary text-fg hover:bg-secondary-hover [--btn-edge-color:var(--color-border-strong)] [--ui-orbit-color:var(--color-primary)] [--ui-progress-fill:color-mix(in_srgb,var(--color-primary)_16%,transparent)] [--ui-progress-bar:var(--color-primary)]",
           "[--btn-ring:inset_0_0_0_1px_var(--color-border-strong)]",
         ],
-        ghost: "bg-transparent text-fg hover:bg-secondary-hover active:bg-border [--ui-orbit-color:var(--color-primary)]",
-        danger: "bg-danger text-danger-fg hover:bg-danger-hover [--btn-edge-color:var(--color-danger-edge)] [--ui-orbit-color:#fff]",
+        ghost: "bg-transparent text-fg hover:bg-secondary-hover active:bg-border [--ui-orbit-color:var(--color-primary)] [--ui-progress-fill:color-mix(in_srgb,var(--color-primary)_16%,transparent)] [--ui-progress-bar:var(--color-primary)]",
+        danger: "bg-danger text-danger-fg hover:bg-danger-hover [--btn-edge-color:var(--color-danger-edge)] [--ui-orbit-color:#fff] [--ui-progress-fill:color-mix(in_srgb,var(--color-danger-fg)_22%,transparent)] [--ui-progress-bar:var(--color-danger-fg)]",
       },
       // Raised: a 3px darker bottom edge makes the button look lifted. On press it drops
       // 2px and the edge shrinks to 1px, so it reads as pushed in. Flat buttons move 1px.
@@ -135,9 +135,21 @@ export interface ButtonProps
    * How loading is shown.
    * - "spinner": a spinning icon (default)
    * - "orbit": experimental — a light runs around the button's edge and the label stays visible
+   * - "progress": experimental — a progress fill or bar; the label stays visible
    */
-  loadingIndicator?: "spinner" | "orbit";
-  /** Label shown while loading, e.g. "Saving…". Used with "start"/"end" placement and with "orbit". */
+  loadingIndicator?: "spinner" | "orbit" | "progress";
+  /**
+   * With loadingIndicator="progress":
+   * - "fill": a translucent fill sweeps across the button from left to right (default)
+   * - "bar": a thin bar runs along the bottom edge
+   */
+  progressStyle?: "fill" | "bar";
+  /**
+   * With loadingIndicator="progress": the real progress, 0–100 (e.g. from an upload).
+   * Leave it out and the progress creeps forward on its own until the work finishes.
+   */
+  progress?: number;
+  /** Label shown while loading, e.g. "Saving…". Used with "start"/"end" placement, "orbit" and "progress". */
   loadingLabel?: React.ReactNode;
   /**
    * Keep the spinner visible for at least this many milliseconds, so very fast
@@ -212,6 +224,68 @@ function SideSlot({
   );
 }
 
+/** How long the finish (jump to 100%, then fade) takes. */
+const PROGRESS_FINISH_MS = 420;
+
+/**
+ * Experimental progress indicator. Determinate when `value` is given; otherwise it
+ * creeps toward ~92% (fast at first, then slower) until the work finishes. On finish
+ * it runs to 100% and fades out.
+ */
+function ProgressIndicator({
+  kind,
+  value,
+  finishing,
+}: {
+  kind: "fill" | "bar";
+  value?: number;
+  finishing: boolean;
+}) {
+  const barRef = React.useRef<HTMLSpanElement>(null);
+  const determinate = typeof value === "number" && Number.isFinite(value);
+
+  React.useLayoutEffect(() => {
+    const el = barRef.current;
+    if (!el) return;
+    if (!finishing) {
+      // Loading started again before the finish ended: start fresh.
+      el.style.animation = el.style.transition = el.style.opacity = "";
+      if (!determinate) el.style.width = "";
+      return;
+    }
+    // Freeze the current (possibly animated) width, then transition from there to 100%.
+    const current = getComputedStyle(el).width;
+    el.style.animation = "none";
+    el.style.width = current;
+    void el.getBoundingClientRect();
+    el.style.transition = "width 180ms ease-out, opacity 220ms ease 180ms";
+    el.style.width = "100%";
+    el.style.opacity = "0";
+  }, [finishing]);
+
+  return (
+    <span aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
+      <span
+        ref={barRef}
+        className={cn(
+          "absolute left-0",
+          kind === "fill"
+            ? "inset-y-0 bg-[var(--ui-progress-fill)]"
+            : "bottom-0 h-[var(--ui-progress-height,3px)] bg-[var(--ui-progress-bar)]",
+          !determinate && "animate-[ui-progress-creep_var(--ui-progress-duration,8s)_cubic-bezier(0.1,0.6,0.3,1)_forwards]"
+        )}
+        style={
+          determinate && !finishing
+            ? { width: `${Math.min(100, Math.max(0, value))}%`, transition: "width 200ms ease-out" }
+            : determinate
+              ? { width: `${Math.min(100, Math.max(0, value))}%` }
+              : undefined
+        }
+      />
+    </span>
+  );
+}
+
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
@@ -227,6 +301,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       loading = false,
       spinnerPlacement = "center",
       loadingIndicator = "spinner",
+      progressStyle = "fill",
+      progress,
       loadingLabel,
       minLoadingTime = 0,
       leadingIcon,
@@ -250,6 +326,20 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     }, []);
 
     const busy = loading || pending;
+
+    // Progress indicator: when loading ends, keep it briefly so it can finish to 100%.
+    const usesProgress = loadingIndicator === "progress";
+    const [finishing, setFinishing] = React.useState(false);
+    const wasBusy = React.useRef(busy);
+    React.useEffect(() => {
+      const ended = wasBusy.current && !busy;
+      wasBusy.current = busy;
+      if (busy) setFinishing(false);
+      if (!ended || !usesProgress) return;
+      setFinishing(true);
+      const timer = window.setTimeout(() => setFinishing(false), PROGRESS_FINISH_MS);
+      return () => window.clearTimeout(timer);
+    }, [busy, usesProgress]);
     const classes = cn(buttonVariants({ variant, raised, shadow, size, rounded, iconOnly, fullWidth }), className);
     const lead = renderIcon(leadingIcon);
     const trail = renderIcon(trailingIcon);
@@ -287,9 +377,11 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     };
 
     const orbit = loadingIndicator === "orbit";
+    // Orbit and progress replace the spinner and keep the label visible.
+    const keepsLabel = orbit || usesProgress;
     const centered = spinnerPlacement === "center" || iconOnly;
-    const showSpinner = busy && !orbit;
-    const useLoadingLabel = busy && !iconOnly && loadingLabel !== undefined && (orbit || !centered);
+    const showSpinner = busy && !keepsLabel;
+    const useLoadingLabel = busy && !iconOnly && loadingLabel !== undefined && (keepsLabel || !centered);
     const label = useLoadingLabel ? loadingLabel : content;
 
     return (
@@ -313,13 +405,20 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             <span className="ui-btn-orbit" />
           </span>
         )}
+        {usesProgress && (busy || finishing) && (
+          <ProgressIndicator
+            kind={progressStyle}
+            value={progress}
+            finishing={!busy && finishing}
+          />
+        )}
         {centered && showSpinner && (
           <span className="absolute inset-0 flex items-center justify-center pb-[inherit]">
             <Spinner />
           </span>
         )}
-        <span className={cn("inline-flex items-center gap-2", centered && showSpinner && "opacity-0")}>
-          {centered || orbit ? (
+        <span className={cn("relative inline-flex items-center gap-2", centered && showSpinner && "opacity-0")}>
+          {centered || keepsLabel ? (
             <>
               {lead}
               {label}

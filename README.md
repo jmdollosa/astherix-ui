@@ -96,7 +96,9 @@ import { Button } from "@jm/ui";
 | `fullWidth`    | boolean                                         | `false`     |
 | `loading`      | boolean — show the spinner on demand            | `false`     |
 | `spinnerPlacement` | `center` `start` `end`                      | `center`    |
-| `loadingIndicator` | `spinner` `orbit` (experimental running light) | `spinner` |
+| `loadingIndicator` | `spinner` `orbit` `progress` (both experimental) | `spinner` |
+| `progressStyle` | `fill` `bar` (with `progress` indicator)        | `fill`      |
+| `progress`     | 0–100 real progress; omit for automatic         |             |
 | `loadingLabel` | label while loading, e.g. "Saving…" (start/end) |             |
 | `minLoadingTime` | ms the spinner stays visible at minimum       | `0`         |
 | `onClick`      | may return a Promise → spinner until it settles |             |
@@ -158,6 +160,19 @@ further clicks (so forms can't be submitted twice).
 A light runs around the button's edge while loading; the label stays visible. Tune it with
 `--ui-orbit-color`, `--ui-orbit-width` and `--ui-orbit-speed`. It needs CSS `@property`
 (current Chrome, Edge, Safari and Firefox); older browsers show a still light.
+
+### Progress (experimental)
+
+```tsx
+<Button loadingIndicator="progress" onClick={generate}>Generate report</Button>
+<Button loadingIndicator="progress" progressStyle="bar" loading={uploading} progress={pct}>
+  Upload
+</Button>
+```
+
+`fill` sweeps a translucent fill across the button; `bar` runs a thin bar along the bottom.
+Without `progress` it creeps toward ~92% and completes when loading ends. Tune with
+`--ui-progress-fill`, `--ui-progress-bar`, `--ui-progress-height`, `--ui-progress-duration`.
 
 ### Icon fonts (Bootstrap Icons, Font Awesome, Glyphicons)
 

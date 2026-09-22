@@ -47,6 +47,36 @@ function OrbitToggleDemo() {
   );
 }
 
+function UploadDemo({ progressStyle }: { progressStyle: "fill" | "bar" }) {
+  const [pct, setPct] = React.useState<number | null>(null);
+  const start = () => {
+    setPct(0);
+    let p = 0;
+    const tick = setInterval(() => {
+      p = Math.min(100, p + Math.round(4 + Math.random() * 12));
+      setPct(p);
+      if (p >= 100) {
+        clearInterval(tick);
+        setTimeout(() => setPct(null), 250);
+      }
+    }, 280);
+  };
+  return (
+    <Button
+      variant={progressStyle === "fill" ? "primary" : "secondary"}
+      leadingIcon="bi bi-cloud-arrow-up"
+      loadingIndicator="progress"
+      progressStyle={progressStyle}
+      loading={pct !== null}
+      progress={pct ?? 0}
+      loadingLabel={`Uploading ${pct ?? 0}%`}
+      onClick={start}
+    >
+      Upload photos
+    </Button>
+  );
+}
+
 function ErrorDemo() {
   const [error, setError] = React.useState("");
   return (
@@ -457,6 +487,115 @@ const [isPending, startTransition] = useTransition();
         </Button>
         <Button variant="secondary" loadingIndicator="orbit" className="[--ui-orbit-speed:2s]" loading>
           Slower light
+        </Button>
+      </Section>
+
+      <Section
+        title="Progress (experimental)"
+        desc={
+          <>
+            Set <code className="font-mono text-[0.8125rem]">loadingIndicator="progress"</code> to show progress
+            instead of a spinner. With <code className="font-mono text-[0.8125rem]">progressStyle="fill"</code> (the
+            default) a translucent fill sweeps across the button; with{" "}
+            <code className="font-mono text-[0.8125rem]">"bar"</code> a thin bar runs along the bottom. It creeps
+            forward on its own and completes when the response arrives. Tap to try.
+          </>
+        }
+        code={`
+<Button loadingIndicator="progress" loadingLabel="Generating…"
+  onClick={() => fetch("/api/report", { method: "POST" })}>
+  Generate report
+</Button>
+
+<Button variant="secondary" loadingIndicator="progress" progressStyle="bar"
+  onClick={() => api.sync()}>
+  Sync contacts
+</Button>
+
+<Button variant="danger" raised={false} rounded="full"
+  loadingIndicator="progress" loadingLabel="Emptying…" onClick={emptyTrash}>
+  Empty trash
+</Button>`}
+      >
+        <Button loadingIndicator="progress" loadingLabel="Generating…" onClick={() => fakeRequest(3200)}>Generate report</Button>
+        <Button variant="secondary" loadingIndicator="progress" progressStyle="bar" onClick={() => fakeRequest(3200)}>Sync contacts</Button>
+        <Button variant="secondary" loadingIndicator="progress" onClick={() => fakeRequest(3200)} leadingIcon="bi bi-download">Export CSV</Button>
+        <Button variant="danger" raised={false} rounded="full" loadingIndicator="progress" loadingLabel="Emptying…" onClick={() => fakeRequest(3200)}>Empty trash</Button>
+        <Button loadingIndicator="progress" progressStyle="bar" raised={false} shadow="md" onClick={() => fakeRequest(3200)}>Publish</Button>
+      </Section>
+
+      <Section
+        title="Real progress"
+        desc={
+          <>
+            When you know how far along the work is — like an upload — pass it as{" "}
+            <code className="font-mono text-[0.8125rem]">progress</code> (0–100). The fill or bar follows it, then
+            finishes and fades when you stop loading.
+          </>
+        }
+        code={`
+const [progress, setProgress] = useState<number | null>(null);
+
+async function upload(files: FileList) {
+  setProgress(0);
+  await axios.post("/api/photos", toFormData(files), {
+    onUploadProgress: (e) => setProgress(Math.round((e.loaded / (e.total ?? 1)) * 100)),
+  });
+  setProgress(null);
+}
+
+<Button
+  leadingIcon="bi bi-cloud-arrow-up"
+  loadingIndicator="progress"
+  loading={progress !== null}
+  progress={progress ?? 0}
+  loadingLabel={\`Uploading \${progress}%\`}
+  onClick={() => upload(files)}
+>
+  Upload photos
+</Button>
+
+// Laravel + Inertia: useForm tracks upload progress for you
+<Button loadingIndicator="progress" progressStyle="bar"
+  loading={form.processing} progress={form.progress?.percentage}>
+  Save
+</Button>`}
+      >
+        <UploadDemo progressStyle="fill" />
+        <UploadDemo progressStyle="bar" />
+      </Section>
+
+      <Section
+        title="Tuning the progress"
+        desc="Change the colors, the bar's thickness, and how long the automatic progress takes to reach the end with CSS variables — per button or app-wide."
+        code={`
+<Button
+  loadingIndicator="progress"
+  progressStyle="bar"
+  className="[--ui-progress-bar:#facc15] [--ui-progress-height:4px] [--ui-progress-duration:4s]"
+  onClick={deploy}
+>
+  Deploy
+</Button>
+
+/* app-wide, after the theme import */
+:root { --ui-progress-duration: 12s; }  /* for slower operations */`}
+      >
+        <Button
+          loadingIndicator="progress"
+          progressStyle="bar"
+          className="[--ui-progress-bar:#facc15] [--ui-progress-height:4px] [--ui-progress-duration:4s]"
+          onClick={() => fakeRequest(3000)}
+        >
+          Deploy
+        </Button>
+        <Button
+          variant="secondary"
+          loadingIndicator="progress"
+          className="[--ui-progress-fill:rgb(22_163_74/0.18)] [--ui-progress-duration:3s]"
+          onClick={() => fakeRequest(2600)}
+        >
+          Green fill
         </Button>
       </Section>
 
