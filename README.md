@@ -809,7 +809,8 @@ Text lit by a moving spotlight — the lit part glows, the rest sits in shadow.
 ```
 
 `mode` (`follow` — follows the pointer or finger, drifts when idle; `sweep` — a beam passes every
-few seconds; `reveal` — dark until lit), `as`, `tint` (color or gradient; default the text's own
-color), `radius`, `dim`, `glow`, `smoothing`, `duration`, `pause`. Real, selectable text for
+few seconds; `reveal` — dark until lit), `speed` (`slow` `normal` `fast` or ms per pass; `fast`
+suits status messages like "Syncing…"), `as`, `tint` (color or gradient; default the text's own
+color), `radius`, `dim`, `glow`, `smoothing`, `duration` / `pause` (exact sweep pace). Real, selectable text for
 screen readers; pauses off-screen; fully lit and still with reduced motion.
 

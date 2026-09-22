@@ -23,9 +23,14 @@ export interface SpotlightTextProps extends React.HTMLAttributes<HTMLElement> {
   dim?: number;
   /** A soft glow around the lit letters. Default true. */
   glow?: boolean;
-  /** For sweep: ms for one pass. Default 2200. */
+  /**
+   * How fast the light moves: "slow", "normal" (default) or "fast" — or ms for one pass.
+   * "fast" makes a quick shimmer that suits status messages ("Syncing…").
+   */
+  speed?: "slow" | "normal" | "fast" | number;
+  /** For sweep: ms for one pass (overrides speed). */
   duration?: number;
-  /** For sweep: pause between passes in ms. Default 1400. */
+  /** For sweep: pause between passes in ms (overrides speed). */
   pause?: number;
   /** How closely it follows the pointer, 0–1 (1 = instantly). Default 0.14 — a smooth trail. */
   smoothing?: number;
@@ -38,14 +43,20 @@ export function SpotlightText({
   tint,
   dim,
   glow = true,
-  duration = 2200,
-  pause = 1400,
+  speed = "normal",
+  duration: durationProp,
+  pause: pauseProp,
   smoothing = 0.14,
   className,
   style,
   children,
   ...props
 }: SpotlightTextProps) {
+  // Speed presets: one pass and the rest between passes. "fast" is a quick status shimmer.
+  const presets = { slow: [3400, 1800], normal: [2200, 1400], fast: [950, 250] } as const;
+  const [presetPass, presetRest] = typeof speed === "number" ? [speed, Math.round(speed * 0.35)] : presets[speed];
+  const duration = durationProp ?? presetPass;
+  const pause = pauseProp ?? presetRest;
   const ref = React.useRef<HTMLElement>(null);
   const [reduced, setReduced] = React.useState(false);
   const target = React.useRef<{ x: number; y: number } | null>(null);
