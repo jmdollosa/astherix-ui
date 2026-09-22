@@ -5,7 +5,7 @@ import { extendTailwindMerge } from "tailwind-merge";
 const twMerge = extendTailwindMerge({
   extend: {
     theme: {
-      radius: ["control", "control-sm", "control-lg", "modal"],
+      radius: ["control", "control-sm", "control-lg", "modal", "card"],
     },
   },
 });

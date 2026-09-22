@@ -11,6 +11,7 @@ packages/ui/
   src/components/activity/ ActivityIndicator, ProgressBar, ProgressRing, Skeleton, ActivitySteps, LoadingOverlay
   src/components/avatar/ Avatar, AvatarGroup, AvatarLabel, AvatarUpload
   src/components/button/ Button
+  src/components/card/   Card, ChoiceCard
   src/components/editor/ Editor (entry: @jm/ui/editor)
   src/components/input/  Field, Input, Textarea
   src/components/modal/  Modal
@@ -309,6 +310,33 @@ Props: `options`, `value` / `defaultValue` / `onChange` (string | null, or strin
 
 Keyboard: Enter/Space/↓ open, type to search, ↑ ↓ Home End move, Enter picks, Backspace removes
 the last chip, Escape closes (before a surrounding Modal), Tab closes and moves on.
+
+## Card
+
+```tsx
+<Card variant="outline" | "elevated" | "filled" | "ghost" padding="md">
+  <CardMedia src={cover} ratio="16/9" />
+  <CardHeader title="Website refresh" description="Due 30 September" action={<Button …/>} />
+  <CardContent>…</CardContent>
+  <CardFooter divided justify="between">…</CardFooter>
+</Card>
+
+// Whole card clickable; other buttons inside still work
+<Card interactive><CardHeader><CardTitle><CardLink href="/posts/1">Title</CardLink></CardTitle></CardHeader></Card>
+
+// Choices with real radios / checkboxes
+<ChoiceCardGroup value={plan} onValueChange={setPlan} name="plan">
+  <ChoiceCard value="team" title="Team" description="…" meta="₱990 / month" />
+</ChoiceCardGroup>
+```
+
+`Card`: `variant`, `tone` (`default` `primary` `danger`), `orientation` (`vertical` `horizontal`,
+wrap text in `CardBody`), `interactive`, `padding` (`none` `sm` `md` `lg`), `asChild`.
+`CardHeader`: `title`, `description`, `action`, `icon`, `titleLevel`. `CardFooter`: `divided`,
+`justify`. `CardMedia`: `src`, `alt`, `ratio`, `inset`. `ChoiceCardGroup`: `type`, `value` /
+`defaultValue` / `onValueChange`, `name`, `columns`, `disabled`, `invalid`, `required`.
+`ChoiceCard`: `value`, `title`, `description`, `icon`, `meta`, `badge`, `disabled`.
+Token: `--radius-card`.
 
 ## Editor (rich text)
 

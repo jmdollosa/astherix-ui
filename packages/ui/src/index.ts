@@ -86,3 +86,25 @@ export type {
   AvatarSize,
   AvatarStatus,
 } from "./components/avatar/Avatar";
+export {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+  CardMedia,
+  CardLink,
+  CardBody,
+  ChoiceCardGroup,
+  ChoiceCard,
+  cardVariants,
+} from "./components/card/Card";
+export type {
+  CardProps,
+  CardHeaderProps,
+  CardFooterProps,
+  CardMediaProps,
+  ChoiceCardGroupProps,
+  ChoiceCardProps,
+} from "./components/card/Card";
