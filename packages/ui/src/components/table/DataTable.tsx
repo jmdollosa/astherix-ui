@@ -74,6 +74,16 @@ export interface DataTableProps<T> {
   toolbar?: React.ReactNode;
 
   loading?: boolean;
+  /**
+   * How a refresh (loading while rows are already showing) is shown:
+   * - "border": a light runs around the table's edge (default)
+   * - "bar": a thin bar slides along the top
+   * - "shimmer": a soft sweep of light passes over the rows
+   * - "none": rows just dim
+   */
+  refreshIndicator?: "border" | "bar" | "shimmer" | "none";
+  /** Adds a refresh button to the toolbar. Return a Promise; the indicator runs until it settles. */
+  onRefresh?: () => Promise<unknown> | void;
   /** Shown when there are no rows (and when a search finds nothing). */
   emptyState?: React.ReactNode;
 
@@ -135,6 +145,65 @@ const SortIcon = ({ dir }: { dir: "asc" | "desc" | null }) => (
   </svg>
 );
 
+/* ---------- refresh indicators ---------- */
+
+/**
+ * A comet of light running around the table's rounded edge. It's an SVG rectangle drawn
+ * on the border with three dashes of different lengths that share one head — a bright
+ * point with a fading tail — moving at an even speed along the whole perimeter.
+ */
+function RunningBorder({ radius }: { radius: number }) {
+  const tails: Array<[number, number, number]> = [
+    // [dash length, opacity, width]
+    [26, 0.18, 2],
+    [14, 0.45, 2],
+    [5, 1, 2.5],
+  ];
+  return (
+    <svg
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 z-30 size-full overflow-visible drop-shadow-[0_0_3px_var(--color-primary)] motion-reduce:hidden"
+    >
+      {tails.map(([len, opacity, width]) => (
+        <rect
+          key={len}
+          x="0"
+          y="0"
+          width="100%"
+          height="100%"
+          rx={radius}
+          pathLength={100}
+          fill="none"
+          stroke="var(--color-primary)"
+          strokeOpacity={opacity}
+          strokeWidth={width}
+          strokeLinecap="round"
+          strokeDasharray={`${len} ${100 - len}`}
+          className="animate-[ui-border-run_2.2s_linear_infinite]"
+          // Line up the heads: shorter dashes start further along.
+          style={{ ["--o" as string]: `${len - 26}` }}
+        />
+      ))}
+    </svg>
+  );
+}
+
+function RefreshBar() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 z-30 h-0.5 overflow-hidden rounded-t-card">
+      <div className="h-full w-2/5 rounded-full bg-primary animate-[ui-indeterminate_1.2s_cubic-bezier(0.4,0,0.2,1)_infinite] motion-reduce:w-full motion-reduce:animate-[ui-breathe_1.6s_ease-in-out_infinite]" />
+    </div>
+  );
+}
+
+function RefreshShimmer() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-20 overflow-hidden rounded-card motion-reduce:hidden">
+      <div className="h-full w-full bg-[linear-gradient(100deg,transparent_20%,color-mix(in_srgb,var(--color-primary)_9%,transparent)_45%,color-mix(in_srgb,var(--color-surface)_55%,transparent)_50%,color-mix(in_srgb,var(--color-primary)_9%,transparent)_55%,transparent_80%)] animate-[ui-sweep_1.4s_ease-in-out_infinite]" />
+    </div>
+  );
+}
+
 /* ---------- component ---------- */
 
 export function DataTable<T>({
@@ -156,6 +225,8 @@ export function DataTable<T>({
   onRowClick,
   toolbar,
   loading = false,
+  refreshIndicator = "border",
+  onRefresh,
   emptyState,
   density = "comfortable",
   striped = false,
@@ -171,6 +242,7 @@ export function DataTable<T>({
     [rowKey]
   );
 
+  const [refreshingByButton, setRefreshingByButton] = React.useState(false);
   const [search, setSearch] = React.useState("");
   const [debounced, setDebounced] = React.useState("");
   const [sort, setSort] = React.useState<SortState>(defaultSort);
@@ -241,6 +313,37 @@ export function DataTable<T>({
   const allOnPage = pageKeys.length > 0 && selectedOnPage.length === pageKeys.length;
   const selectedRows = data.filter((r) => selected.includes(keyOf(r)));
 
+  // A refresh = loading while rows are already showing (or the refresh button's Promise is running).
+  const refreshing = (loading && paged.length > 0) || refreshingByButton;
+  const [justRefreshed, setJustRefreshed] = React.useState(false);
+  const wasRefreshing = React.useRef(false);
+  React.useEffect(() => {
+    if (wasRefreshing.current && !refreshing) {
+      setJustRefreshed(true);
+      const t = window.setTimeout(() => setJustRefreshed(false), 750);
+      wasRefreshing.current = false;
+      return () => window.clearTimeout(t);
+    }
+    wasRefreshing.current = refreshing;
+  }, [refreshing]);
+
+  const frameRef = React.useRef<HTMLDivElement>(null);
+  const [radius, setRadius] = React.useState(12);
+  React.useLayoutEffect(() => {
+    if (!refreshing || !frameRef.current) return;
+    setRadius(parseFloat(getComputedStyle(frameRef.current).borderTopLeftRadius) || 12);
+  }, [refreshing]);
+
+  const runRefresh = async () => {
+    if (!onRefresh || refreshingByButton) return;
+    setRefreshingByButton(true);
+    try {
+      await onRefresh();
+    } finally {
+      setRefreshingByButton(false);
+    }
+  };
+
   const cards = mobile === "cards";
   const pad = density === "compact" ? "px-3 py-2" : "px-4 py-3";
   const primaryCol = columns.find((c) => c.primary) ?? columns[0];
@@ -268,7 +371,7 @@ export function DataTable<T>({
 
   return (
     <div className={cn("@container grid w-full gap-3", className)}>
-      {(searchable || toolbar) && (
+      {(searchable || toolbar || onRefresh) && (
         <div className="flex flex-wrap items-center gap-2">
           {searchable && (
             <Input
@@ -288,7 +391,27 @@ export function DataTable<T>({
               frameClassName="w-full sm:w-72"
             />
           )}
-          {toolbar && <div className="ms-auto flex flex-wrap items-center gap-2">{toolbar}</div>}
+          {(toolbar || onRefresh) && (
+            <div className="ms-auto flex flex-wrap items-center gap-2">
+              {onRefresh && (
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  iconOnly
+                  aria-label={refreshing ? `Refreshing ${caption.toLowerCase()}` : `Refresh ${caption.toLowerCase()}`}
+                  title="Refresh"
+                  onClick={() => void runRefresh()}
+                  className={cn(refreshing && "[&_svg]:animate-spin [&_svg]:[animation-duration:0.9s]")}
+                >
+                  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M16 10a6 6 0 1 1-1.8-4.3" />
+                    <path d="M16 3.5v3.3h-3.3" />
+                  </svg>
+                </Button>
+              )}
+              {toolbar}
+            </div>
+          )}
         </div>
       )}
 
@@ -300,13 +423,22 @@ export function DataTable<T>({
         </div>
       )}
 
+      <div className="relative">
+      {refreshing && refreshIndicator === "border" && <RunningBorder radius={radius} />}
+      {refreshing && refreshIndicator === "bar" && <RefreshBar />}
+      {refreshing && refreshIndicator === "shimmer" && <RefreshShimmer />}
+      <span className="sr-only" aria-live="polite">
+        {refreshing ? `Refreshing ${caption.toLowerCase()}…` : justRefreshed ? `${caption} updated.` : ""}
+      </span>
       <div
+        ref={frameRef}
         className={cn(
           "relative overflow-auto rounded-card border border-border bg-surface",
-          cards && "@max-[40rem]:overflow-visible @max-[40rem]:border-0 @max-[40rem]:bg-transparent"
+          cards && "@max-[40rem]:overflow-visible @max-[40rem]:border-0 @max-[40rem]:bg-transparent",
+          justRefreshed && refreshIndicator !== "none" && "animate-[ui-refresh-done_750ms_ease-out] motion-reduce:animate-none"
         )}
         style={{ maxHeight }}
-        aria-busy={loading || undefined}
+        aria-busy={loading || refreshing || undefined}
       >
         <table role="table" className={cn("w-full border-separate border-spacing-0 text-sm", cardTable)}>
           <caption className={showCaption ? "px-4 pt-3 text-start font-medium text-fg" : "sr-only"}>
@@ -397,7 +529,7 @@ export function DataTable<T>({
                         "hover:[&>td]:bg-secondary-hover/50",
                         striped && ri % 2 === 1 && "[&>td]:bg-secondary-hover/35",
                         isSel && "[&>td]:bg-[color:color-mix(in_srgb,var(--color-primary)_6%,var(--color-surface))]",
-                        loading && "opacity-60",
+                        refreshing && "opacity-70 transition-opacity duration-200",
                         cardRow,
                         cards && isSel && "@max-[40rem]:border-primary"
                       )}
@@ -463,6 +595,7 @@ export function DataTable<T>({
             )}
           </tbody>
         </table>
+      </div>
       </div>
 
       {/* Footer: count, page size, pages */}

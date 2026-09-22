@@ -1,10 +1,12 @@
 import * as React from "react";
 import {
+  PillGroup,
+  PillOption,
+  Pill,
   DataTable,
   type DataTableColumn,
   type DataTableQuery,
   Button,
-  Pill,
   Avatar,
   Text,
   DropdownMenu,
@@ -162,6 +164,78 @@ function ServerDemo() {
   );
 }
 
+function RefreshDemo() {
+  const [style, setStyle] = React.useState<string | null>("border");
+  const [rows, setRows] = React.useState(() => invoices.slice(0, 6));
+  const [live, setLive] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [updated, setUpdated] = React.useState<Date | null>(null);
+
+  // Pretend the server returns slightly different numbers each time.
+  const refresh = React.useCallback(async () => {
+    await new Promise((r) => setTimeout(r, 2200));
+    setRows((rs) =>
+      rs.map((r) => ({
+        ...r,
+        amount: Math.max(1000, r.amount + Math.round((Math.random() - 0.4) * 3000)),
+        status: r.status === "due" && Math.random() > 0.5 ? "paid" : r.status,
+      }))
+    );
+    setUpdated(new Date());
+  }, []);
+
+  // Auto-refresh every 6 seconds while "Live" is on.
+  React.useEffect(() => {
+    if (!live) return;
+    let stop = false;
+    const tick = async () => {
+      setLoading(true);
+      await refresh();
+      if (!stop) setLoading(false);
+    };
+    void tick();
+    const t = setInterval(tick, 6000);
+    return () => {
+      stop = true;
+      clearInterval(t);
+      setLoading(false);
+    };
+  }, [live, refresh]);
+
+  return (
+    <div className="grid w-full gap-4">
+      <div className="flex flex-wrap items-center gap-3">
+        <PillGroup value={style} onValueChange={setStyle} size="sm" aria-label="Refresh indicator">
+          <PillOption value="border">Running border</PillOption>
+          <PillOption value="bar">Top bar</PillOption>
+          <PillOption value="shimmer">Shimmer</PillOption>
+          <PillOption value="none">None</PillOption>
+        </PillGroup>
+      </div>
+      <DataTable
+        caption="Payments today"
+        data={rows}
+        columns={columns.filter((c) => ["no", "client", "amount", "status"].includes(c.key))}
+        rowKey="id"
+        pageSize={0}
+        loading={loading}
+        refreshIndicator={(style ?? "border") as "border"}
+        onRefresh={refresh}
+        toolbar={
+          <>
+            <Text size="sm" tone="muted" numeric>
+              {updated ? `Updated ${updated.toLocaleTimeString("en-PH", { hour: "numeric", minute: "2-digit", second: "2-digit" })}` : "Not refreshed yet"}
+            </Text>
+            <Button size="sm" variant={live ? "primary" : "secondary"} onClick={() => setLive((l) => !l)} aria-pressed={live}>
+              {live ? <Pill size="sm" tone="danger" appearance="solid" dot="pulse" className="-ms-1">Live</Pill> : "Go live"}
+            </Button>
+          </>
+        }
+      />
+    </div>
+  );
+}
+
 export function TablePage() {
   const [empty, setEmpty] = React.useState(false);
   return (
@@ -261,6 +335,22 @@ return Invoice::query()
         <div className="w-full">
           <ServerDemo />
         </div>
+      </Section>
+
+      <Section
+        title="Refreshing"
+        desc="When the table reloads data it's already showing, the rows stay in place, dim slightly, and an indicator runs until the new data arrives — by default a light that travels around the table's edge. A brief glow says it's done. Press the refresh button, or Go live to refresh every few seconds."
+        code={`
+// Built-in refresh button: the indicator runs until the Promise settles
+<DataTable onRefresh={() => router.reload({ only: ["payments"] })} … />
+
+// Or drive it yourself — loading while rows are showing counts as a refresh
+<DataTable loading={isFetching} … />
+
+// Pick the style
+<DataTable refreshIndicator="border" | "bar" | "shimmer" | "none" … />`}
+      >
+        <RefreshDemo />
       </Section>
 
       <Section

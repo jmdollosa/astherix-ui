@@ -455,7 +455,8 @@ Columns: `key`, `header`, `accessor`, `cell`, `sortable`, `sortFn`, `align`, `wi
 Table: `caption` (required, accessible name), `showCaption`, `searchable`, `searchPlaceholder`,
 `pageSize` (0 = all), `pageSizeOptions`, `defaultSort`, `selectable`, `selected` /
 `onSelectedChange`, `bulkActions`, `rowActions`, `onRowClick`, `toolbar`, `loading`,
-`emptyState`, `density` (`comfortable` `compact`), `striped`, `mobile` (`cards` `scroll`),
+`refreshIndicator` (`border` `bar` `shimmer` `none`), `onRefresh` (adds a refresh button; runs
+until its Promise settles), `emptyState`, `density` (`comfortable` `compact`), `striped`, `mobile` (`cards` `scroll`),
 `maxHeight`, `manual`, `total`, `onQueryChange`.
 Narrow containers (under 40rem) switch to cards via a container query, so it adapts inside
 sidebars and cards as well as on phones.

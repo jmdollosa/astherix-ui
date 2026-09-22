@@ -557,3 +557,29 @@
     transform: translateY(4px) scale(0.98);
   }
 }
+
+/* DataTable refresh indicators */
+@keyframes ui-border-run {
+  from {
+    stroke-dashoffset: var(--o, 0);
+  }
+  to {
+    stroke-dashoffset: calc(var(--o, 0) - 100);
+  }
+}
+@keyframes ui-sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+@keyframes ui-refresh-done {
+  from {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 35%, transparent);
+  }
+  to {
+    box-shadow: 0 0 0 3px transparent;
+  }
+}
