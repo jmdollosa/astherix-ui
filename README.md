@@ -12,6 +12,7 @@ packages/ui/
   src/components/editor/ Editor (entry: @jm/ui/editor)
   src/components/input/  Field, Input, Textarea
   src/components/modal/  Modal
+  src/components/pill/   Pill, PillGroup, PillOption
   src/components/select/ Select
   src/components/tabs/   Tabs
 docs/                    User guide
@@ -222,6 +223,28 @@ controls can read it with `useField()`.
 **Textarea** — `size`, `rounded` (`none` … `lg`), `invalid`, `autoResize` with `minRows` /
 `maxRows`, `showCount` (with `maxLength` shows "12 / 280"), `resize` (`vertical` `none`),
 `frameClassName`.
+
+## Pills
+
+```tsx
+<Pill tone="success" dot>Paid</Pill>
+<Pill tone="danger" appearance="solid">Overdue</Pill>
+<Pill size="lg" onRemove={() => removeTag(tag)}>{tag}</Pill>
+<Pill asChild tone="primary"><Link href="/topics/laravel">Laravel</Link></Pill>
+
+<PillGroup value={category} onValueChange={setCategory} aria-label="Category">
+  <PillOption value="all" count={5}>All</PillOption>
+  <PillOption value="design">Design</PillOption>
+</PillGroup>
+<PillGroup type="multiple" value={tags} onValueChange={setTags}>…</PillGroup>
+```
+
+`Pill`: `tone` (`neutral` `primary` `success` `warning` `danger` `info`), `appearance`
+(`soft` `solid` `outline`), `size` (`sm` `md` `lg`), `icon`, `dot` (`true` or `"pulse"`),
+`count`, `onRemove`, `removeLabel`, `asChild`. `PillGroup`: `type` (`single` `multiple`),
+`value` / `defaultValue` / `onValueChange`, `allowDeselect`, `size`, `tone`, `showCheck`,
+`disabled`. `PillOption`: `value`, `icon`, `count`, `disabled`.
+Status colors are theme tokens: `--ui-success`, `--ui-warning`, `--ui-info` (+ `-fg`).
 
 ## Select
 

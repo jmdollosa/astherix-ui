@@ -70,6 +70,13 @@
   --ui-danger-edge: #5c140f;
   --ui-danger-fg: #ffffff;
 
+  --ui-success: #15803d;
+  --ui-success-fg: #ffffff;
+  --ui-warning: #b45309;
+  --ui-warning-fg: #ffffff;
+  --ui-info: #0369a1;
+  --ui-info-fg: #ffffff;
+
   /* Drop shadows for buttons (the `shadow` prop). Two layers: a tight contact
      shadow plus a softer, wider one; heavier levels spread further. */
   --ui-shadow-color: 29 33 38;
@@ -109,6 +116,13 @@
   --ui-danger-edge: #c0392b;
   --ui-danger-fg: #2a0906;
 
+  --ui-success: #4ade80;
+  --ui-success-fg: #052e16;
+  --ui-warning: #fbbf24;
+  --ui-warning-fg: #2b1700;
+  --ui-info: #38bdf8;
+  --ui-info-fg: #04203a;
+
   /* Dark backgrounds need deeper, darker shadows to read at all. */
   --ui-shadow-color: 0 0 0;
   --ui-shadow-sm: 0 1px 2px rgb(var(--ui-shadow-color) / 0.4);
@@ -141,6 +155,12 @@
   --color-danger-hover: var(--ui-danger-hover);
   --color-danger-edge: var(--ui-danger-edge);
   --color-danger-fg: var(--ui-danger-fg);
+  --color-success: var(--ui-success);
+  --color-success-fg: var(--ui-success-fg);
+  --color-warning: var(--ui-warning);
+  --color-warning-fg: var(--ui-warning-fg);
+  --color-info: var(--ui-info);
+  --color-info-fg: var(--ui-info-fg);
 }
 
 @layer base {

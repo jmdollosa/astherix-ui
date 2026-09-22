@@ -25,3 +25,5 @@ export { Select } from "./components/select/Select";
 export type { SelectProps, SelectOption } from "./components/select/Select";
 export { Tabs, TabList, Tab, TabPanel } from "./components/tabs/Tabs";
 export type { TabsProps, TabListProps, TabProps, TabPanelProps } from "./components/tabs/Tabs";
+export { Pill, PillGroup, PillOption, pillVariants } from "./components/pill/Pill";
+export type { PillProps, PillGroupProps, PillOptionProps, PillTone, PillAppearance } from "./components/pill/Pill";
