@@ -23,7 +23,7 @@ function LabelText({ label, description, size, disabled }: { label?: React.React
 }
 
 const boxBase = [
-  "peer absolute inset-0 m-0 cursor-pointer appearance-none border bg-surface outline-none transition-[background-color,border-color,box-shadow] duration-100",
+  "peer absolute inset-0 m-0 size-full p-0 cursor-pointer appearance-none border bg-surface outline-none transition-[background-color,border-color,box-shadow] duration-100",
   "border-border-strong shadow-[inset_0_1px_2px_rgb(var(--ui-shadow-color)/0.08)]",
   "hover:border-fg-muted/70",
   "focus-visible:ring-3 focus-visible:ring-ring/35 focus-visible:ring-offset-1 focus-visible:ring-offset-bg",
@@ -379,7 +379,7 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
             aria-busy={pending !== null || undefined}
             onChange={handle}
             className={cn(
-              "peer absolute inset-0 m-0 cursor-pointer appearance-none rounded-full outline-none transition-[background-color,box-shadow] duration-250 ease-out",
+              "peer absolute inset-0 m-0 size-full p-0 cursor-pointer appearance-none rounded-full outline-none transition-[background-color,box-shadow] duration-250 ease-out",
               "focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:ring-offset-2 focus-visible:ring-offset-bg",
               "disabled:cursor-not-allowed aria-busy:cursor-progress",
               liquid
