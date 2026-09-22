@@ -248,7 +248,9 @@ export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(functio
         else if (ref) ref.current = n;
       }}
       aria-label={L.nav}
-      className={cn("flex w-full min-w-0 flex-wrap items-center gap-x-4 gap-y-3", className)}
+      // contain: inline-size — take the width from the container, not from the buttons, so the
+      // measured width decides the layout (otherwise the wide layout props its container open).
+      className={cn("flex w-full min-w-0 flex-wrap items-center gap-x-4 gap-y-3 [contain:inline-size]", className)}
       {...props}
     >
       {showSummary && total !== undefined && (
