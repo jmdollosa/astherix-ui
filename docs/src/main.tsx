@@ -7,18 +7,20 @@ import { ModalPage } from "./pages/ModalPage";
 import { InputPage } from "./pages/InputPage";
 import { TextareaPage } from "./pages/TextareaPage";
 import { SelectPage } from "./pages/SelectPage";
+import { EditorPage } from "./pages/EditorPage";
 
 // Add each new component page here; the nav and routing pick it up automatically.
 const pages = [
   { path: "getting-started", title: "Getting started", group: "Guide", Page: GettingStarted },
   { path: "button", title: "Button", group: "Components", Page: ButtonPage },
+  { path: "editor", title: "Editor", group: "Components", Page: EditorPage },
   { path: "input", title: "Input", group: "Components", Page: InputPage },
   { path: "modal", title: "Modal", group: "Components", Page: ModalPage },
   { path: "select", title: "Select", group: "Components", Page: SelectPage },
   { path: "textarea", title: "Textarea", group: "Components", Page: TextareaPage },
 ];
 
-const VERSION = "0.9.0";
+const VERSION = "0.10.0";
 
 function useHashRoute() {
   const read = () => window.location.hash.replace(/^#\/?/, "") || pages[0].path;

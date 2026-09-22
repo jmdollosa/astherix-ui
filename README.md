@@ -9,6 +9,7 @@ packages/ui/
   theme.css              Tokens (colors, font, radius), light/dark themes
   src/lib/cn.ts          Class merging helper
   src/components/button/ Button
+  src/components/editor/ Editor (entry: @jm/ui/editor)
   src/components/input/  Field, Input, Textarea
   src/components/modal/  Modal
   src/components/select/ Select
@@ -245,6 +246,32 @@ Props: `options`, `value` / `defaultValue` / `onChange` (string | null, or strin
 
 Keyboard: Enter/Space/↓ open, type to search, ↑ ↓ Home End move, Enter picks, Backspace removes
 the last chip, Escape closes (before a surrounding Modal), Tab closes and moves on.
+
+## Editor (rich text)
+
+A basic WYSIWYG editor built on [Tiptap](https://tiptap.dev). It has its own entry point so
+apps that don't use it don't load it:
+
+```tsx
+import { Editor } from "@jm/ui/editor";
+
+<Field label="Release notes">
+  <Editor value={html} onChange={setHtml} />
+</Field>
+
+<Editor toolbar={["bold", "italic", "link", "|", "bulletList"]} maxLength={280} />
+<Editor name="body" />            {/* posts the HTML with the form */}
+<Editor readOnly value={post.body} />
+```
+
+Props: `value` / `defaultValue` / `onChange` (HTML; empty editor gives `""`), `placeholder`,
+`toolbar` (tools: `paragraph heading2 heading3 bold italic underline strike code link
+bulletList orderedList blockquote horizontalRule undo redo`, `"|"` for a divider),
+`maxLength`, `showCount`, `minHeight`, `maxHeight`, `rounded`, `invalid`, `disabled`,
+`readOnly`, `name`, `autoFocus`, `onReady(editor)` for the Tiptap instance.
+
+Show saved HTML with the same styles: `<div className="ui-prose" dangerouslySetInnerHTML={…} />`.
+Always sanitize HTML on the server (e.g. `stevebauman/purify` in Laravel).
 
 ## Modal
 

@@ -1,5 +1,18 @@
 {
   "extends": "../packages/ui/tsconfig.json",
-  "compilerOptions": { "noEmit": true, "baseUrl": ".", "paths": { "@jm/ui": ["../packages/ui/src/index.ts"] } },
-  "include": ["src"]
+  "compilerOptions": {
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@jm/ui": [
+        "../packages/ui/src/index.ts"
+      ],
+      "@jm/ui/editor": [
+        "../packages/ui/src/editor.ts"
+      ]
+    }
+  },
+  "include": [
+    "src"
+  ]
 }
