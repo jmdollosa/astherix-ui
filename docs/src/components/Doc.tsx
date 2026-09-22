@@ -34,7 +34,7 @@ export function Section({ title, desc, code, children, wide = false }: { title: 
         <div className={`mt-1.5 text-sm leading-relaxed text-fg-muted ${wide ? "max-w-[70ch]" : "max-w-[34ch]"}`}>{desc}</div>
       </div>
       <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] content-start gap-4">
-        <div className="flex min-w-0 flex-wrap items-center gap-3 [&>*]:min-w-0 [&>*]:max-w-full">{children}</div>
+        <div className="flex min-w-0 flex-wrap items-center gap-3 [:where(&>*)]:min-w-0 [:where(&>*)]:max-w-full">{children}</div>
         <Code code={code} />
       </div>
     </section>

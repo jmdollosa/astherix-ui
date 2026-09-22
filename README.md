@@ -262,6 +262,25 @@ or Laravel `resources/js/app.tsx`.
 
 `type` defaults to `"button"`; set `type="submit"` on form submit buttons.
 
+## Carousel
+
+```tsx
+<Carousel aria-label="Photos" indicators="thumbnails">
+  <CarouselSlide label="Sagada" thumbnail={<img … />}><img … /></CarouselSlide>
+</Carousel>
+
+<Carousel aria-label="Plans" effect="coverflow" slidesPerView={{ base: 1.3, md: 2.4 }} defaultIndex={1} />
+<Carousel aria-label="Highlights" indicators="stories" autoplay={4000} loop />
+```
+
+Native scroll snapping (real swipe momentum, trackpads, no scroll-jacking) plus mouse dragging
+and keyboard. `Carousel`: `slidesPerView` (number or `{ base, sm, md, lg }` by container width;
+fractions peek), `gap`, `peek`, `align` (`start` `center`), `effect` (`coverflow`), `loop`,
+`autoplay` (ms; pauses on hover/touch/focus, hidden tab or off-screen; off with reduced motion;
+pause button), `indicators` (`dots` `counter` `stories` `thumbnails` `none`), `controls`
+(`overlay` `below` `none`), `defaultIndex`, `onSlideChange`; ref → `{ next, prev, goTo, index }`.
+`CarouselSlide`: `label`, `thumbnail`.
+
 ## Checkbox, radio & switch
 
 ```tsx

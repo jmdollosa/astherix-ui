@@ -192,3 +192,5 @@ export type { PaginationProps, LoadMoreProps } from "./components/pagination/Pag
 export * from "./components/widgets/index";
 export { Accordion, AccordionItem, AccordionToggleAll, useAccordion } from "./components/accordion/Accordion";
 export type { AccordionProps, AccordionItemProps, AccordionStatus } from "./components/accordion/Accordion";
+export { Carousel, CarouselSlide } from "./components/carousel/Carousel";
+export type { CarouselProps, CarouselSlideProps, CarouselHandle, PerView } from "./components/carousel/Carousel";
