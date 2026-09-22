@@ -17,6 +17,7 @@ import { CardPage } from "./pages/CardPage";
 import { DropdownPage } from "./pages/DropdownPage";
 import { TablePage } from "./pages/TablePage";
 import { TimelinePage } from "./pages/TimelinePage";
+import { UploadPage } from "./pages/UploadPage";
 
 // Add each new component page here; the nav and routing pick it up automatically.
 const pages = [
@@ -27,6 +28,7 @@ const pages = [
   { path: "card", title: "Card", group: "Components", Page: CardPage },
   { path: "dropdown", title: "Dropdown menu", group: "Components", Page: DropdownPage },
   { path: "editor", title: "Editor", group: "Components", Page: EditorPage },
+  { path: "upload", title: "File upload", group: "Components", Page: UploadPage },
   { path: "input", title: "Input", group: "Components", Page: InputPage },
   { path: "modal", title: "Modal", group: "Components", Page: ModalPage },
   { path: "pills", title: "Pills", group: "Components", Page: PillsPage },
@@ -38,7 +40,7 @@ const pages = [
   { path: "typography", title: "Typography", group: "Components", Page: TypographyPage },
 ];
 
-const VERSION = "0.22.0";
+const VERSION = "0.23.0";
 
 function useHashRoute() {
   const read = () => window.location.hash.replace(/^#\/?/, "") || pages[0].path;

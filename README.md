@@ -21,6 +21,7 @@ packages/ui/
   src/components/table/  DataTable
   src/components/tabs/   Tabs
   src/components/timeline/ Timeline, Roadmap
+  src/components/upload/ FileDropzone, FileInput, FileUploadButton, useFileUploads, xhrUpload
   src/components/typography/ Heading, Text, Lead, Link, Code, Kbd, Mark, Blockquote, List, Prose, Stat
 docs/                    User guide
   index.html             Built guide — open it in any browser, works offline
@@ -239,6 +240,22 @@ Load the icon font's CSS once in each app, e.g. `npm install bootstrap-icons`, t
 or Laravel `resources/js/app.tsx`.
 
 `type` defaults to `"button"`; set `type="submit"` on form submit buttons.
+
+## File upload
+
+```tsx
+<FileDropzone upload={xhrUpload("/api/receipts")} accept="image/*,.pdf" maxSize={10 * 1024 * 1024} maxFiles={6} />
+<FileUploadButton upload={xhrUpload("/api/contracts")} accept=".pdf">Upload contract</FileUploadButton>
+<FileInput name="resume" accept=".pdf" maxSize={5 * 1024 * 1024} />   {/* posts with the form */}
+```
+
+`FileDropzone`: `upload`, `accept`, `maxSize`, `maxFiles`, `multiple`, `concurrency`, `onChange`,
+`onUploaded`, `title`, `hint`, `name`, `disabled`, `pasteable`, `size`. `FileUploadButton`: Button
+props + `upload`, `accept`, `maxSize`, `onUploaded`, `onRemove`, `completeLabel`. `FileInput`:
+native file-input props + `onFilesChange`, `buttonLabel`, `placeholder`, `size`, `rounded`,
+`invalid`, `maxSize`, `clearable`. `xhrUpload(url, { fieldName, method, headers, data,
+withCredentials, xsrfCookie })` gives real progress and reads Laravel's XSRF cookie and
+validation errors. `useFileUploads(…)` and `FileList` for custom layouts.
 
 ## Field, Input and Textarea
 

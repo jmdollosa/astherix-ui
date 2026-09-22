@@ -152,3 +152,7 @@ export type {
   TimelineTone,
   TimelineStatus,
 } from "./components/timeline/Timeline";
+export { FileDropzone, FileInput, FileUploadButton, FileList } from "./components/upload/FileUpload";
+export type { FileDropzoneProps, FileInputProps, FileUploadButtonProps, FileListProps } from "./components/upload/FileUpload";
+export { useFileUploads, xhrUpload, formatBytes, describeAccept, fileMatchesAccept } from "./components/upload/useFileUploads";
+export type { UploadItem, UploadStatus, UploadFn, UseFileUploadsOptions, XhrUploadOptions } from "./components/upload/useFileUploads";
