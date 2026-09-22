@@ -3,14 +3,16 @@ import { createRoot } from "react-dom/client";
 import { Button } from "@jm/ui";
 import { GettingStarted } from "./pages/GettingStarted";
 import { ButtonPage } from "./pages/ButtonPage";
+import { ModalPage } from "./pages/ModalPage";
 
 // Add each new component page here; the nav and routing pick it up automatically.
 const pages = [
   { path: "getting-started", title: "Getting started", group: "Guide", Page: GettingStarted },
   { path: "button", title: "Button", group: "Components", Page: ButtonPage },
+  { path: "modal", title: "Modal", group: "Components", Page: ModalPage },
 ];
 
-const VERSION = "0.5.0";
+const VERSION = "0.6.0";
 
 function useHashRoute() {
   const read = () => window.location.hash.replace(/^#\/?/, "") || pages[0].path;

@@ -9,10 +9,11 @@ packages/ui/
   theme.css              Tokens (colors, font, radius), light/dark themes
   src/lib/cn.ts          Class merging helper
   src/components/button/ Button
+  src/components/modal/  Modal
 docs/                    User guide
   index.html             Built guide — open it in any browser, works offline
   src/main.tsx           Navigation and page list
-  src/pages/             One page per component (Getting started, Button…)
+  src/pages/             One page per component (Getting started, Button, Modal…)
   src/components/Doc.tsx Shared building blocks: Section, Code, PageHeader
 ```
 
@@ -175,6 +176,47 @@ Load the icon font's CSS once in each app, e.g. `npm install bootstrap-icons`, t
 or Laravel `resources/js/app.tsx`.
 
 `type` defaults to `"button"`; set `type="submit"` on form submit buttons.
+
+## Modal
+
+```tsx
+import { Modal, ModalTrigger, ModalContent, ModalHeader, ModalTitle,
+  ModalDescription, ModalBody, ModalFooter, ModalClose, useModal } from "@jm/ui";
+
+// Open with a button
+<Modal>
+  <ModalTrigger asChild><Button>Rename project</Button></ModalTrigger>
+  <ModalContent size="sm">
+    <ModalHeader>
+      <ModalTitle>Rename project</ModalTitle>
+      <ModalDescription>The new name shows up for everyone.</ModalDescription>
+    </ModalHeader>
+    <ModalBody>…</ModalBody>
+    <ModalFooter>
+      <ModalClose asChild><Button variant="ghost">Cancel</Button></ModalClose>
+      <Button onClick={save}>Save name</Button>
+    </ModalFooter>
+  </ModalContent>
+</Modal>
+
+// Open from code
+const session = useModal();          // { isOpen, open, close, toggle, modalProps }
+<Modal {...session.modalProps}>…</Modal>
+session.open();
+```
+
+| Component / prop                 | Values                                   | Default |
+| -------------------------------- | ---------------------------------------- | ------- |
+| `Modal` `open` / `onOpenChange`  | controlled state                         |         |
+| `Modal` `defaultOpen`            | boolean                                  | `false` |
+| `ModalContent` `size`            | `sm` `md` `lg` `xl`                      | `md`    |
+| `ModalContent` `dismissible`     | Escape, backdrop and × close it          | `true`  |
+| `ModalContent` `showCloseButton` | boolean                                  | `true`  |
+| `ModalContent` `closeLabel`      | label for ×                              | `"Close"` |
+
+Built on the native `<dialog>`: focus moves in on open (honours `autoFocus`) and returns
+to the opener on close, Tab stays inside, the page behind is inert and doesn't scroll.
+Theme tokens: `--radius-modal`, `--ui-backdrop`, `--ui-shadow-modal`.
 
 ## Theming
 
