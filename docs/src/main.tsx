@@ -25,6 +25,7 @@ import { ThemingPage } from "./pages/ThemingPage";
 import { SidebarPage } from "./pages/SidebarPage";
 import { AutocompletePage } from "./pages/AutocompletePage";
 import { SliderPage } from "./pages/SliderPage";
+import { PaginationPage } from "./pages/PaginationPage";
 
 // Add each new component page here; the nav and routing pick it up automatically.
 const pages = [
@@ -41,6 +42,7 @@ const pages = [
   { path: "upload", title: "File upload", group: "Components", Page: UploadPage },
   { path: "input", title: "Input", group: "Components", Page: InputPage },
   { path: "modal", title: "Modal", group: "Components", Page: ModalPage },
+  { path: "pagination", title: "Pagination", group: "Components", Page: PaginationPage },
   { path: "pills", title: "Pills", group: "Components", Page: PillsPage },
   { path: "select", title: "Select", group: "Components", Page: SelectPage },
   { path: "table", title: "Table", group: "Components", Page: TablePage },
@@ -53,7 +55,7 @@ const pages = [
   { path: "typography", title: "Typography", group: "Components", Page: TypographyPage },
 ];
 
-const VERSION = "0.28.0";
+const VERSION = "0.29.0";
 
 function useHashRoute() {
   const read = () => window.location.hash.replace(/^#\/?/, "") || pages[0].path;

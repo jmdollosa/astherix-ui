@@ -323,6 +323,22 @@ controls can read it with `useField()`.
 `maxRows`, `showCount` (with `maxLength` shows "12 / 280"), `resize` (`vertical` `none`),
 `frameClassName`.
 
+## Pagination
+
+```tsx
+<Pagination page={page} pageCount={12} onPageChange={setPage} />
+<Pagination page={p.current_page} pageCount={p.last_page} total={p.total} pageSize={p.per_page}
+  getHref={(n) => `${p.path}?page=${n}`} linkComponent={Link} showSummary />
+<LoadMore loaded={items.length} total={total} onLoadMore={fetchNext} auto />
+```
+
+`Pagination`: `page`, `pageCount` or `total` + `pageSize`, `onPageChange`, `getHref` +
+`linkComponent` (real links), `siblingCount`, `boundaryCount`, `showFirstLast`, `variant`
+(`numbers` `simple`), `responsive` (fits its own width), `showSummary`, `pageSizeOptions` +
+`onPageSizeChange`, `showJump`, `size`, `labels`. Gaps jump five pages; the highlight slides.
+`LoadMore`: `loaded`, `total`, `onLoadMore` (Promise → progress), `hasMore`, `auto` (infinite
+scroll), `label`. `getPageItems(page, count, siblings, boundaries)` is exported too.
+
 ## Pills
 
 ```tsx
