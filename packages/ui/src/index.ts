@@ -222,3 +222,5 @@ export type {
   SkeletonSwapProps,
   UseDelayedLoadingOptions,
 } from "./components/animated/Skeletons";
+export { SignaturePad } from "./components/signature/SignaturePad";
+export type { SignaturePadProps, SignaturePadHandle } from "./components/signature/SignaturePad";

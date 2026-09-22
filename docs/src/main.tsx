@@ -32,6 +32,7 @@ import { CarouselPage } from "./pages/CarouselPage";
 import { IconButtonPage } from "./pages/IconButtonPage";
 import { SpotlightTextPage } from "./pages/SpotlightTextPage";
 import { SkeletonPage } from "./pages/SkeletonPage";
+import { SignaturePage } from "./pages/SignaturePage";
 
 // Add each new component page here; the nav and routing pick it up automatically.
 const pages = [
@@ -57,6 +58,7 @@ const pages = [
   { path: "select", title: "Select", group: "Components", Page: SelectPage },
   { path: "table", title: "Table", group: "Components", Page: TablePage },
   { path: "sidebar", title: "Sidebar", group: "Components", Page: SidebarPage },
+  { path: "signature", title: "Signature", group: "Components", Page: SignaturePage },
   { path: "slider", title: "Slider", group: "Components", Page: SliderPage },
   { path: "tabs", title: "Tabs", group: "Components", Page: TabsPage },
   { path: "textarea", title: "Textarea", group: "Components", Page: TextareaPage },
@@ -67,7 +69,7 @@ const pages = [
   { path: "spotlight-text", title: "Spotlight text", group: "Animated components", Page: SpotlightTextPage },
 ];
 
-const VERSION = "0.36.0";
+const VERSION = "0.37.0";
 
 function useHashRoute() {
   const read = () => window.location.hash.replace(/^#\/?/, "") || pages[0].path;

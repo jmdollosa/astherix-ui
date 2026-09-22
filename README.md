@@ -430,6 +430,26 @@ supporting phones. Props: `value` / `defaultValue` (number, or `[low, high]` for
 palette or any CSS color), `size` (`sm` `md` `lg`), `disabled`, `minDistance`, `haptics`, `name`,
 `thumbLabels`.
 
+## Signature
+
+```tsx
+const pad = useRef<SignaturePadHandle>(null);
+
+<SignaturePad ref={pad} name="signature" allowTyped onChange={setSignature} />
+
+pad.current.toDataURL({ trim: true, ink: "#111827", background: "#ffffff" })   // PNG
+pad.current.toSVG({ trim: true, ink: "#111827" })                              // vector, for PDFs
+pad.current.clear();  pad.current.undo();  pad.current.isEmpty();  pad.current.fromDataURL(png);
+```
+
+Ink thickens and thins with speed (and stylus pressure); strokes are kept as points, so it
+redraws crisply on resize and undo works stroke by stroke. Props: `onChange` (PNG data URL or
+null), `onBegin`, `onEnd`, `penColor`, `penWidth` `[min, max]`, `height`, `background`, `guide`,
+`guideLabel`, `toolbar`, `actions`, `readOnly`, `defaultValue`, `name` (posts with the form),
+`allowTyped` (a Type tab in a handwriting font — the accessible alternative), `typedFont`.
+Export `ink` matters: the pen follows the theme, so force a dark color for people signing in
+dark mode.
+
 ## Select
 
 A searchable dropdown in the spirit of Select2.
