@@ -156,3 +156,7 @@ export { FileDropzone, FileInput, FileUploadButton, FileList } from "./component
 export type { FileDropzoneProps, FileInputProps, FileUploadButtonProps, FileListProps } from "./components/upload/FileUpload";
 export { useFileUploads, xhrUpload, formatBytes, describeAccept, fileMatchesAccept } from "./components/upload/useFileUploads";
 export type { UploadItem, UploadStatus, UploadFn, UseFileUploadsOptions, XhrUploadOptions } from "./components/upload/useFileUploads";
+export { Checkbox, CheckboxGroup, RadioGroup, Radio, Switch } from "./components/choice/Choice";
+export type { CheckboxProps, CheckboxGroupProps, RadioGroupProps, RadioProps, SwitchProps } from "./components/choice/Choice";
+export { toast, Toaster } from "./components/toast/Toast";
+export type { ToastOptions, ToastData, ToastType, ToasterProps, ToasterPosition } from "./components/toast/Toast";

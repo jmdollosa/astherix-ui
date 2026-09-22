@@ -114,7 +114,7 @@ export interface ButtonProps
    * Click handler. Return a Promise (e.g. from fetch or axios) and the button
    * shows its spinner until the Promise settles — no loading state to manage.
    */
-  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void | Promise<unknown>;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => unknown;
   /**
    * Render the child element instead of a <button>, keeping the button styles.
    * Use it for links: <Button asChild><Link href="/x">Open</Link></Button>

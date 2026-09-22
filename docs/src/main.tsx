@@ -1,6 +1,7 @@
 import * as React from "react";
 import { createRoot } from "react-dom/client";
-import { Button } from "@jm/ui";
+import { Button, Toaster } from "@jm/ui";
+import { useToasterSettings } from "./toasterSettings";
 import { GettingStarted } from "./pages/GettingStarted";
 import { ButtonPage } from "./pages/ButtonPage";
 import { ModalPage } from "./pages/ModalPage";
@@ -18,6 +19,8 @@ import { DropdownPage } from "./pages/DropdownPage";
 import { TablePage } from "./pages/TablePage";
 import { TimelinePage } from "./pages/TimelinePage";
 import { UploadPage } from "./pages/UploadPage";
+import { ChoicePage } from "./pages/ChoicePage";
+import { ToastPage } from "./pages/ToastPage";
 
 // Add each new component page here; the nav and routing pick it up automatically.
 const pages = [
@@ -26,6 +29,7 @@ const pages = [
   { path: "avatar", title: "Avatar", group: "Components", Page: AvatarPage },
   { path: "button", title: "Button", group: "Components", Page: ButtonPage },
   { path: "card", title: "Card", group: "Components", Page: CardPage },
+  { path: "choice", title: "Checkbox, radio & switch", group: "Components", Page: ChoicePage },
   { path: "dropdown", title: "Dropdown menu", group: "Components", Page: DropdownPage },
   { path: "editor", title: "Editor", group: "Components", Page: EditorPage },
   { path: "upload", title: "File upload", group: "Components", Page: UploadPage },
@@ -37,10 +41,11 @@ const pages = [
   { path: "tabs", title: "Tabs", group: "Components", Page: TabsPage },
   { path: "textarea", title: "Textarea", group: "Components", Page: TextareaPage },
   { path: "timeline", title: "Timeline", group: "Components", Page: TimelinePage },
+  { path: "toast", title: "Toast", group: "Components", Page: ToastPage },
   { path: "typography", title: "Typography", group: "Components", Page: TypographyPage },
 ];
 
-const VERSION = "0.23.0";
+const VERSION = "0.24.0";
 
 function useHashRoute() {
   const read = () => window.location.hash.replace(/^#\/?/, "") || pages[0].path;
@@ -99,6 +104,7 @@ function Nav({ route, onNavigate }: { route: string; onNavigate?: () => void }) 
 
 function App() {
   const route = useHashRoute();
+  const toaster = useToasterSettings();
   const current = pages.find((p) => p.path === route) ?? pages[0];
   const [dark, setDark] = React.useState(() => document.documentElement.classList.contains("dark"));
   const [menuOpen, setMenuOpen] = React.useState(false);
@@ -159,6 +165,7 @@ function App() {
       <main className="min-w-0 px-5 pb-20 pt-8 md:px-0 md:pt-10">
         <current.Page />
       </main>
+      <Toaster position={toaster.position} richColors={toaster.richColors} expand={toaster.expand} />
     </div>
   );
 }

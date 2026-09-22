@@ -4,6 +4,7 @@ import { Input } from "../input/Input";
 import { Button } from "../button/Button";
 import { Select } from "../select/Select";
 import { Skeleton, ActivityIndicator } from "../activity/Activity";
+import { Checkbox } from "../choice/Choice";
 
 /*
  * DataTable — a light take on DataTables: sorting, search, pagination, row selection
@@ -154,20 +155,16 @@ function compare(a: unknown, b: unknown) {
 
 const alignClass = { start: "text-start", center: "text-center", end: "text-end" } as const;
 
-function Checkbox({ checked, indeterminate, onChange, label }: { checked: boolean; indeterminate?: boolean; onChange: (v: boolean) => void; label: string }) {
-  const ref = React.useRef<HTMLInputElement>(null);
-  React.useEffect(() => {
-    if (ref.current) ref.current.indeterminate = !!indeterminate;
-  }, [indeterminate]);
+function RowCheckbox({ checked, indeterminate, onChange, label }: { checked: boolean; indeterminate?: boolean; onChange: (v: boolean) => void; label: string }) {
   return (
-    <input
-      ref={ref}
-      type="checkbox"
+    <Checkbox
+      size="sm"
       aria-label={label}
       checked={checked}
-      onChange={(e) => onChange(e.target.checked)}
+      indeterminate={indeterminate}
+      onCheckedChange={onChange}
       onClick={(e) => e.stopPropagation()}
-      className="size-4 cursor-pointer rounded-[4px] accent-[color:var(--color-primary)]"
+      className="align-middle"
     />
   );
 }
@@ -651,7 +648,7 @@ export function DataTable<T>({
             <tr role="row">
               {selectable && (
                 <th role="columnheader" scope="col" className={cn("sticky top-0 z-10 w-10 border-b border-border bg-surface", pad, "pe-0")}>
-                  <Checkbox
+                  <RowCheckbox
                     label={allOnPage ? "Unselect all rows on this page" : "Select all rows on this page"}
                     checked={allOnPage}
                     indeterminate={selectedOnPage.length > 0 && !allOnPage}
@@ -738,7 +735,7 @@ export function DataTable<T>({
                     >
                       {selectable && (
                         <td role="cell" className={cn("border-b border-border", pad, "pe-0", cards && "@max-[40rem]:absolute @max-[40rem]:start-4 @max-[40rem]:top-4 @max-[40rem]:border-0 @max-[40rem]:p-0")}>
-                          <Checkbox
+                          <RowCheckbox
                             label={`Select ${String(valueOf(primaryCol, row) ?? k)}`}
                             checked={isSel}
                             onChange={(v) => setSelected(v ? [...selected, k] : selected.filter((x) => x !== k))}

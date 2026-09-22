@@ -17,11 +17,13 @@ packages/ui/
   src/components/menu/   DropdownMenu, SplitButton
   src/components/modal/  Modal
   src/components/pill/   Pill, PillGroup, PillOption
+  src/components/choice/ Checkbox, CheckboxGroup, RadioGroup, Radio, Switch
   src/components/select/ Select
   src/components/table/  DataTable
   src/components/tabs/   Tabs
   src/components/timeline/ Timeline, Roadmap
   src/components/upload/ FileDropzone, FileInput, FileUploadButton, useFileUploads, xhrUpload
+  src/components/toast/  Toaster, toast
   src/components/typography/ Heading, Text, Lead, Link, Code, Kbd, Mark, Blockquote, List, Prose, Stat
 docs/                    User guide
   index.html             Built guide — open it in any browser, works offline
@@ -240,6 +242,39 @@ Load the icon font's CSS once in each app, e.g. `npm install bootstrap-icons`, t
 or Laravel `resources/js/app.tsx`.
 
 `type` defaults to `"button"`; set `type="submit"` on form submit buttons.
+
+## Checkbox, radio & switch
+
+```tsx
+<Checkbox label="Attach PDF" description="Adds the invoice as an attachment." />
+<Checkbox label="All clients" checked={all} indeterminate={some && !all} onCheckedChange={toggleAll} />
+<CheckboxGroup name="methods[]" options={[{ value: "card", label: "Card" }, …]} defaultValue={["card"]} />
+<RadioGroup label="Send" defaultValue="now"><Radio value="now" label="Now" /><Radio value="draft" label="Save as draft" /></RadioGroup>
+<Switch label="Weekly summary" onCheckedChange={(on) => api.save(on)} />   {/* spinner; flips back on failure */}
+```
+
+Real inputs underneath (keyboard, screen readers and form posts work natively). `Checkbox`:
+`label`, `description`, `indeterminate`, `onCheckedChange`, `invalid`, `size` (`sm` `md`) + input
+props. `CheckboxGroup`: `label`, `options`, `value` / `defaultValue` / `onValueChange`, `name`,
+`orientation`. `RadioGroup`: `label`, `value` / `defaultValue` / `onValueChange`, `name`,
+`orientation`, `size`, `disabled`, `invalid`, `required`; `Radio`: `value`, `label`, `description`.
+`Switch`: `label`, `description`, `onCheckedChange` (may return a Promise), `size`, `labelPosition`.
+
+## Toast
+
+```tsx
+<Toaster position="bottom-right" />          {/* once, near the root */}
+
+toast("Draft saved");
+toast.success("Invoice sent", { description: "…" });
+toast.promise(api.send(id), { loading: "Sending…", success: "Sent", error: (e) => e.message });
+toast("Invoice deleted", { action: { label: "Undo", onClick: restore } });
+```
+
+`toast(title, options)` and `toast.success / error / warning / info / loading / promise / dismiss`.
+Options: `id` (update in place), `description`, `action`, `duration`, `icon`, `dismissible`,
+`onDismiss`. `Toaster`: `position`, `expand`, `visibleToasts`, `richColors`, `showTimer`, `hotkey`.
+Stacks and spreads on hover, pauses while hovered/focused/hidden, swipe or Escape to dismiss.
 
 ## File upload
 
