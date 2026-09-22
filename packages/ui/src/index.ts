@@ -47,3 +47,33 @@ export type {
   ActivityTone,
   ActivitySize,
 } from "./components/activity/Activity";
+export {
+  Heading,
+  Text,
+  Lead,
+  Link,
+  Code,
+  Kbd,
+  Mark,
+  Blockquote,
+  List,
+  ListItem,
+  Prose,
+  Stat,
+  StatGroup,
+  headingSizes,
+  textSizes,
+} from "./components/typography/Typography";
+export type {
+  HeadingProps,
+  HeadingSize,
+  TextProps,
+  TextTone,
+  LinkProps,
+  KbdProps,
+  BlockquoteProps,
+  ListProps,
+  ProseProps,
+  StatProps,
+  StatGroupProps,
+} from "./components/typography/Typography";

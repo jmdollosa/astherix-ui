@@ -16,6 +16,7 @@ packages/ui/
   src/components/pill/   Pill, PillGroup, PillOption
   src/components/select/ Select
   src/components/tabs/   Tabs
+  src/components/typography/ Heading, Text, Lead, Link, Code, Kbd, Mark, Blockquote, List, Prose, Stat
 docs/                    User guide
   index.html             Built guide — open it in any browser, works offline
   src/main.tsx           Navigation and page list
@@ -380,6 +381,27 @@ Theme tokens: `--radius-modal`, `--ui-shadow-modal`, `--ui-backdrop`, `--ui-back
 `TabList`: `onReorder`, `onRename`, `onAdd` (return the new value to select it), `addLabel`,
 `renameOnAdd`, `onClose`, `closeLabel`. `Tab`: `value`, `label`, `disabled`, `icon`, `badge`,
 `renamable`, `closable`. `TabPanel`: `value`, `keepMounted`.
+
+## Typography
+
+```tsx
+<Heading level={1} size="display">Get paid faster</Heading>
+<Lead>Create, send and track invoices from one place.</Lead>
+<Text size="sm" tone="muted" numeric>₱48,200.00</Text>
+<Link href="https://laravel.com/docs">Laravel docs</Link>   {/* external: ↗, new tab */}
+<Code>APP_ENV</Code> <Kbd keys={["⌘", "K"]} /> <Mark>match</Mark>
+<Blockquote author="Maria Santos" source="Owner">…</Blockquote>
+<List variant="check"><ListItem>Payment links</ListItem></List>
+<Prose html={sanitizedHtml} />
+<StatGroup divided><Stat label="Revenue" value="₱1.24M" change="12.5%" trend="up" /></StatGroup>
+```
+
+`Heading`: `level` (tag), `size` (`display` `h1`–`h6`), `tone`, `weight`, `align`, `truncate`,
+`lineClamp`. `Text`: `as`, `size` (`xl` `lg` `md` `sm` `xs`), `tone` (`default` `muted` `subtle`
+`primary` `success` `warning` `danger` `info` `inherit`), `weight`, `align`, `numeric`,
+`truncate`, `lineClamp`. `Link`: `variant` (`inline` `subtle` `standalone`), `external`,
+`asChild`. `Prose`: `size`, `html`. `Stat`: `label`, `value`, `change`, `trend`,
+`invertTrend`, `description`, `size`. Set `--font-heading` for a separate heading font.
 
 ## Theming
 

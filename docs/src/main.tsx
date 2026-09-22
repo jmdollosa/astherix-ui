@@ -11,6 +11,7 @@ import { EditorPage } from "./pages/EditorPage";
 import { TabsPage } from "./pages/TabsPage";
 import { PillsPage } from "./pages/PillsPage";
 import { ActivityPage } from "./pages/ActivityPage";
+import { TypographyPage } from "./pages/TypographyPage";
 
 // Add each new component page here; the nav and routing pick it up automatically.
 const pages = [
@@ -24,9 +25,10 @@ const pages = [
   { path: "select", title: "Select", group: "Components", Page: SelectPage },
   { path: "tabs", title: "Tabs", group: "Components", Page: TabsPage },
   { path: "textarea", title: "Textarea", group: "Components", Page: TextareaPage },
+  { path: "typography", title: "Typography", group: "Components", Page: TypographyPage },
 ];
 
-const VERSION = "0.13.0";
+const VERSION = "0.14.0";
 
 function useHashRoute() {
   const read = () => window.location.hash.replace(/^#\/?/, "") || pages[0].path;
