@@ -12,7 +12,7 @@ const pages = [
   { path: "modal", title: "Modal", group: "Components", Page: ModalPage },
 ];
 
-const VERSION = "0.6.0";
+const VERSION = "0.6.1";
 
 function useHashRoute() {
   const read = () => window.location.hash.replace(/^#\/?/, "") || pages[0].path;

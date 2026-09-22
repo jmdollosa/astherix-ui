@@ -209,14 +209,16 @@ session.open();
 | -------------------------------- | ---------------------------------------- | ------- |
 | `Modal` `open` / `onOpenChange`  | controlled state                         |         |
 | `Modal` `defaultOpen`            | boolean                                  | `false` |
-| `ModalContent` `size`            | `sm` `md` `lg` `xl`                      | `md`    |
+| `ModalContent` `size`            | `sm` `md` `lg` `xl` `full`               | `md`    |
+| `ModalContent` `backdrop`        | `default` `dark` `blur` `solid`          | `default` |
 | `ModalContent` `dismissible`     | Escape, backdrop and × close it          | `true`  |
 | `ModalContent` `showCloseButton` | boolean                                  | `true`  |
 | `ModalContent` `closeLabel`      | label for ×                              | `"Close"` |
 
 Built on the native `<dialog>`: focus moves in on open (honours `autoFocus`) and returns
 to the opener on close, Tab stays inside, the page behind is inert and doesn't scroll.
-Theme tokens: `--radius-modal`, `--ui-backdrop`, `--ui-shadow-modal`.
+Theme tokens: `--radius-modal`, `--ui-shadow-modal`, `--ui-backdrop`, `--ui-backdrop-dark`,
+`--ui-backdrop-blur`, `--ui-backdrop-blur-radius`, `--ui-backdrop-solid`.
 
 ## Theming
 

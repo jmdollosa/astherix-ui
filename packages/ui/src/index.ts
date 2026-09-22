@@ -14,4 +14,4 @@ export {
   useModal,
   modalPanelVariants,
 } from "./components/modal/Modal";
-export type { ModalProps, ModalContentProps } from "./components/modal/Modal";
+export type { ModalProps, ModalContentProps, ModalBackdrop } from "./components/modal/Modal";

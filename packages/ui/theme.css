@@ -80,6 +80,10 @@
 
   /* Modal */
   --ui-backdrop: rgb(18 20 24 / 0.5);
+  --ui-backdrop-dark: rgb(8 10 13 / 0.82);
+  --ui-backdrop-blur: rgb(18 20 24 / 0.22);
+  --ui-backdrop-blur-radius: 8px;
+  --ui-backdrop-solid: var(--color-ash-50);
   --ui-shadow-modal: 0 2px 6px rgb(var(--ui-shadow-color) / 0.08), 0 24px 56px -12px rgb(var(--ui-shadow-color) / 0.35);
 }
 
@@ -113,6 +117,9 @@
   --ui-shadow-xl: 0 3px 6px rgb(var(--ui-shadow-color) / 0.4), 0 16px 32px -8px rgb(var(--ui-shadow-color) / 0.75);
 
   --ui-backdrop: rgb(0 0 0 / 0.62);
+  --ui-backdrop-dark: rgb(0 0 0 / 0.86);
+  --ui-backdrop-blur: rgb(0 0 0 / 0.38);
+  --ui-backdrop-solid: var(--color-ash-950);
   --ui-shadow-modal: 0 2px 6px rgb(0 0 0 / 0.4), 0 24px 56px -12px rgb(0 0 0 / 0.7);
 }
 

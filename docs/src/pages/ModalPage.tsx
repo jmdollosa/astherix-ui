@@ -198,6 +198,75 @@ function SizesDemo() {
   );
 }
 
+function BackdropDemo() {
+  const options = [
+    ["default", "Default", "Dims the page. Good for most modals."],
+    ["dark", "Dark", "Darkens the page heavily, so the modal stands out on busy screens."],
+    ["blur", "Blur", "Lightly dims and blurs the page, keeping a hint of what's behind."],
+    ["solid", "Solid", "Covers the page completely with the background color. Nothing behind shows."],
+  ] as const;
+  return (
+    <>
+      {options.map(([backdrop, label, text]) => (
+        <Modal key={backdrop}>
+          <ModalTrigger asChild>
+            <Button variant="secondary">{label}</Button>
+          </ModalTrigger>
+          <ModalContent size="sm" backdrop={backdrop}>
+            <ModalHeader>
+              <ModalTitle>{label} backdrop</ModalTitle>
+              <ModalDescription>{text}</ModalDescription>
+            </ModalHeader>
+            <ModalFooter>
+              <ModalClose asChild>
+                <Button>Done</Button>
+              </ModalClose>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      ))}
+    </>
+  );
+}
+
+function FullScreenDemo() {
+  return (
+    <Modal>
+      <ModalTrigger asChild>
+        <Button variant="secondary" leadingIcon="bi bi-envelope">Compose email</Button>
+      </ModalTrigger>
+      <ModalContent size="full">
+        <div className="mx-auto flex min-h-[inherit] w-full max-w-3xl flex-col">
+          <ModalHeader>
+            <ModalTitle>New message</ModalTitle>
+            <ModalDescription>Full-screen modals suit longer tasks, especially on phones.</ModalDescription>
+          </ModalHeader>
+          <ModalBody className="grid flex-1 content-start gap-4">
+            <Field label="To" placeholder="ana@example.com" autoFocus />
+            <Field label="Subject" placeholder="Project update" />
+            <div className="grid gap-1.5">
+              <label htmlFor="compose-body" className="text-sm font-medium">Message</label>
+              <textarea
+                id="compose-body"
+                rows={8}
+                className="rounded-control border border-border-strong bg-surface p-3 text-[0.9375rem] text-fg outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30"
+              />
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <ModalClose asChild>
+              <Button variant="ghost">Discard</Button>
+            </ModalClose>
+            <Button leadingIcon="bi bi-send" spinnerPlacement="start" loadingLabel="Sending…" onClick={() => wait(1400)}>
+              Send
+            </Button>
+          </ModalFooter>
+        </div>
+      </ModalContent>
+    </Modal>
+  );
+}
+
 function LongContentDemo() {
   return (
     <Modal>
@@ -412,9 +481,61 @@ async function remove() {
 <ModalContent size="sm">…</ModalContent>
 <ModalContent size="md">…</ModalContent>   {/* default */}
 <ModalContent size="lg">…</ModalContent>
-<ModalContent size="xl">…</ModalContent>`}
+<ModalContent size="xl">…</ModalContent>
+<ModalContent size="full">…</ModalContent> {/* whole screen */}`}
       >
         <SizesDemo />
+      </Section>
+
+      <Section
+        title="Backdrop"
+        desc={
+          <>
+            Choose how the page behind is covered with <code className="font-mono text-[0.8125rem]">backdrop</code>:
+            dimmed (the default), dark, blurred, or fully covered.
+          </>
+        }
+        code={`
+<ModalContent backdrop="default">…</ModalContent>   {/* dimmed */}
+<ModalContent backdrop="dark">…</ModalContent>      {/* heavily darkened */}
+<ModalContent backdrop="blur">…</ModalContent>      {/* dimmed and blurred */}
+<ModalContent backdrop="solid">…</ModalContent>     {/* page fully hidden */}
+
+/* Fine-tune for your app, after the theme import */
+:root {
+  --ui-backdrop: rgb(18 20 24 / 0.5);
+  --ui-backdrop-dark: rgb(8 10 13 / 0.82);
+  --ui-backdrop-blur: rgb(18 20 24 / 0.22);
+  --ui-backdrop-blur-radius: 8px;
+  --ui-backdrop-solid: #f6f7f9;
+}`}
+      >
+        <BackdropDemo />
+      </Section>
+
+      <Section
+        title="Full screen"
+        desc={
+          <>
+            <code className="font-mono text-[0.8125rem]">size="full"</code> makes the modal itself fill the screen,
+            edge to edge. Center a narrower column inside for readable line lengths.
+          </>
+        }
+        code={`
+<ModalContent size="full">
+  <div className="mx-auto w-full max-w-3xl">
+    <ModalHeader>
+      <ModalTitle>New message</ModalTitle>
+    </ModalHeader>
+    <ModalBody>…</ModalBody>
+    <ModalFooter>
+      <ModalClose asChild><Button variant="ghost">Discard</Button></ModalClose>
+      <Button leadingIcon="bi bi-send" onClick={send}>Send</Button>
+    </ModalFooter>
+  </div>
+</ModalContent>`}
+      >
+        <FullScreenDemo />
       </Section>
 
       <Section

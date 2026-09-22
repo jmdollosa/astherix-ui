@@ -169,6 +169,19 @@ function unlockScroll() {
 
 /* ---------- ModalContent ---------- */
 
+/*
+ * Backdrop styles. Each reads a theme token, with a literal fallback for browsers
+ * where ::backdrop doesn't inherit custom properties yet.
+ */
+const backdropClasses = {
+  default: "backdrop:bg-[var(--ui-backdrop,rgb(18_20_24/0.5))]",
+  dark: "backdrop:bg-[var(--ui-backdrop-dark,rgb(8_10_13/0.82))]",
+  blur: "backdrop:bg-[var(--ui-backdrop-blur,rgb(18_20_24/0.22))] backdrop:backdrop-blur-[var(--ui-backdrop-blur-radius,8px)]",
+  solid: "backdrop:bg-[var(--ui-backdrop-solid,#f6f7f9)]",
+} as const;
+
+export type ModalBackdrop = keyof typeof backdropClasses;
+
 /** Must match the closing animation length below. */
 const CLOSE_MS = 140;
 
@@ -193,6 +206,8 @@ export const modalPanelVariants = cva(
         md: "max-w-lg",
         lg: "max-w-2xl",
         xl: "max-w-4xl",
+        // Covers the whole screen, edge to edge.
+        full: "my-0 min-h-full max-w-none rounded-none border-0",
       },
     },
     defaultVariants: { size: "md" },
@@ -207,6 +222,14 @@ export interface ModalContentProps
    * while something is saving, or when the person must choose an action.
    */
   dismissible?: boolean;
+  /**
+   * How the page behind the modal is covered.
+   * - "default": dimmed
+   * - "dark": heavily darkened
+   * - "blur": lightly dimmed and blurred
+   * - "solid": fully covered with the page background color, so nothing behind shows
+   */
+  backdrop?: ModalBackdrop;
   /** Show the × button in the top-right corner. */
   showCloseButton?: boolean;
   /** Accessible label for the × button. */
@@ -224,6 +247,7 @@ export const ModalContent = React.forwardRef<HTMLDivElement, ModalContentProps>(
     {
       className,
       size,
+      backdrop = "default",
       dismissible = true,
       showCloseButton = true,
       closeLabel = "Close",
@@ -308,7 +332,8 @@ export const ModalContent = React.forwardRef<HTMLDivElement, ModalContentProps>(
           // The dialog fills the viewport so clicks outside the panel land on it (= backdrop).
           "fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none overflow-y-auto overscroll-contain",
           "bg-transparent p-4 text-fg sm:p-6 open:flex open:flex-col open:items-center",
-          "backdrop:bg-[var(--ui-backdrop,rgb(18_20_24/0.5))]",
+          size === "full" && "p-0 sm:p-0",
+          backdropClasses[backdrop],
           "data-[state=open]:backdrop:animate-[ui-fade-in_200ms_ease-out]",
           "data-[state=closing]:backdrop:animate-[ui-fade-out_140ms_ease-in_forwards]"
         )}
