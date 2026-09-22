@@ -445,6 +445,32 @@ wrap text in `CardBody`), `interactive`, `padding` (`none` `sm` `md` `lg`), `asC
 `ChoiceCard`: `value`, `title`, `description`, `icon`, `meta`, `badge`, `disabled`.
 Token: `--radius-card`.
 
+## Dashboard widgets
+
+Dependency-free SVG widgets for KPI dashboards — one look, one palette (`--ui-chart-1…6`),
+responsive, keyboard- and screen-reader-friendly.
+
+```tsx
+<DashboardGrid columns={4}>
+  <KpiCard label="Revenue" value="₱318,400" change={8.2} sparkline={monthly} />
+  <WidgetCard data-span="3" title="Revenue" action={<PeriodPicker />} loading={isLoading}>
+    <AreaChart data={rows} index="month" series={[{ key: "invoiced" }, { key: "collected" }]}
+      referenceLine={{ value: 280000, label: "Target" }} aria-label="Revenue by month" />
+  </WidgetCard>
+</DashboardGrid>
+```
+
+- `KpiCard`: `label`, `value`, `change`, `changeLabel`, `invertTrend`, `icon`, `sparkline`,
+  `sparklineType`, `progress`, `href`, `loading`
+- `LineChart` / `AreaChart` / `BarChart`: `data`, `index`, `series` (`key`, `label`, `color`),
+  `height`, `formatValue`, `formatIndex`, `showLegend`, `showGrid`, `referenceLine`; line: `curve`,
+  `dots`; bar: `stacked`. Crosshair tooltip, legend toggles, ← → to read points
+- `DonutChart` (`data`, `size`, `thickness`, `centerLabel`, `legend`), `Gauge` (`value`, `max`,
+  `target`, `bands`), `BarList` (`items`, `limit`), `CalendarHeatmap` (`data`, `weeks`),
+  `Sparkline` (`data`, `type`)
+- `WidgetCard`: `title`, `description`, `action`, `value`, `loading`, `empty`, `error`,
+  `onRetry`, `footer`; `DashboardGrid`: `columns`, children use `data-span="2|3|4|full"`
+
 ## Dropdown menu
 
 ```tsx

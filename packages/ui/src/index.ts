@@ -189,3 +189,4 @@ export { Slider } from "./components/slider/Slider";
 export type { SliderProps, SliderMark } from "./components/slider/Slider";
 export { Pagination, LoadMore, getPageItems } from "./components/pagination/Pagination";
 export type { PaginationProps, LoadMoreProps } from "./components/pagination/Pagination";
+export * from "./components/widgets/index";
