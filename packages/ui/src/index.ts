@@ -190,3 +190,5 @@ export type { SliderProps, SliderMark } from "./components/slider/Slider";
 export { Pagination, LoadMore, getPageItems } from "./components/pagination/Pagination";
 export type { PaginationProps, LoadMoreProps } from "./components/pagination/Pagination";
 export * from "./components/widgets/index";
+export { Accordion, AccordionItem, AccordionToggleAll, useAccordion } from "./components/accordion/Accordion";
+export type { AccordionProps, AccordionItemProps, AccordionStatus } from "./components/accordion/Accordion";

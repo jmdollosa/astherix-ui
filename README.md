@@ -87,6 +87,24 @@ Laravel (`resources/views/app.blade.php`, inside `<head>`):
 **3. Dark mode** — add the `dark` class to `<html>` (next-themes with `attribute="class"`,
 or the appearance handling in Laravel's starter kit).
 
+## Accordion
+
+```tsx
+<Accordion type="single" collapsible defaultValue="refunds" variant="outline" linkToHash>
+  <AccordionItem value="refunds" title="How do refunds work?">…</AccordionItem>
+</Accordion>
+
+<AccordionItem value="shipping" title="Delivery" status="complete" summary="Express · ₱350">…</AccordionItem>
+<AccordionItem value="reminders" title="Reminders" action={<Switch … />}>…</AccordionItem>
+```
+
+`Accordion`: `type` (`single` `multiple`), `value` / `defaultValue` / `onValueChange`, `collapsible`,
+`variant` (`separated` `outline` `flush`), `size`, `headingLevel`, `linkToHash`. `AccordionItem`:
+`value`, `title`, `description`, `summary` (while closed), `icon`, `meta`, `action` (header
+controls), `status` (`complete` `current` `error` `locked`), `disabled`, `keepMounted`.
+`AccordionToggleAll`, `useAccordion()` → `{ open, toggle, expandAll, collapseAll }`. Closed
+sections use `hidden="until-found"`, so Ctrl/⌘+F finds and opens them (Chrome/Edge).
+
 ## Activity indicators
 
 ```tsx

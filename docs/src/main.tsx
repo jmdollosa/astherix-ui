@@ -27,11 +27,13 @@ import { AutocompletePage } from "./pages/AutocompletePage";
 import { SliderPage } from "./pages/SliderPage";
 import { PaginationPage } from "./pages/PaginationPage";
 import { WidgetsPage } from "./pages/WidgetsPage";
+import { AccordionPage } from "./pages/AccordionPage";
 
 // Add each new component page here; the nav and routing pick it up automatically.
 const pages = [
   { path: "getting-started", title: "Getting started", group: "Guide", Page: GettingStarted },
   { path: "theming", title: "Theming", group: "Guide", Page: ThemingPage },
+  { path: "accordion", title: "Accordion", group: "Components", Page: AccordionPage },
   { path: "activity", title: "Activity indicators", group: "Components", Page: ActivityPage },
   { path: "autocomplete", title: "Autocomplete", group: "Components", Page: AutocompletePage },
   { path: "avatar", title: "Avatar", group: "Components", Page: AvatarPage },
@@ -57,7 +59,7 @@ const pages = [
   { path: "typography", title: "Typography", group: "Components", Page: TypographyPage },
 ];
 
-const VERSION = "0.30.0";
+const VERSION = "0.32.0";
 
 function useHashRoute() {
   const read = () => window.location.hash.replace(/^#\/?/, "") || pages[0].path;
