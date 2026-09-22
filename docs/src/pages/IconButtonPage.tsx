@@ -33,10 +33,10 @@ function PostDemo() {
 
 function RowDemo() {
   return (
-    <ul className="grid w-full max-w-lg divide-y divide-border rounded-card border border-border bg-surface">
+    <ul className="grid w-full max-w-lg grid-cols-[minmax(0,1fr)] divide-y divide-border rounded-card border border-border bg-surface">
       {[["INV-1047", "Northwind Traders", "₱48,200"], ["INV-1046", "Blue Harbor Café", "₱12,750"], ["INV-1045", "Luzon Freight", "₱96,000"]].map(([no, client, amt]) => (
         <li key={no} className="group/row flex items-center gap-3 px-3 py-2 text-sm">
-          <span className="w-20 font-mono text-[0.8125rem] text-fg-muted">{no}</span>
+          <span className="hidden w-20 font-mono text-[0.8125rem] text-fg-muted sm:inline">{no}</span>
           <span className="min-w-0 flex-1 truncate">{client}</span>
           <span className="tabular-nums">{amt}</span>
           <span className="flex">
