@@ -131,3 +131,5 @@ export type {
   DropdownMenuRadioItemProps,
   SplitButtonProps,
 } from "./components/menu/DropdownMenu";
+export { DataTable } from "./components/table/DataTable";
+export type { DataTableProps, DataTableColumn, DataTableQuery, SortState } from "./components/table/DataTable";

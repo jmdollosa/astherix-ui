@@ -18,6 +18,7 @@ packages/ui/
   src/components/modal/  Modal
   src/components/pill/   Pill, PillGroup, PillOption
   src/components/select/ Select
+  src/components/table/  DataTable
   src/components/tabs/   Tabs
   src/components/typography/ Heading, Text, Lead, Link, Code, Kbd, Mark, Blockquote, List, Prose, Stat
 docs/                    User guide
@@ -431,6 +432,33 @@ Built on the native `<dialog>`: focus moves in on open (honours `autoFocus`) and
 to the opener on close, Tab stays inside, the page behind is inert and doesn't scroll.
 Theme tokens: `--radius-modal`, `--ui-shadow-modal`, `--ui-backdrop`, `--ui-backdrop-dark`,
 `--ui-backdrop-blur`, `--ui-backdrop-blur-radius`, `--ui-backdrop-solid`.
+
+## Table (DataTable)
+
+```tsx
+const columns: DataTableColumn<Invoice>[] = [
+  { key: "no", header: "Invoice", sortable: true, primary: true },
+  { key: "client", header: "Client", sortable: true, cell: (r) => r.client },
+  { key: "issued", header: "Issued", hideOnMobile: true },
+  { key: "amount", header: "Amount", sortable: true, align: "end", cell: (r) => peso(r.amount) },
+];
+
+<DataTable caption="Invoices" data={rows} columns={columns} rowKey="id"
+  searchable selectable bulkActions={(rows, clear) => …} rowActions={(row) => <RowMenu row={row} />} />
+
+// Server-side (e.g. a Laravel paginator)
+<DataTable manual data={page.data} total={page.total} loading={loading} onQueryChange={fetchPage} … />
+```
+
+Columns: `key`, `header`, `accessor`, `cell`, `sortable`, `sortFn`, `align`, `width`, `primary`
+(card title on mobile), `hideOnMobile`, `searchable`, `className`.
+Table: `caption` (required, accessible name), `showCaption`, `searchable`, `searchPlaceholder`,
+`pageSize` (0 = all), `pageSizeOptions`, `defaultSort`, `selectable`, `selected` /
+`onSelectedChange`, `bulkActions`, `rowActions`, `onRowClick`, `toolbar`, `loading`,
+`emptyState`, `density` (`comfortable` `compact`), `striped`, `mobile` (`cards` `scroll`),
+`maxHeight`, `manual`, `total`, `onQueryChange`.
+Narrow containers (under 40rem) switch to cards via a container query, so it adapts inside
+sidebars and cards as well as on phones.
 
 ## Tabs
 
