@@ -351,8 +351,8 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
               "peer absolute inset-0 m-0 cursor-pointer appearance-none rounded-control border outline-none transition-[background-color,border-color] duration-200",
               // off: a sunken slot, like a text field
               "border-border-strong bg-secondary-hover shadow-[inset_0_1px_2px_rgb(var(--ui-shadow-color)/0.12)]",
-              // on: filled with the primary color
-              "checked:border-primary-hover checked:bg-primary checked:shadow-[inset_0_1px_2px_rgb(0_0_0/0.18)]",
+              // on: the track stays neutral — only the knob turns blue
+              "checked:border-border-strong",
               "focus-visible:ring-3 focus-visible:ring-ring/35 focus-visible:ring-offset-1 focus-visible:ring-offset-bg",
               "disabled:cursor-not-allowed disabled:opacity-50",
               "aria-busy:cursor-progress"
@@ -360,49 +360,41 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
             {...control}
             {...props}
           />
-          {showStateLabels && (
-            <>
-              <span
-                aria-hidden="true"
-                className={cn(
-                  "pointer-events-none relative col-start-1 row-start-1 text-center font-semibold text-primary-fg opacity-0 transition-opacity duration-200 peer-checked:opacity-100",
-                  sm ? "text-[0.625rem]" : "text-[0.6875rem]"
-                )}
-              >
-                {onLabel}
-              </span>
-              <span
-                aria-hidden="true"
-                className={cn(
-                  "pointer-events-none relative col-start-2 row-start-1 text-center font-semibold text-fg-muted transition-opacity duration-200 peer-checked:opacity-0",
-                  sm ? "text-[0.625rem]" : "text-[0.6875rem]"
-                )}
-              >
-                {offLabel}
-              </span>
-            </>
-          )}
-          {/* the knob: raised like a secondary Button, with a small grip */}
+          {/*
+            The knob carries the state: on the left it reads "Off" (plain), on the right it
+            turns blue and reads "On" in white. The track itself stays neutral.
+          */}
           <span
             aria-hidden="true"
             className={cn(
               "pointer-events-none absolute inset-y-[3px] start-[3px] grid w-[calc(50%-3px)] place-items-center",
               "rounded-[calc(var(--radius-control)-2px)] border border-border-strong bg-surface text-fg-muted",
               "shadow-[inset_0_-2px_0_var(--color-border),0_1px_2px_rgb(var(--ui-shadow-color)/0.18)]",
-              "transition-[translate,box-shadow] duration-200 ease-[cubic-bezier(0.3,1.3,0.5,1)] motion-reduce:transition-none",
-              "peer-checked:translate-x-full peer-checked:border-primary-edge/40 rtl:peer-checked:-translate-x-full",
-              "peer-active:shadow-[inset_0_-1px_0_var(--color-border),0_0_0_rgb(0_0_0/0)]"
+              "transition-[translate,background-color,border-color,color,box-shadow] duration-200 ease-[cubic-bezier(0.3,1.3,0.5,1)] motion-reduce:transition-none",
+              "peer-checked:translate-x-full rtl:peer-checked:-translate-x-full",
+              "peer-checked:border-primary-edge/60 peer-checked:bg-primary peer-checked:text-primary-fg peer-checked:shadow-[inset_0_-2px_0_var(--color-primary-edge),0_1px_2px_rgb(var(--ui-shadow-color)/0.18)]",
+              "peer-active:shadow-[inset_0_-1px_0_var(--color-border)] peer-checked:peer-active:shadow-[inset_0_-1px_0_var(--color-primary-edge)]"
             )}
           >
             {pending !== null ? (
-              <svg viewBox="0 0 16 16" fill="none" className={cn("animate-spin text-primary", sm ? "size-3" : "size-3.5")} aria-hidden="true">
-                <circle cx="8" cy="8" r="5.5" stroke="currentColor" strokeOpacity="0.25" strokeWidth="2" />
+              <svg viewBox="0 0 16 16" fill="none" className={cn("col-start-1 row-start-1 animate-spin", sm ? "size-3" : "size-3.5")} aria-hidden="true">
+                <circle cx="8" cy="8" r="5.5" stroke="currentColor" strokeOpacity="0.3" strokeWidth="2" />
                 <path d="M13.5 8A5.5 5.5 0 0 0 8 2.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
               </svg>
+            ) : showStateLabels ? (
+              <>
+                {/* both words share one spot; only the current one shows */}
+                <span className={cn("col-start-1 row-start-1 font-semibold leading-none opacity-100 transition-opacity duration-150 [.peer:checked~*_&]:opacity-0", sm ? "text-[0.625rem]" : "text-[0.6875rem]")}>
+                  {offLabel}
+                </span>
+                <span className={cn("col-start-1 row-start-1 font-semibold leading-none opacity-0 transition-opacity duration-150 [.peer:checked~*_&]:opacity-100", sm ? "text-[0.625rem]" : "text-[0.6875rem]")}>
+                  {onLabel}
+                </span>
+              </>
             ) : (
               <span className="flex -translate-y-px gap-[2px]">
                 {[0, 1, 2].map((i) => (
-                  <span key={i} className={cn("w-px rounded-full bg-border-strong", sm ? "h-2" : "h-2.5")} />
+                  <span key={i} className={cn("w-px rounded-full bg-current opacity-45", sm ? "h-2" : "h-2.5")} />
                 ))}
               </span>
             )}
