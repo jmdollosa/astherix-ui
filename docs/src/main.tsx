@@ -29,6 +29,7 @@ import { PaginationPage } from "./pages/PaginationPage";
 import { WidgetsPage } from "./pages/WidgetsPage";
 import { AccordionPage } from "./pages/AccordionPage";
 import { CarouselPage } from "./pages/CarouselPage";
+import { IconButtonPage } from "./pages/IconButtonPage";
 
 // Add each new component page here; the nav and routing pick it up automatically.
 const pages = [
@@ -46,6 +47,7 @@ const pages = [
   { path: "dropdown", title: "Dropdown menu", group: "Components", Page: DropdownPage },
   { path: "editor", title: "Editor", group: "Components", Page: EditorPage },
   { path: "upload", title: "File upload", group: "Components", Page: UploadPage },
+  { path: "iconbutton", title: "Icon button", group: "Components", Page: IconButtonPage },
   { path: "input", title: "Input", group: "Components", Page: InputPage },
   { path: "modal", title: "Modal", group: "Components", Page: ModalPage },
   { path: "pagination", title: "Pagination", group: "Components", Page: PaginationPage },
@@ -61,7 +63,7 @@ const pages = [
   { path: "typography", title: "Typography", group: "Components", Page: TypographyPage },
 ];
 
-const VERSION = "0.33.0";
+const VERSION = "0.34.0";
 
 function useHashRoute() {
   const read = () => window.location.hash.replace(/^#\/?/, "") || pages[0].path;

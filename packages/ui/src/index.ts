@@ -194,3 +194,5 @@ export { Accordion, AccordionItem, AccordionToggleAll, useAccordion } from "./co
 export type { AccordionProps, AccordionItemProps, AccordionStatus } from "./components/accordion/Accordion";
 export { Carousel, CarouselSlide } from "./components/carousel/Carousel";
 export type { CarouselProps, CarouselSlideProps, CarouselHandle, PerView } from "./components/carousel/Carousel";
+export { IconButton } from "./components/button/IconButton";
+export type { IconButtonProps, IconButtonTone } from "./components/button/IconButton";

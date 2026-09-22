@@ -567,6 +567,23 @@ bulletList orderedList blockquote horizontalRule undo redo`, `"|"` for a divider
 Show saved HTML with the same styles: `<div className="ui-prose" dangerouslySetInnerHTML={…} />`.
 Always sanitize HTML on the server (e.g. `stevebauman/purify` in Laravel).
 
+## IconButton
+
+The icon itself is the button. Press: the icon squishes and a ripple spreads; toggles swap to a
+filled icon, pop and burst.
+
+```tsx
+<IconButton icon="bi bi-heart" pressedIcon="bi bi-heart-fill" tone="danger" label="Like"
+  pressed={liked} onPressedChange={setLiked} />
+<IconButton icon="bi bi-bell" label="Notifications" badge={3} />
+<IconButton icon="bi bi-download" label="Download INV-1047" onClick={download} />   {/* Promise → spinner */}
+```
+
+Props: `icon`, `label` (required; spoken and tooltip), `variant` (`plain` `soft` `solid`), `tone`
+(Switch palette or any CSS color), `size` (`xs`–`xl`; small ones get a 44px tap area on touch),
+`shape` (`circle` `square`), `pressed` / `defaultPressed` / `onPressedChange`, `pressedIcon`,
+`burst`, `badge` (number or dot), `loading`, `href`, `tooltip`, `disabled`.
+
 ## Modal
 
 ```tsx

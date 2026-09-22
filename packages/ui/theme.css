@@ -754,3 +754,39 @@
     background-color: transparent;
   }
 }
+
+/* IconButton: press ripple, toggle pop and burst */
+@keyframes ui-icon-ripple {
+  from {
+    transform: scale(0.4);
+    opacity: 0.35;
+  }
+  to {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+@keyframes ui-icon-pop {
+  0% {
+    transform: scale(0.6);
+  }
+  45% {
+    transform: scale(1.28);
+  }
+  75% {
+    transform: scale(0.94);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes ui-icon-burst {
+  0% {
+    transform: rotate(var(--a)) translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(var(--a)) translateY(calc(var(--d) * -1)) scale(0.3);
+    opacity: 0;
+  }
+}

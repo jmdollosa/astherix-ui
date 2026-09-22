@@ -14,7 +14,7 @@ export function Code({ code }: { code: string }) {
   };
   return (
     <div className="relative min-w-0 rounded-[0.5rem] border border-border bg-surface">
-      <div className="absolute right-1.5 top-1.5">
+      <div className="absolute right-1.5 top-1.5 z-[1] rounded-control bg-surface/90 shadow-[0_0_0_4px_var(--color-surface)] backdrop-blur-sm">
         <Button size="sm" variant="ghost" onClick={copy} leadingIcon={copied ? "bi bi-check2" : "bi bi-copy"}>
           {copied ? "Copied" : "Copy"}
         </Button>
