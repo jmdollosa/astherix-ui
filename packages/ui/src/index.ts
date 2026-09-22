@@ -15,3 +15,9 @@ export {
   modalPanelVariants,
 } from "./components/modal/Modal";
 export type { ModalProps, ModalContentProps, ModalBackdrop } from "./components/modal/Modal";
+export { Field, useField } from "./components/input/Field";
+export type { FieldProps, FieldContextValue } from "./components/input/Field";
+export { Input } from "./components/input/Input";
+export type { InputProps } from "./components/input/Input";
+export { Textarea } from "./components/input/Textarea";
+export type { TextareaProps } from "./components/input/Textarea";

@@ -1,6 +1,6 @@
 {
   "name": "@jm/ui",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Tailwind-based React UI components for Next.js and Laravel + Inertia apps",
   "type": "module",
   "exports": {

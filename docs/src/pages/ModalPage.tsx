@@ -11,25 +11,19 @@ import {
   ModalBody,
   ModalFooter,
   useModal,
+  Field as FormField,
+  Input,
+  Textarea,
 } from "@jm/ui";
+
+const Field = ({ label, ...props }: { label: string } & React.ComponentProps<typeof Input>) => (
+  <FormField label={label}>
+    <Input {...props} />
+  </FormField>
+);
 import { PageHeader, Section } from "../components/Doc";
 
 const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
-
-// A plain text field for the demos (an Input component is coming later).
-function Field({ label, ...props }: { label: string } & React.InputHTMLAttributes<HTMLInputElement>) {
-  const id = React.useId();
-  return (
-    <div className="grid gap-1.5">
-      <label htmlFor={id} className="text-sm font-medium">{label}</label>
-      <input
-        id={id}
-        className="h-10 rounded-control border border-border-strong bg-surface px-3 text-[0.9375rem] text-fg outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30"
-        {...props}
-      />
-    </div>
-  );
-}
 
 /* ---------- demos ---------- */
 
@@ -244,14 +238,9 @@ function FullScreenDemo() {
           <ModalBody className="grid flex-1 content-start gap-4">
             <Field label="To" placeholder="ana@example.com" autoFocus />
             <Field label="Subject" placeholder="Project update" />
-            <div className="grid gap-1.5">
-              <label htmlFor="compose-body" className="text-sm font-medium">Message</label>
-              <textarea
-                id="compose-body"
-                rows={8}
-                className="rounded-control border border-border-strong bg-surface p-3 text-[0.9375rem] text-fg outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30"
-              />
-            </div>
+            <FormField label="Message">
+              <Textarea autoResize minRows={8} maxRows={16} />
+            </FormField>
           </ModalBody>
           <ModalFooter>
             <ModalClose asChild>
@@ -361,8 +350,9 @@ export function ModalPage() {
       <ModalDescription>The new name shows up for everyone on the team.</ModalDescription>
     </ModalHeader>
     <ModalBody>
-      <label htmlFor="name">Project name</label>
-      <input id="name" defaultValue="Website refresh" autoFocus />
+      <Field label="Project name">
+        <Input defaultValue="Website refresh" autoFocus />
+      </Field>
     </ModalBody>
     <ModalFooter>
       <ModalClose asChild><Button variant="ghost">Cancel</Button></ModalClose>

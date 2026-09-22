@@ -9,6 +9,7 @@ packages/ui/
   theme.css              Tokens (colors, font, radius), light/dark themes
   src/lib/cn.ts          Class merging helper
   src/components/button/ Button
+  src/components/input/  Field, Input, Textarea
   src/components/modal/  Modal
 docs/                    User guide
   index.html             Built guide — open it in any browser, works offline
@@ -191,6 +192,33 @@ Load the icon font's CSS once in each app, e.g. `npm install bootstrap-icons`, t
 or Laravel `resources/js/app.tsx`.
 
 `type` defaults to `"button"`; set `type="submit"` on form submit buttons.
+
+## Field, Input and Textarea
+
+```tsx
+import { Field, Input, Textarea } from "@jm/ui";
+
+<Field label="Email" description="We'll send receipts here." error={form.errors.email} required>
+  <Input type="email" leadingIcon="bi bi-envelope" />
+</Field>
+
+<Field label="Message">
+  <Textarea autoResize minRows={3} maxRows={8} showCount maxLength={500} />
+</Field>
+```
+
+**Field** — `label`, `description`, `error` (marks the control invalid), `required`, `optional`,
+`disabled`, `id`. Wires the label, `aria-describedby` and `aria-invalid` for you. Custom
+controls can read it with `useField()`.
+
+**Input** — `size` (`sm` `md` `lg`, same heights as Button), `rounded` (`none` … `full`),
+`leadingIcon` / `trailingIcon` (element or icon-font class), `prefix` / `suffix` text,
+`invalid`, `clearable` + `onClear`, `revealable` (password show/hide, default on),
+`frameClassName`. All native input props work; `ref` goes to the `<input>`.
+
+**Textarea** — `size`, `rounded` (`none` … `lg`), `invalid`, `autoResize` with `minRows` /
+`maxRows`, `showCount` (with `maxLength` shows "12 / 280"), `resize` (`vertical` `none`),
+`frameClassName`.
 
 ## Modal
 
