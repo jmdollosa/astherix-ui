@@ -163,3 +163,23 @@ export type { ToastOptions, ToastData, ToastType, ToasterProps, ToasterPosition 
 export { ThemeProvider } from "./components/theme/ThemeProvider";
 export type { ThemeProviderProps } from "./components/theme/ThemeProvider";
 export type { ThemeConfig } from "./theme/index";
+export {
+  SidebarProvider,
+  Sidebar,
+  SidebarHeader,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarTrigger,
+  SidebarInset,
+  SidebarNav,
+  useSidebar,
+} from "./components/sidebar/Sidebar";
+export type {
+  SidebarProviderProps,
+  SidebarProps,
+  SidebarGroupProps,
+  SidebarTriggerProps,
+  SidebarNavItem,
+  SidebarNavProps,
+} from "./components/sidebar/Sidebar";

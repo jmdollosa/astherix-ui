@@ -19,6 +19,7 @@ packages/ui/
   src/components/pill/   Pill, PillGroup, PillOption
   src/components/choice/ Checkbox, CheckboxGroup, RadioGroup, Radio, Switch
   src/components/select/ Select
+  src/components/sidebar/ SidebarProvider, Sidebar, SidebarNav, SidebarTrigger …
   src/components/table/  DataTable
   src/components/tabs/   Tabs
   src/components/timeline/ Timeline, Roadmap
@@ -519,6 +520,34 @@ until its Promise settles), `status` (`true` for automatic messages, your own te
 `maxHeight`, `manual`, `total`, `onQueryChange`.
 Narrow containers (under 40rem) switch to cards via a container query, so it adapts inside
 sidebars and cards as well as on phones.
+
+## Sidebar
+
+```tsx
+<SidebarProvider side="left" linkComponent={Link} persistKey="sidebar">
+  <Sidebar>
+    <SidebarHeader><Logo /></SidebarHeader>
+    <SidebarContent>
+      <SidebarGroup label="Workspace">
+        <SidebarNav items={nav} activeHref={pathname} />
+      </SidebarGroup>
+    </SidebarContent>
+    <SidebarFooter><AccountMenu /></SidebarFooter>
+  </Sidebar>
+  <SidebarInset>
+    <header><SidebarTrigger /></header>
+    …
+  </SidebarInset>
+</SidebarProvider>
+```
+
+Nav items: `{ label, href?, icon?, badge?, children?, defaultOpen?, disabled?, onSelect?, external?, id? }`
+— `children` nest to any depth. Wide: full sidebar ↔ icon rail (submenus open as a flyout);
+narrow: off-canvas drawer. Chosen by the layout's own width.
+`SidebarProvider`: `side`, `defaultCollapsed`, `collapsed` / `onCollapsedChange`, `drawerBelow` (768),
+`railBelow` (1024), `persistKey`, `shortcut` ("b" → Ctrl/⌘+B), `linkComponent`, `onNavigate`, `contained`.
+`Sidebar`: `width`, `railWidth`. `SidebarNav`: `items`, `activeHref`, `matchNested`. `SidebarGroup`:
+`label`, `action`. `useSidebar()` → `{ mode, collapsed, drawerOpen, toggle, setCollapsed, setDrawerOpen, side }`.
 
 ## Tabs
 
