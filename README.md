@@ -14,6 +14,7 @@ packages/ui/
   src/components/card/   Card, ChoiceCard
   src/components/editor/ Editor (entry: @jm/ui/editor)
   src/components/input/  Field, Input, Textarea
+  src/components/menu/   DropdownMenu, SplitButton
   src/components/modal/  Modal
   src/components/pill/   Pill, PillGroup, PillOption
   src/components/select/ Select
@@ -337,6 +338,30 @@ wrap text in `CardBody`), `interactive`, `padding` (`none` `sm` `md` `lg`), `asC
 `defaultValue` / `onValueChange`, `name`, `columns`, `disabled`, `invalid`, `required`.
 `ChoiceCard`: `value`, `title`, `description`, `icon`, `meta`, `badge`, `disabled`.
 Token: `--radius-card`.
+
+## Dropdown menu
+
+```tsx
+<DropdownMenu>
+  <DropdownMenuTrigger asChild><Button trailingIcon="bi bi-chevron-down">Actions</Button></DropdownMenuTrigger>
+  <DropdownMenuContent align="start">
+    <DropdownMenuItem icon="bi bi-pencil" shortcut="⌘E" onSelect={edit}>Edit</DropdownMenuItem>
+    <DropdownMenuItem asChild><Link href="/settings">Settings</Link></DropdownMenuItem>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem destructive onSelect={remove}>Delete</DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>
+
+<SplitButton onClick={save} menu={<DropdownMenuItem onSelect={saveDraft}>Save as draft</DropdownMenuItem>}>Save</SplitButton>
+```
+
+`DropdownMenu`: `open` / `defaultOpen` / `onOpenChange`. `DropdownMenuContent`: `align`
+(`start` `end`), `side` (`bottom` `top`, flips automatically), `matchTriggerWidth`.
+`DropdownMenuItem`: `onSelect` (call `event.preventDefault()` to keep the menu open), `icon`,
+`shortcut`, `description`, `destructive`, `disabled`, `inset`, `textValue`, `asChild`. Also
+`DropdownMenuCheckboxItem` (`checked`, `onCheckedChange`), `DropdownMenuRadioGroup` +
+`DropdownMenuRadioItem`, `DropdownMenuLabel`, `DropdownMenuSeparator`, `DropdownMenuGroup`.
+`SplitButton`: Button props + `menu`, `menuLabel`, `align`.
 
 ## Editor (rich text)
 

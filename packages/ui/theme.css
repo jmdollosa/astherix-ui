@@ -543,3 +543,17 @@
     color: hsl(var(--av-h, 215) 62% 84%);
   }
 }
+
+/* Dropdown menus */
+@keyframes ui-menu-down {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}
+@keyframes ui-menu-up {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.98);
+  }
+}
