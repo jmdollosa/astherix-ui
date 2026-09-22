@@ -90,7 +90,12 @@ export function Tabs({
     <TabsContext.Provider value={ctx}>
       <div
         data-orientation={orientation}
-        className={cn(orientation === "vertical" ? "flex items-start gap-6" : "grid gap-4", className)}
+        className={cn(
+          orientation === "vertical"
+            ? "flex min-w-0 flex-col gap-4 sm:flex-row sm:items-start sm:gap-6"
+            : "grid min-w-0 grid-cols-[minmax(0,1fr)] gap-4",
+          className
+        )}
         {...props}
       >
         {children}
@@ -448,7 +453,7 @@ export function TabList({
       <div
         className={cn(
           "relative flex",
-          vertical ? "w-52 shrink-0 flex-col" : "items-end",
+          vertical ? "w-full shrink-0 flex-col sm:w-52" : "items-end",
           // The baseline is an inset shadow (not a border) so the active tab can cover it.
           variant !== "pills" && (vertical ? "shadow-[inset_-1px_0_0_var(--color-border)]" : "shadow-[inset_0_-1px_0_var(--color-border)]"),
           variant === "pills" && cn("gap-1 rounded-control-lg bg-secondary-hover p-1", vertical ? "" : "w-fit max-w-full items-center"),
@@ -660,7 +665,7 @@ export function TabPanel({ value, keepMounted = false, className, children, ...p
       aria-labelledby={tabs.tabId(value)}
       tabIndex={0}
       hidden={!selected}
-      className={cn("min-w-0 flex-1 rounded-control outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring", className)}
+      className={cn("w-full min-w-0 flex-1 rounded-control outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring", className)}
       {...props}
     >
       {children}

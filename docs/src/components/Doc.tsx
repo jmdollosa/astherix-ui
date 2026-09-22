@@ -13,7 +13,7 @@ export function Code({ code }: { code: string }) {
     }
   };
   return (
-    <div className="relative rounded-[0.5rem] border border-border bg-surface">
+    <div className="relative min-w-0 rounded-[0.5rem] border border-border bg-surface">
       <div className="absolute right-1.5 top-1.5">
         <Button size="sm" variant="ghost" onClick={copy} leadingIcon={copied ? "bi bi-check2" : "bi bi-copy"}>
           {copied ? "Copied" : "Copy"}
@@ -28,13 +28,13 @@ export function Code({ code }: { code: string }) {
 
 export function Section({ title, desc, code, children }: { title: string; desc: React.ReactNode; code: string; children: React.ReactNode }) {
   return (
-    <section className="grid gap-4 border-t border-border py-9 md:grid-cols-[14rem_minmax(0,1fr)] md:gap-10">
+    <section className="grid grid-cols-[minmax(0,1fr)] gap-4 border-t border-border py-9 md:grid-cols-[14rem_minmax(0,1fr)] md:gap-10">
       <div>
         <h2 className="text-[1.0625rem] font-semibold tracking-[-0.01em]">{title}</h2>
         <div className="mt-1.5 max-w-[34ch] text-sm leading-relaxed text-fg-muted">{desc}</div>
       </div>
-      <div className="grid min-w-0 content-start gap-4">
-        <div className="flex flex-wrap items-center gap-3">{children}</div>
+      <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] content-start gap-4">
+        <div className="flex min-w-0 flex-wrap items-center gap-3 [&>*]:min-w-0 [&>*]:max-w-full">{children}</div>
         <Code code={code} />
       </div>
     </section>

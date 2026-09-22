@@ -3,9 +3,9 @@ import { Code, PageHeader } from "../components/Doc";
 
 function Step({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="grid gap-4 border-t border-border py-9 md:grid-cols-[14rem_minmax(0,1fr)] md:gap-10">
+    <section className="grid grid-cols-[minmax(0,1fr)] gap-4 border-t border-border py-9 md:grid-cols-[14rem_minmax(0,1fr)] md:gap-10">
       <h2 className="text-[1.0625rem] font-semibold tracking-[-0.01em]">{title}</h2>
-      <div className="grid min-w-0 content-start gap-4 text-[0.9375rem] leading-relaxed [&_code]:font-mono [&_code]:text-[0.8125rem] [&>p]:max-w-[60ch]">
+      <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] content-start gap-4 text-[0.9375rem] leading-relaxed [&_code]:font-mono [&_code]:text-[0.8125rem] [&>p]:max-w-[60ch]">
         {children}
       </div>
     </section>

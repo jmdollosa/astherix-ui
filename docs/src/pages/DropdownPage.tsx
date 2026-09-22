@@ -57,7 +57,7 @@ const rows = [
 function RowActionsDemo() {
   const [last, setLast] = React.useState("");
   return (
-    <div className="grid w-full gap-3">
+    <div className="grid w-full grid-cols-[minmax(0,1fr)] gap-3">
       <ul className="w-full max-w-lg divide-y divide-border rounded-card border border-border bg-surface text-sm">
         {rows.map((r) => (
           <li key={r.no} className="flex items-center gap-3 px-4 py-2.5">

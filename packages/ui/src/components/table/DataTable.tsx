@@ -539,7 +539,7 @@ export function DataTable<T>({
   const headerLabel = (c: DataTableColumn<T>) => (typeof c.header === "string" ? c.header : c.key);
 
   return (
-    <div className={cn("@container grid w-full gap-3", className)}>
+    <div className={cn("@container grid w-full min-w-0 grid-cols-[minmax(0,1fr)] gap-3", className)}>
       {(searchable || toolbar || onRefresh) && (
         <div className="flex flex-wrap items-center gap-2">
           {searchable && (
@@ -592,7 +592,7 @@ export function DataTable<T>({
         </div>
       )}
 
-      <div className="relative">
+      <div className="relative min-w-0">
       {refreshing && !overlayVisible && refreshIndicator === "border" && <RunningBorder radius={radius} />}
       {refreshing && !overlayVisible && refreshIndicator === "bar" && <RefreshBar />}
       {refreshing && !overlayVisible && refreshIndicator === "shimmer" && <RefreshShimmer />}

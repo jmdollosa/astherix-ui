@@ -412,7 +412,7 @@ export function Roadmap({ items, itemWidth = "16rem", className, ...props }: Roa
   );
 
   return (
-    <div className={cn("relative w-full", className)} {...props} role="region">
+    <div className={cn("relative w-full min-w-0", className)} {...props} role="region">
       <div className="pointer-events-none absolute inset-x-0 top-[1.9rem] z-10 flex justify-between px-1 [&>*]:pointer-events-auto">
         {arrow(-1)}
         {arrow(1)}
@@ -435,7 +435,7 @@ export function Roadmap({ items, itemWidth = "16rem", className, ...props }: Roa
             <li
               key={i}
               aria-current={status === "current" ? "step" : undefined}
-              className="grid shrink-0 snap-start content-start gap-3 pe-4"
+              className="relative grid shrink-0 snap-start content-start gap-3 pe-4"
               style={{ width: itemWidth }}
             >
               <span className={cn("text-xs font-medium tabular-nums", status === "upcoming" ? "text-fg-muted" : "text-primary")}>{item.label}</span>
