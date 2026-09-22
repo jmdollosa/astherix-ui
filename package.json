@@ -1,0 +1,17 @@
+{
+  "name": "ui-framework",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build -w @jm/ui",
+    "typecheck": "npm run typecheck -w @jm/ui",
+    "docs": "npm run build && esbuild docs/src/main.tsx --bundle --minify --format=iife --jsx=automatic --alias:@jm/ui=./packages/ui/src/index.ts --define:process.env.NODE_ENV='\"production\"' --outfile=docs/build/app.js && tailwindcss -i docs/input.css -o docs/build/app.css --minify && node docs/assemble.mjs"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.0.0",
+    "bootstrap-icons": "^1.13.1",
+    "esbuild": "^0.24.2"
+  }
+}

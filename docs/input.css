@@ -1,0 +1,5 @@
+@import "tailwindcss";
+@import "../packages/ui/theme.css";
+@source "./src";
+@source "../packages/ui/src";
+@theme { --font-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace; }
