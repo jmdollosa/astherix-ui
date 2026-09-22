@@ -133,3 +133,22 @@ export type {
 } from "./components/menu/DropdownMenu";
 export { DataTable } from "./components/table/DataTable";
 export type { DataTableProps, DataTableColumn, DataTableQuery, DataTableStatusState, SortState } from "./components/table/DataTable";
+export {
+  Timeline,
+  TimelineGroup,
+  TimelineItem,
+  TimelineCollapse,
+  Roadmap,
+  formatTimelineTime,
+  formatTimelineDay,
+} from "./components/timeline/Timeline";
+export type {
+  TimelineProps,
+  TimelineGroupProps,
+  TimelineItemProps,
+  TimelineCollapseProps,
+  RoadmapProps,
+  RoadmapItem,
+  TimelineTone,
+  TimelineStatus,
+} from "./components/timeline/Timeline";

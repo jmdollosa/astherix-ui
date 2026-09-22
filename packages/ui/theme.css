@@ -583,3 +583,25 @@
     box-shadow: 0 0 0 3px transparent;
   }
 }
+
+/* Timeline: the thread draws itself as it scrolls into view (where supported). */
+@keyframes ui-thread {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+@layer components {
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .ui-thread-draw {
+        transform-origin: top;
+        animation: ui-thread linear both;
+        animation-timeline: view();
+        animation-range: entry 20% cover 45%;
+      }
+    }
+  }
+}

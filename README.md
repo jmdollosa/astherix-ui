@@ -20,6 +20,7 @@ packages/ui/
   src/components/select/ Select
   src/components/table/  DataTable
   src/components/tabs/   Tabs
+  src/components/timeline/ Timeline, Roadmap
   src/components/typography/ Heading, Text, Lead, Link, Code, Kbd, Mark, Blockquote, List, Prose, Stat
 docs/                    User guide
   index.html             Built guide — open it in any browser, works offline
@@ -484,6 +485,27 @@ sidebars and cards as well as on phones.
 `TabList`: `onReorder`, `onRename`, `onAdd` (return the new value to select it), `addLabel`,
 `renameOnAdd`, `onClose`, `closeLabel`. `Tab`: `value`, `label`, `disabled`, `icon`, `badge`,
 `renamable`, `closable`. `TabPanel`: `value`, `keepMounted`.
+
+## Timeline
+
+```tsx
+<Timeline aria-label="Invoice activity" variant="feed" | "progress" layout="left" | "alternate">
+  <TimelineGroup date={new Date()}>                               {/* "Today" */}
+    <TimelineItem icon="bi bi-check-lg" tone="success" title="Payment received" time={at} />
+    <TimelineItem avatar={<Avatar … />} title="Maria commented" time={at} card>…</TimelineItem>
+    <TimelineCollapse>{quietItems}</TimelineCollapse>
+  </TimelineGroup>
+</Timeline>
+
+<Roadmap aria-label="Roadmap" items={[{ label: "Q3 2026", title: "Mobile app", status: "current" }]} />
+```
+
+`Timeline`: `layout`, `variant`, `size` (`sm` `md`), `animated` (the thread draws itself on
+scroll where supported). `TimelineGroup`: `label` or `date`. `TimelineItem`: `title`, `time`
+(shown as "2 hours ago") or `timeLabel`, `icon`, `avatar`, `tone`, `status` (`past` `current`
+`upcoming`), `meta`, `card`, `last`. `TimelineCollapse`: `label`, `defaultOpen`.
+`Roadmap`: `items` (`label`, `title`, `description`, `status` `done`/`current`/`upcoming`,
+`footer`), `itemWidth`. Helpers: `formatTimelineTime`, `formatTimelineDay`.
 
 ## Typography
 
