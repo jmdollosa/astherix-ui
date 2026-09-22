@@ -258,9 +258,9 @@ Real inputs underneath (keyboard, screen readers and form posts work natively). 
 props. `CheckboxGroup`: `label`, `options`, `value` / `defaultValue` / `onValueChange`, `name`,
 `orientation`. `RadioGroup`: `label`, `value` / `defaultValue` / `onValueChange`, `name`,
 `orientation`, `size`, `disabled`, `invalid`, `required`; `Radio`: `value`, `label`, `description`.
-`Switch` (a flip switch: a neutral sunken track and a raised knob that slides over and reads "Off", or turns blue and reads "On"): `label`, `description`,
-`onCheckedChange` (may return a Promise), `size`, `labelPosition`, `onLabel`, `offLabel`,
-`showStateLabels`.
+`Switch`: `variant` (`labelled` — the word in the pill, `mark` — × / ✓ on the knob, `liquid` —
+blue floods from the knob), `label`, `description`, `onCheckedChange` (may return a Promise:
+spinner, flips back on failure), `size`, `labelPosition`, `onLabel`, `offLabel`.
 
 ## Toast
 

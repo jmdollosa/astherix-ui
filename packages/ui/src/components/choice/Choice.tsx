@@ -256,9 +256,17 @@ Radio.displayName = "Radio";
 
 /* ---------- Switch ---------- */
 
+export type SwitchVariant = "labelled" | "mark" | "liquid";
+
 export interface SwitchProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type" | "size" | "onChange"> {
   label?: React.ReactNode;
   description?: React.ReactNode;
+  /**
+   * - "labelled" (default): a pill with the word inside — "On" in white on blue, "Off" in gray
+   * - "mark": the knob shows × when off and bends into a blue ✓ when on
+   * - "liquid": an outlined pill that floods blue from the knob when turned on
+   */
+  variant?: SwitchVariant;
   /**
    * Called when flipped. Return a Promise (e.g. saving the setting) and the knob shows a
    * spinner until it settles — and flips back if it fails.
@@ -268,29 +276,34 @@ export interface SwitchProps extends Omit<React.InputHTMLAttributes<HTMLInputEle
   size?: Size;
   /** Put the label before the switch, spread across the row — common in settings lists. */
   labelPosition?: "end" | "start";
-  /** Text on the track. Default "On" / "Off". */
+  /** Words for the "labelled" variant. Default "On" / "Off". */
   onLabel?: string;
   offLabel?: string;
-  /** Hide the On/Off text (e.g. in tight spaces). */
-  showStateLabels?: boolean;
 }
 
-/**
- * A flip switch: a sunken track marked On and Off, with a raised knob that slides across to
- * cover the side that isn't active — the same pressed-in / raised feel as the fields and buttons.
- */
+// Track width, knob size and inset for each variant and size. Knob travel = width − knob − 2 × inset.
+const switchGeometry: Record<SwitchVariant, Record<Size, { w: number; h: number; k: number; pad: number }>> = {
+  labelled: { md: { w: 68, h: 32, k: 26, pad: 3 }, sm: { w: 54, h: 24, k: 18, pad: 3 } },
+  mark: { md: { w: 52, h: 32, k: 26, pad: 3 }, sm: { w: 40, h: 24, k: 18, pad: 3 } },
+  liquid: { md: { w: 56, h: 32, k: 24, pad: 4 }, sm: { w: 44, h: 24, k: 16, pad: 4 } },
+};
+
+const knobShadow = "shadow-[0_2px_4px_rgb(0_0_0/0.18),0_0_0_0.5px_rgb(0_0_0/0.06)]";
+const spring = "ease-[cubic-bezier(0.3,1.35,0.5,1)]";
+
+/** A switch for settings that take effect right away. Three looks: labelled, mark and liquid. */
 export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
   (
     {
       label,
       description,
+      variant = "labelled",
       onCheckedChange,
       onChange,
       size = "md",
       labelPosition = "end",
       onLabel = "On",
       offLabel = "Off",
-      showStateLabels = true,
       checked: checkedProp,
       defaultChecked,
       disabled,
@@ -326,9 +339,23 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
       } else if (!controlled) setInner(next);
     };
 
-    const sm = size === "sm";
-    // Track sizes are chosen so the knob lands on whole pixels: knob = (width − 6) / 2.
-    const track = sm ? (showStateLabels ? "h-6 w-[3.75rem]" : "h-6 w-10") : showStateLabels ? "h-7 w-[4.5rem]" : "h-7 w-12";
+    const g = switchGeometry[variant][size];
+    const liquid = variant === "liquid";
+    const vars = {
+      "--sw-w": `${g.w}px`,
+      "--sw-h": `${g.h}px`,
+      "--sw-k": `${g.k}px`,
+      "--sw-pad": `${g.pad}px`,
+      "--sw-travel": `${g.w - g.k - 2 * g.pad}px`,
+    } as React.CSSProperties;
+    const textSize = size === "sm" ? "text-[0.625rem]" : "text-[0.72rem]";
+
+    const spinner = (
+      <svg viewBox="0 0 16 16" fill="none" className={cn("animate-spin text-primary", size === "sm" ? "size-2.5" : "size-3.5")} aria-hidden="true">
+        <circle cx="8" cy="8" r="5.5" stroke="currentColor" strokeOpacity="0.25" strokeWidth="2.2" />
+        <path d="M13.5 8A5.5 5.5 0 0 0 8 2.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+      </svg>
+    );
 
     return (
       <label
@@ -339,7 +366,11 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
           className
         )}
       >
-        <span className={cn("relative inline-grid shrink-0 grid-cols-2 items-center", track, sm ? "-mt-0.5" : "-mt-1")}>
+        <span
+          className={cn("relative inline-block shrink-0 has-[:disabled]:opacity-50", size === "sm" ? "mt-0" : "-mt-1")}
+          style={{ ...vars, width: g.w, height: g.h }}
+        >
+          {/* The real checkbox is the track (styled with appearance: none). */}
           <input
             ref={ref}
             type="checkbox"
@@ -348,56 +379,93 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
             aria-busy={pending !== null || undefined}
             onChange={handle}
             className={cn(
-              "peer absolute inset-0 m-0 cursor-pointer appearance-none rounded-control border outline-none transition-[background-color,border-color] duration-200",
-              // off: a sunken slot, like a text field
-              "border-border-strong bg-secondary-hover shadow-[inset_0_1px_2px_rgb(var(--ui-shadow-color)/0.12)]",
-              // on: the track stays neutral — only the knob turns blue
-              "checked:border-border-strong",
-              "focus-visible:ring-3 focus-visible:ring-ring/35 focus-visible:ring-offset-1 focus-visible:ring-offset-bg",
-              "disabled:cursor-not-allowed disabled:opacity-50",
-              "aria-busy:cursor-progress"
+              "peer absolute inset-0 m-0 cursor-pointer appearance-none rounded-full outline-none transition-[background-color,box-shadow] duration-250 ease-out",
+              "focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:ring-offset-2 focus-visible:ring-offset-bg",
+              "disabled:cursor-not-allowed aria-busy:cursor-progress",
+              liquid
+                ? "bg-surface shadow-[inset_0_0_0_1.5px_var(--color-border-strong),inset_0_1px_2px_rgb(var(--ui-shadow-color)/0.12)] checked:shadow-[inset_0_0_0_1.5px_var(--color-primary)]"
+                : "bg-border-strong shadow-[inset_0_1px_2px_rgb(var(--ui-shadow-color)/0.2)] checked:bg-primary"
             )}
             {...control}
             {...props}
           />
-          {/*
-            The knob carries the state: on the left it reads "Off" (plain), on the right it
-            turns blue and reads "On" in white. The track itself stays neutral.
-          */}
+
+          {/* liquid: blue floods out from the knob */}
+          {liquid && (
+            <span
+              aria-hidden="true"
+              className={cn(
+                "pointer-events-none absolute inset-0 rounded-full bg-primary transition-[clip-path] duration-[450ms] ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none",
+                "[clip-path:circle(0%_at_calc(var(--sw-pad)+var(--sw-k)/2)_50%)] peer-checked:[clip-path:circle(125%_at_calc(var(--sw-w)-var(--sw-pad)-var(--sw-k)/2)_50%)]"
+              )}
+            />
+          )}
+
+          {/* labelled: the words live in the track */}
+          {variant === "labelled" && (
+            <>
+              <span
+                aria-hidden="true"
+                className={cn(
+                  "pointer-events-none absolute inset-y-0 start-0 grid place-items-center font-bold text-primary-fg opacity-0 transition-opacity duration-200 peer-checked:opacity-100",
+                  textSize
+                )}
+                style={{ width: g.w - g.k - g.pad }}
+              >
+                {onLabel}
+              </span>
+              <span
+                aria-hidden="true"
+                className={cn(
+                  "pointer-events-none absolute inset-y-0 end-0 grid place-items-center font-bold text-fg-muted transition-opacity duration-200 peer-checked:opacity-0",
+                  textSize
+                )}
+                style={{ width: g.w - g.k - g.pad }}
+              >
+                {offLabel}
+              </span>
+            </>
+          )}
+
+          {/* the knob: stretches a little while pressed, springs into place */}
           <span
             aria-hidden="true"
             className={cn(
-              "pointer-events-none absolute inset-y-[3px] start-[3px] grid w-[calc(50%-3px)] place-items-center",
-              "rounded-[calc(var(--radius-control)-2px)] border border-border-strong bg-surface text-fg-muted",
-              "shadow-[inset_0_-2px_0_var(--color-border),0_1px_2px_rgb(var(--ui-shadow-color)/0.18)]",
-              "transition-[translate,background-color,border-color,color,box-shadow] duration-200 ease-[cubic-bezier(0.3,1.3,0.5,1)] motion-reduce:transition-none",
-              "peer-checked:translate-x-full rtl:peer-checked:-translate-x-full",
-              "peer-checked:border-primary-edge/60 peer-checked:bg-primary peer-checked:text-primary-fg peer-checked:shadow-[inset_0_-2px_0_var(--color-primary-edge),0_1px_2px_rgb(var(--ui-shadow-color)/0.18)]",
-              "peer-active:shadow-[inset_0_-1px_0_var(--color-border)] peer-checked:peer-active:shadow-[inset_0_-1px_0_var(--color-primary-edge)]"
+              "pointer-events-none absolute start-[var(--sw-pad)] top-[var(--sw-pad)] grid h-[var(--sw-k)] w-[var(--sw-k)] place-items-center rounded-full",
+              `transition-[translate,width,background-color] duration-300 ${spring} motion-reduce:transition-none`,
+              "peer-checked:translate-x-[var(--sw-travel)] rtl:peer-checked:-translate-x-[var(--sw-travel)]",
+              !liquid && "peer-active:w-[calc(var(--sw-k)+4px)] peer-checked:peer-active:translate-x-[calc(var(--sw-travel)-4px)]",
+              liquid ? cn("bg-border-strong shadow-[0_1px_2px_rgb(0_0_0/0.15)] peer-checked:bg-white") : cn("bg-white", knobShadow)
             )}
           >
-            {pending !== null ? (
-              <svg viewBox="0 0 16 16" fill="none" className={cn("col-start-1 row-start-1 animate-spin", sm ? "size-3" : "size-3.5")} aria-hidden="true">
-                <circle cx="8" cy="8" r="5.5" stroke="currentColor" strokeOpacity="0.3" strokeWidth="2" />
-                <path d="M13.5 8A5.5 5.5 0 0 0 8 2.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-              </svg>
-            ) : showStateLabels ? (
-              <>
-                {/* both words share one spot; only the current one shows */}
-                <span className={cn("col-start-1 row-start-1 font-semibold leading-none opacity-100 transition-opacity duration-150 [.peer:checked~*_&]:opacity-0", sm ? "text-[0.625rem]" : "text-[0.6875rem]")}>
-                  {offLabel}
-                </span>
-                <span className={cn("col-start-1 row-start-1 font-semibold leading-none opacity-0 transition-opacity duration-150 [.peer:checked~*_&]:opacity-100", sm ? "text-[0.625rem]" : "text-[0.6875rem]")}>
-                  {onLabel}
-                </span>
-              </>
-            ) : (
-              <span className="flex -translate-y-px gap-[2px]">
-                {[0, 1, 2].map((i) => (
-                  <span key={i} className={cn("w-px rounded-full bg-current opacity-45", sm ? "h-2" : "h-2.5")} />
-                ))}
-              </span>
-            )}
+            {pending !== null
+              ? spinner
+              : variant === "mark" && (
+                  <>
+                    <svg
+                      viewBox="0 0 14 14"
+                      aria-hidden="true"
+                      className={cn(
+                        "col-start-1 row-start-1 fill-none stroke-[#8a929e] [stroke-linecap:round] [stroke-width:2.4]",
+                        size === "sm" ? "size-2.5" : "size-3.5",
+                        `transition-[opacity,scale,rotate] duration-300 ${spring} [.peer:checked~*_&]:scale-[0.4] [.peer:checked~*_&]:rotate-45 [.peer:checked~*_&]:opacity-0`
+                      )}
+                    >
+                      <path d="M4 4L10 10M10 4L4 10" />
+                    </svg>
+                    <svg
+                      viewBox="0 0 14 14"
+                      aria-hidden="true"
+                      className={cn(
+                        "col-start-1 row-start-1 scale-[0.4] -rotate-45 fill-none stroke-primary opacity-0 [stroke-linecap:round] [stroke-linejoin:round] [stroke-width:2.4]",
+                        size === "sm" ? "size-2.5" : "size-3.5",
+                        `transition-[opacity,scale,rotate] duration-300 ${spring} [.peer:checked~*_&]:scale-100 [.peer:checked~*_&]:rotate-0 [.peer:checked~*_&]:opacity-100`
+                      )}
+                    >
+                      <path d="M2.5 7.5L5.5 10.5L11.5 3.5" />
+                    </svg>
+                  </>
+                )}
           </span>
         </span>
         <LabelText label={label} description={description} size={size} disabled={!!control.disabled} />

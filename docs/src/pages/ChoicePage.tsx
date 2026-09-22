@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Checkbox, CheckboxGroup, RadioGroup, Radio, Switch, Field, Button, Card, CardHeader, CardContent, Text, toast } from "@jm/ui";
+import { Checkbox, CheckboxGroup, RadioGroup, Radio, Switch, Field, Button, Card, CardHeader, CardContent, Text, toast, PillGroup, PillOption, type SwitchVariant } from "@jm/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
@@ -25,8 +25,39 @@ function SelectAllDemo() {
   );
 }
 
+function VariantsDemo() {
+  return (
+    <div className="grid w-full max-w-md gap-3">
+      {(
+        [
+          ["labelled", "Labelled", "The word sits inside the pill: “On” in white on blue, “Off” in gray."],
+          ["mark", "Mark", "The knob shows × when off and bends into a blue ✓ when on."],
+          ["liquid", "Liquid", "An outlined pill that floods blue out from the knob."],
+        ] as const
+      ).map(([v, name, text]) => (
+        <Card key={v} padding="sm">
+          <CardContent className="grid gap-3">
+            <div>
+              <p className="text-sm font-semibold">{name}</p>
+              <p className="text-[0.8125rem] text-fg-muted">{text}</p>
+            </div>
+            <div className="flex flex-wrap items-center gap-5">
+              <Switch variant={v} defaultChecked aria-label={`${name} switch, on`} />
+              <Switch variant={v} aria-label={`${name} switch, off`} />
+              <Switch variant={v} size="sm" defaultChecked aria-label={`${name} small switch, on`} />
+              <Switch variant={v} size="sm" aria-label={`${name} small switch, off`} />
+              <Switch variant={v} disabled aria-label={`${name} switch, disabled`} />
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
 function SettingsDemo() {
   const [fail, setFail] = React.useState(false);
+  const [variant, setVariant] = React.useState<string | null>("labelled");
   const save = (label: string) => async (on: boolean) => {
     await wait(900);
     if (fail) {
@@ -35,15 +66,21 @@ function SettingsDemo() {
     }
     toast.success(`${label} ${on ? "on" : "off"}`);
   };
+  const v = (variant ?? "labelled") as SwitchVariant;
   return (
     <div className="grid w-full max-w-md gap-3">
+      <PillGroup value={variant} onValueChange={setVariant} size="sm" aria-label="Switch style">
+        <PillOption value="labelled">Labelled</PillOption>
+        <PillOption value="mark">Mark</PillOption>
+        <PillOption value="liquid">Liquid</PillOption>
+      </PillGroup>
       <Card>
         <CardHeader title="Notifications" description="Changes save as soon as you flip a switch." />
         <CardContent className="grid gap-4">
-          <Switch labelPosition="start" defaultChecked label="Payment received" description="When a client pays an invoice." onCheckedChange={save("Payment received")} />
-          <Switch labelPosition="start" defaultChecked label="Invoice viewed" description="The first time a client opens it." onCheckedChange={save("Invoice viewed")} />
-          <Switch labelPosition="start" label="Weekly summary" description="Every Monday at 8 AM." onCheckedChange={save("Weekly summary")} />
-          <Switch labelPosition="start" label="Product news" disabled description="Turned off by your workspace admin." />
+          <Switch variant={v} labelPosition="start" defaultChecked label="Payment received" description="When a client pays an invoice." onCheckedChange={save("Payment received")} />
+          <Switch variant={v} labelPosition="start" defaultChecked label="Invoice viewed" description="The first time a client opens it." onCheckedChange={save("Invoice viewed")} />
+          <Switch variant={v} labelPosition="start" label="Weekly summary" description="Every Monday at 8 AM." onCheckedChange={save("Weekly summary")} />
+          <Switch variant={v} labelPosition="start" label="Product news" disabled description="Turned off by your workspace admin." />
         </CardContent>
       </Card>
       <label className="flex items-center gap-2 text-sm text-fg-muted">
@@ -164,10 +201,25 @@ export function ChoicePage() {
       </Section>
 
       <Section
-        title="Switch"
-        desc="A flip switch for settings that take effect right away: the knob slides across a track marked On and Off. Return a Promise from onCheckedChange and the switch shows a spinner while it saves — and flips back if saving fails. Try it with the failure box ticked."
+        title="Switch styles"
+        desc="Three looks for the same switch. Labelled puts the word inside the pill; mark shows × or ✓ on the knob, so the state never depends on color alone; liquid floods blue out from the knob. The knob stretches slightly while pressed and springs into place."
+        code={`
+<Switch label="Payment received" />                     {/* variant="labelled", the default */}
+<Switch variant="mark" label="Payment received" />
+<Switch variant="liquid" label="Payment received" />
+
+<Switch size="sm" … />                                 {/* compact */}
+<Switch onLabel="Yes" offLabel="No" … />               {/* your own words (labelled) */}`}
+      >
+        <VariantsDemo />
+      </Section>
+
+      <Section
+        title="Saving as you flip"
+        desc="Return a Promise from onCheckedChange and the knob shows a spinner while it saves — and the switch flips back if saving fails. Pick a style, then try it with the failure box ticked."
         code={`
 <Switch
+  variant="mark"
   labelPosition="start"
   label="Payment received"
   description="When a client pays an invoice."
