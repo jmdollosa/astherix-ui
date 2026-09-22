@@ -165,7 +165,7 @@ export function ChoicePage() {
 
       <Section
         title="Switch"
-        desc="For settings that take effect right away. Return a Promise from onCheckedChange and the switch shows a spinner while it saves — and flips back if saving fails. Try it with the failure box ticked."
+        desc="A flip switch for settings that take effect right away: the knob slides across a track marked On and Off. Return a Promise from onCheckedChange and the switch shows a spinner while it saves — and flips back if saving fails. Try it with the failure box ticked."
         code={`
 <Switch
   labelPosition="start"
