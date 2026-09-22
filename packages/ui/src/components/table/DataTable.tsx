@@ -106,6 +106,18 @@ export interface DataTableProps<T> {
   error?: React.ReactNode;
   /** When the data was last loaded, if you track it. Otherwise the table notes when a refresh finishes. */
   lastUpdated?: Date | null;
+  /**
+   * Cover the table with a message while it loads or refreshes:
+   * true for "Loading rows…" / "Refreshing rows…", or pass your own message.
+   * The rows behind are dimmed and can't be clicked until it's done.
+   */
+  loadingOverlay?: boolean | React.ReactNode;
+  /** Where the overlay's message sits: near the top (default; stays in view on tall tables) or centered. */
+  overlayPosition?: "top" | "center";
+  /** The indicator in the overlay. Default "orbit". */
+  overlayIndicator?: "spinner" | "dots" | "bars" | "pulse" | "orbit";
+  /** Adds a Cancel button to the overlay. */
+  onCancelLoading?: () => void;
   /** Shown when there are no rows (and when a search finds nothing). */
   emptyState?: React.ReactNode;
 
@@ -342,6 +354,10 @@ export function DataTable<T>({
   statusTone,
   error,
   lastUpdated: lastUpdatedProp,
+  loadingOverlay = false,
+  overlayPosition = "top",
+  overlayIndicator = "orbit",
+  onCancelLoading,
   emptyState,
   density = "comfortable",
   striped = false,
@@ -477,6 +493,23 @@ export function DataTable<T>({
     }
   };
 
+  // Loading overlay: shown after a short delay so quick loads don't flash.
+  const busyForOverlay = !!loadingOverlay && (loading || refreshingByButton);
+  const [overlayVisible, setOverlayVisible] = React.useState(false);
+  React.useEffect(() => {
+    if (!busyForOverlay) return setOverlayVisible(false);
+    const t = window.setTimeout(() => setOverlayVisible(true), 150);
+    return () => window.clearTimeout(t);
+  }, [busyForOverlay]);
+  React.useEffect(() => {
+    const el = frameRef.current;
+    if (!el) return;
+    if (overlayVisible) el.setAttribute("inert", "");
+    else el.removeAttribute("inert");
+  }, [overlayVisible]);
+  const overlayMessage =
+    loadingOverlay === true ? (paged.length === 0 ? "Loading rows…" : "Refreshing rows…") : (loadingOverlay as React.ReactNode);
+
   const cards = mobile === "cards";
   const resolvedStatus = resolveStatus(
     status as DataTableProps<unknown>["status"],
@@ -563,9 +596,35 @@ export function DataTable<T>({
       )}
 
       <div className="relative">
-      {refreshing && refreshIndicator === "border" && <RunningBorder radius={radius} />}
-      {refreshing && refreshIndicator === "bar" && <RefreshBar />}
-      {refreshing && refreshIndicator === "shimmer" && <RefreshShimmer />}
+      {refreshing && !overlayVisible && refreshIndicator === "border" && <RunningBorder radius={radius} />}
+      {refreshing && !overlayVisible && refreshIndicator === "bar" && <RefreshBar />}
+      {refreshing && !overlayVisible && refreshIndicator === "shimmer" && <RefreshShimmer />}
+      {overlayVisible && (
+        <div
+          className={cn(
+            "absolute inset-0 z-40 rounded-card bg-[color:color-mix(in_srgb,var(--color-surface)_62%,transparent)] backdrop-blur-[1.5px]",
+            "animate-[ui-fade-in_160ms_ease-out]",
+            // In the card layout the frame has no box, so the overlay needs its own edge.
+            cards && "@max-[40rem]:border @max-[40rem]:border-border"
+          )}
+        >
+          <div className={overlayPosition === "top" ? "sticky top-4 flex justify-center px-4 pt-12" : "grid h-full place-items-center px-4"}>
+            <div
+              role="status"
+              aria-live="polite"
+              className="flex max-w-sm items-center gap-3 rounded-control-lg border border-border bg-surface px-4 py-3 text-sm text-fg shadow-[var(--ui-shadow-lg)] animate-[ui-menu-down_180ms_cubic-bezier(0.2,0.9,0.3,1)]"
+            >
+              <ActivityIndicator variant={overlayIndicator} size="sm" label="" aria-hidden="true" role={undefined} />
+              <div className="min-w-0 flex-1 font-medium">{overlayMessage}</div>
+              {onCancelLoading && (
+                <Button size="sm" variant="ghost" onClick={onCancelLoading} className="-me-1.5">
+                  Cancel
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
       {!resolvedStatus && (
         <span className="sr-only" aria-live="polite">
           {refreshing ? `Refreshing ${caption.toLowerCase()}…` : justRefreshed ? `${caption} updated.` : ""}

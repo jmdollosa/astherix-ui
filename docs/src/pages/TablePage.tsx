@@ -297,6 +297,80 @@ function StatusDemo() {
   );
 }
 
+function OverlayDemo() {
+  const [rows, setRows] = React.useState<Invoice[]>(() => invoices.slice(20, 28));
+  const [loading, setLoading] = React.useState(false);
+  const [position, setPosition] = React.useState<string | null>("top");
+  const [indicator, setIndicator] = React.useState<string | null>("orbit");
+  const [message, setMessage] = React.useState<string | null>("default");
+  const timer = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  const run = (clear: boolean) => {
+    if (clear) setRows([]);
+    setLoading(true);
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => {
+      setRows(invoices.slice(20, 28).map((r) => ({ ...r, amount: r.amount + Math.round(Math.random() * 900) })));
+      setLoading(false);
+    }, 3000);
+  };
+  const cancel = () => {
+    clearTimeout(timer.current);
+    setLoading(false);
+    if (rows.length === 0) setRows(invoices.slice(20, 28));
+  };
+
+  const messages: Record<string, React.ReactNode> = {
+    default: true,
+    custom: "Importing 1,284 invoices from QuickBooks…",
+    rich: (
+      <span className="grid gap-0.5">
+        <span>Recalculating totals</span>
+        <span className="text-xs font-normal text-fg-muted">This takes about 10 seconds for large accounts.</span>
+      </span>
+    ),
+  };
+
+  return (
+    <div className="grid w-full gap-4">
+      <div className="grid gap-3">
+        <PillGroup value={message} onValueChange={setMessage} size="sm" aria-label="Overlay message">
+          <PillOption value="default">Default message</PillOption>
+          <PillOption value="custom">Your own text</PillOption>
+          <PillOption value="rich">Two lines</PillOption>
+        </PillGroup>
+        <PillGroup value={position} onValueChange={setPosition} size="sm" aria-label="Overlay position">
+          <PillOption value="top">Near the top</PillOption>
+          <PillOption value="center">Centered</PillOption>
+        </PillGroup>
+        <PillGroup value={indicator} onValueChange={setIndicator} size="sm" aria-label="Overlay indicator">
+          {["orbit", "spinner", "dots", "bars", "pulse"].map((v) => (
+            <PillOption key={v} value={v}>{v[0].toUpperCase() + v.slice(1)}</PillOption>
+          ))}
+        </PillGroup>
+      </div>
+      <DataTable
+        caption="Imported invoices"
+        data={rows}
+        columns={columns.filter((c) => ["no", "client", "due", "amount", "status"].includes(c.key))}
+        rowKey="id"
+        pageSize={0}
+        loading={loading}
+        loadingOverlay={messages[message ?? "default"]}
+        overlayPosition={(position ?? "top") as "top"}
+        overlayIndicator={(indicator ?? "orbit") as "orbit"}
+        onCancelLoading={cancel}
+        toolbar={
+          <>
+            <Button size="sm" variant="secondary" onClick={() => run(false)} disabled={loading}>Refresh</Button>
+            <Button size="sm" variant="secondary" onClick={() => run(true)} disabled={loading}>Load from scratch</Button>
+          </>
+        }
+      />
+    </div>
+  );
+}
+
 export function TablePage() {
   const [empty, setEmpty] = React.useState(false);
   return (
@@ -412,6 +486,26 @@ return Invoice::query()
 <DataTable refreshIndicator="border" | "bar" | "shimmer" | "none" … />`}
       >
         <RefreshDemo />
+      </Section>
+
+      <Section
+        title="Loading overlay"
+        desc="For loads that take a while — imports, recalculations — cover the table with a clear message. The rows behind dim and can't be clicked until it's done. By default the message sits near the top and stays in view as you scroll a long table. Add onCancelLoading for a Cancel button. Try Refresh and Load from scratch."
+        code={`
+// Default messages: "Loading rows…" / "Refreshing rows…"
+<DataTable loading={isLoading} loadingOverlay … />
+
+// Your own message, position, indicator and a Cancel button
+<DataTable
+  loading={isImporting}
+  loadingOverlay="Importing 1,284 invoices from QuickBooks…"
+  overlayPosition="top"          // or "center"
+  overlayIndicator="orbit"       // spinner, dots, bars, pulse
+  onCancelLoading={() => abortController.abort()}
+  …
+/>`}
+      >
+        <OverlayDemo />
       </Section>
 
       <Section
