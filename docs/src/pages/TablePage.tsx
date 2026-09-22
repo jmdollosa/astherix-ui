@@ -221,17 +221,78 @@ function RefreshDemo() {
         loading={loading}
         refreshIndicator={(style ?? "border") as "border"}
         onRefresh={refresh}
+        status
+        lastUpdated={updated}
         toolbar={
           <>
-            <Text size="sm" tone="muted" numeric>
-              {updated ? `Updated ${updated.toLocaleTimeString("en-PH", { hour: "numeric", minute: "2-digit", second: "2-digit" })}` : "Not refreshed yet"}
-            </Text>
             <Button size="sm" variant={live ? "primary" : "secondary"} onClick={() => setLive((l) => !l)} aria-pressed={live}>
               {live ? <Pill size="sm" tone="danger" appearance="solid" dot="pulse" className="-ms-1">Live</Pill> : "Go live"}
             </Button>
           </>
         }
       />
+    </div>
+  );
+}
+
+function StatusDemo() {
+  const [mode, setMode] = React.useState<string | null>("auto");
+  const [failing, setFailing] = React.useState(false);
+  const [error, setError] = React.useState<string>();
+  const [loading, setLoading] = React.useState(false);
+
+  const refresh = async () => {
+    setError(undefined);
+    await new Promise((r) => setTimeout(r, 1800));
+    if (failing) setError("Couldn't reach the server. Showing the rows from 9:40 AM.");
+  };
+
+  const statusFor: Record<string, React.ComponentProps<typeof DataTable>["status"]> = {
+    auto: true,
+    custom: "Showing invoices for September 2026 · amounts include VAT",
+    fn: ({ refreshing, total }) => (refreshing ? `Checking ${total} invoices for new payments…` : `${total} invoices · 2 need attention`),
+  };
+
+  return (
+    <div className="grid w-full gap-4">
+      <div className="flex flex-wrap items-center gap-3">
+        <PillGroup value={mode} onValueChange={setMode} size="sm" aria-label="Status message">
+          <PillOption value="auto">Automatic</PillOption>
+          <PillOption value="custom">Your own text</PillOption>
+          <PillOption value="fn">From the state</PillOption>
+        </PillGroup>
+        <label className="flex items-center gap-2 text-sm text-fg-muted">
+          <input type="checkbox" className="size-4 accent-[color:var(--color-danger)]" checked={failing} onChange={(e) => setFailing(e.target.checked)} />
+          Make the next refresh fail
+        </label>
+      </div>
+      <DataTable
+        caption="Invoices with status"
+        data={invoices.slice(10, 15)}
+        columns={columns.filter((c) => ["no", "client", "amount", "status"].includes(c.key))}
+        rowKey="id"
+        pageSize={0}
+        loading={loading}
+        onRefresh={refresh}
+        status={statusFor[mode ?? "auto"]}
+        statusTone={mode === "custom" ? "info" : undefined}
+        error={error}
+        density="compact"
+      />
+      <div>
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={async () => {
+            setError(undefined);
+            setLoading(true);
+            await new Promise((r) => setTimeout(r, 1500));
+            setLoading(false);
+          }}
+        >
+          Simulate loading from the parent
+        </Button>
+      </div>
     </div>
   );
 }
@@ -351,6 +412,33 @@ return Invoice::query()
 <DataTable refreshIndicator="border" | "bar" | "shimmer" | "none" … />`}
       >
         <RefreshDemo />
+      </Section>
+
+      <Section
+        title="Status messages"
+        desc={
+          <>
+            Add <code className="font-mono text-[0.8125rem]">status</code> for a live caption across the top of the
+            table. On its own it tells people what's happening — “Fetching the latest rows…”, then “Updated just now”
+            (which ages to “2 minutes ago”). Pass your own text, work it out from the table's state, or show an error
+            with a Retry link. Tick “Make the next refresh fail” and press refresh to see the error.
+          </>
+        }
+        code={`
+// Automatic: loading, refreshing, "Updated 2 minutes ago", errors
+<DataTable status onRefresh={reload} error={loadError} … />
+
+// Your own message and color
+<DataTable status="Showing cached data from this morning" statusTone="warning" … />
+
+// From the table's state (return null to hide it)
+<DataTable
+  status={({ refreshing, total, lastUpdated, error }) =>
+    refreshing ? \`Checking \${total} invoices for new payments…\` : \`\${total} invoices · 2 need attention\`}
+  …
+/>`}
+      >
+        <StatusDemo />
       </Section>
 
       <Section

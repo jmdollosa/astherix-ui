@@ -3,7 +3,7 @@ import { cn } from "../../lib/cn";
 import { Input } from "../input/Input";
 import { Button } from "../button/Button";
 import { Select } from "../select/Select";
-import { Skeleton } from "../activity/Activity";
+import { Skeleton, ActivityIndicator } from "../activity/Activity";
 
 /*
  * DataTable — a light take on DataTables: sorting, search, pagination, row selection
@@ -41,6 +41,14 @@ export interface DataTableColumn<T> {
 }
 
 export type SortState = { key: string; direction: "asc" | "desc" } | null;
+export type DataTableStatusState = {
+  loading: boolean;
+  refreshing: boolean;
+  lastUpdated: Date | null;
+  error: React.ReactNode;
+  total: number;
+};
+
 export type DataTableQuery = { page: number; pageSize: number; sort: SortState; search: string };
 
 export interface DataTableProps<T> {
@@ -84,6 +92,20 @@ export interface DataTableProps<T> {
   refreshIndicator?: "border" | "bar" | "shimmer" | "none";
   /** Adds a refresh button to the toolbar. Return a Promise; the indicator runs until it settles. */
   onRefresh?: () => Promise<unknown> | void;
+  /**
+   * A status line at the top of the table, like a live caption.
+   * - true: automatic messages — "Loading rows…", "Fetching the latest rows…",
+   *   "Updated 2 minutes ago", or the error
+   * - a message (text or content) to show your own, e.g. "Showing cached data"
+   * - a function that gets the table's state and returns a message (or null to hide)
+   */
+  status?: boolean | React.ReactNode | ((state: DataTableStatusState) => React.ReactNode);
+  /** Color of a custom status message. Automatic messages pick their own. */
+  statusTone?: "neutral" | "info" | "success" | "warning" | "danger";
+  /** An error to show in the status line (e.g. the last refresh failed). Offers Retry with onRefresh. */
+  error?: React.ReactNode;
+  /** When the data was last loaded, if you track it. Otherwise the table notes when a refresh finishes. */
+  lastUpdated?: Date | null;
   /** Shown when there are no rows (and when a search finds nothing). */
   emptyState?: React.ReactNode;
 
@@ -204,6 +226,95 @@ function RefreshShimmer() {
   );
 }
 
+/* ---------- status line ---------- */
+
+function timeAgo(date: Date) {
+  const seconds = Math.round((Date.now() - date.getTime()) / 1000);
+  if (seconds < 45) return "just now";
+  const rtf = new Intl.RelativeTimeFormat(undefined, { numeric: "auto" });
+  const minutes = Math.round(seconds / 60);
+  if (minutes < 60) return rtf.format(-minutes, "minute");
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return rtf.format(-hours, "hour");
+  return rtf.format(-Math.round(hours / 24), "day");
+}
+
+const statusToneClass = {
+  neutral: "text-fg-muted",
+  info: "text-info",
+  success: "text-success",
+  warning: "text-warning",
+  danger: "text-danger",
+} as const;
+
+type ResolvedStatus = { message: React.ReactNode; tone: keyof typeof statusToneClass; icon: "error" | "busy" | "done" | null; spinner: boolean };
+
+/** Work out what the status line should say (or null to hide it). */
+function resolveStatus(
+  status: DataTableProps<unknown>["status"],
+  tone: keyof typeof statusToneClass | undefined,
+  state: DataTableStatusState,
+  justRefreshed: boolean
+): ResolvedStatus | null {
+  if (!status) return null;
+  const hasError = state.error !== undefined && state.error !== null && state.error !== false && state.error !== "";
+  const busy = state.loading || state.refreshing;
+
+  let auto: React.ReactNode = null;
+  let autoTone: keyof typeof statusToneClass = "neutral";
+  if (hasError) {
+    auto = state.error;
+    autoTone = "danger";
+  } else if (state.loading) auto = "Loading rows…";
+  else if (state.refreshing) auto = "Fetching the latest rows…";
+  else if (state.lastUpdated) {
+    auto = `Updated ${timeAgo(state.lastUpdated)}`;
+    autoTone = justRefreshed ? "success" : "neutral";
+  }
+
+  const custom = typeof status === "function" ? status(state) : status === true ? undefined : status;
+  const message = custom !== undefined ? custom : auto;
+  if (message === null || message === undefined || message === false || message === "") return null;
+  return {
+    message,
+    tone: custom !== undefined ? (tone ?? (hasError ? "danger" : "neutral")) : autoTone,
+    icon: hasError ? "error" : busy ? "busy" : state.lastUpdated && custom === undefined ? "done" : null,
+    spinner: state.loading,
+  };
+}
+
+function StatusLine({ resolved, onRetry, cards }: { resolved: ResolvedStatus; onRetry?: () => void; cards: boolean }) {
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      className={cn(
+        "flex min-h-9 items-center gap-2 rounded-t-card border border-border bg-secondary-hover/45 px-4 py-1.5 text-[0.8125rem]",
+        cards && "@max-[40rem]:mb-3 @max-[40rem]:rounded-card",
+        statusToneClass[resolved.tone]
+      )}
+    >
+      {resolved.icon === "error" ? (
+        <svg viewBox="0 0 16 16" aria-hidden="true" className="size-3.5 shrink-0" fill="currentColor">
+          <path d="M8 1.5a6.5 6.5 0 1 1 0 13 6.5 6.5 0 0 1 0-13Zm0 3a.75.75 0 0 0-.75.75v3a.75.75 0 0 0 1.5 0v-3A.75.75 0 0 0 8 4.5Zm0 6.25a.85.85 0 1 0 0 1.7.85.85 0 0 0 0-1.7Z" />
+        </svg>
+      ) : resolved.icon === "busy" ? (
+        <ActivityIndicator variant={resolved.spinner ? "spinner" : "dots"} size="xs" tone="current" label="" aria-hidden="true" role={undefined} />
+      ) : resolved.icon === "done" ? (
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="size-3.5 shrink-0">
+          <path d="M3.5 8.5l3 3 6-7" />
+        </svg>
+      ) : null}
+      <span className="min-w-0 flex-1 truncate">{resolved.message}</span>
+      {resolved.icon === "error" && onRetry && (
+        <button type="button" onClick={onRetry} className="shrink-0 cursor-pointer font-medium underline underline-offset-2 hover:no-underline">
+          Retry
+        </button>
+      )}
+    </div>
+  );
+}
+
 /* ---------- component ---------- */
 
 export function DataTable<T>({
@@ -227,6 +338,10 @@ export function DataTable<T>({
   loading = false,
   refreshIndicator = "border",
   onRefresh,
+  status,
+  statusTone,
+  error,
+  lastUpdated: lastUpdatedProp,
   emptyState,
   density = "comfortable",
   striped = false,
@@ -327,6 +442,24 @@ export function DataTable<T>({
     wasRefreshing.current = refreshing;
   }, [refreshing]);
 
+  // When the rows were last (re)loaded — from the prop, or noted when a refresh or load ends.
+  const [trackedUpdated, setTrackedUpdated] = React.useState<Date | null>(null);
+  const wasBusy = React.useRef(loading);
+  React.useEffect(() => {
+    const busy = loading || refreshingByButton;
+    if (wasBusy.current && !busy) setTrackedUpdated(new Date());
+    wasBusy.current = busy;
+  }, [loading, refreshingByButton]);
+  const lastUpdated = lastUpdatedProp !== undefined ? lastUpdatedProp : trackedUpdated;
+
+  // Re-render every 30s so "Updated 2 minutes ago" stays true.
+  const [, setTick] = React.useState(0);
+  React.useEffect(() => {
+    if (!status || !lastUpdated) return;
+    const t = window.setInterval(() => setTick((n) => n + 1), 30000);
+    return () => window.clearInterval(t);
+  }, [status, lastUpdated]);
+
   const frameRef = React.useRef<HTMLDivElement>(null);
   const [radius, setRadius] = React.useState(12);
   React.useLayoutEffect(() => {
@@ -345,6 +478,12 @@ export function DataTable<T>({
   };
 
   const cards = mobile === "cards";
+  const resolvedStatus = resolveStatus(
+    status as DataTableProps<unknown>["status"],
+    statusTone,
+    { loading: loading && paged.length === 0, refreshing, lastUpdated, error, total: totalRows },
+    justRefreshed
+  );
   const pad = density === "compact" ? "px-3 py-2" : "px-4 py-3";
   const primaryCol = columns.find((c) => c.primary) ?? columns[0];
   const colCount = columns.length + (selectable ? 1 : 0) + (rowActions ? 1 : 0);
@@ -427,13 +566,17 @@ export function DataTable<T>({
       {refreshing && refreshIndicator === "border" && <RunningBorder radius={radius} />}
       {refreshing && refreshIndicator === "bar" && <RefreshBar />}
       {refreshing && refreshIndicator === "shimmer" && <RefreshShimmer />}
-      <span className="sr-only" aria-live="polite">
-        {refreshing ? `Refreshing ${caption.toLowerCase()}…` : justRefreshed ? `${caption} updated.` : ""}
-      </span>
+      {!resolvedStatus && (
+        <span className="sr-only" aria-live="polite">
+          {refreshing ? `Refreshing ${caption.toLowerCase()}…` : justRefreshed ? `${caption} updated.` : ""}
+        </span>
+      )}
+      {resolvedStatus && <StatusLine resolved={resolvedStatus} cards={cards} onRetry={onRefresh ? () => void runRefresh() : undefined} />}
       <div
         ref={frameRef}
         className={cn(
           "relative overflow-auto rounded-card border border-border bg-surface",
+          resolvedStatus && "rounded-t-none border-t-0",
           cards && "@max-[40rem]:overflow-visible @max-[40rem]:border-0 @max-[40rem]:bg-transparent",
           justRefreshed && refreshIndicator !== "none" && "animate-[ui-refresh-done_750ms_ease-out] motion-reduce:animate-none"
         )}

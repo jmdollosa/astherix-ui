@@ -456,7 +456,9 @@ Table: `caption` (required, accessible name), `showCaption`, `searchable`, `sear
 `pageSize` (0 = all), `pageSizeOptions`, `defaultSort`, `selectable`, `selected` /
 `onSelectedChange`, `bulkActions`, `rowActions`, `onRowClick`, `toolbar`, `loading`,
 `refreshIndicator` (`border` `bar` `shimmer` `none`), `onRefresh` (adds a refresh button; runs
-until its Promise settles), `emptyState`, `density` (`comfortable` `compact`), `striped`, `mobile` (`cards` `scroll`),
+until its Promise settles), `status` (`true` for automatic messages, your own text, or
+`(state) => message`), `statusTone`, `error` (shown in the status line with Retry),
+`lastUpdated`, `emptyState`, `density` (`comfortable` `compact`), `striped`, `mobile` (`cards` `scroll`),
 `maxHeight`, `manual`, `total`, `onQueryChange`.
 Narrow containers (under 40rem) switch to cards via a container query, so it adapts inside
 sidebars and cards as well as on phones.
