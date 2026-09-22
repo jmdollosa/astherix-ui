@@ -311,19 +311,36 @@ export function ProgressRing({
 /* ---------- Skeleton ---------- */
 
 export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** "rect" (default), "circle", or "text" lines. */
-  shape?: "rect" | "circle" | "text";
+  /** "rect" (default), "circle", "text" lines, "pill" or "line" (a thin rounded bar). */
+  shape?: "rect" | "circle" | "text" | "pill" | "line";
   /** Number of lines for shape="text". The last line is shorter. */
   lines?: number;
+  /** Width of the last text line. Default "62%". */
+  lastLineWidth?: string;
+  /** Size shortcuts — or use classes (className="h-24 w-full"). */
+  width?: number | string;
+  height?: number | string;
+  /** Rounded corners: a CSS radius, e.g. "0.75rem". */
+  radius?: string;
+  /** "shimmer" (default), "pulse" (a gentle fade) or "none". */
+  animation?: "shimmer" | "pulse" | "none";
+  /** Start the shimmer a little later, so a stack of rows ripples. In ms. */
+  delay?: number;
 }
 
 /** Placeholder shapes while content loads. Size it with classes, e.g. className="h-24 w-full". */
-export function Skeleton({ shape = "rect", lines = 3, className, ...props }: SkeletonProps) {
+export function Skeleton({ shape = "rect", lines = 3, lastLineWidth = "62%", width, height, radius, animation = "shimmer", delay, className, style, ...props }: SkeletonProps) {
+  const anim = cn(animation === "shimmer" && "ui-skeleton", animation === "pulse" && "ui-skeleton-pulse", animation === "none" && "ui-skeleton-still");
+  const base = { ...(width !== undefined ? { width } : {}), ...(height !== undefined ? { height } : {}), ...(radius ? { borderRadius: radius } : {}), ...(delay ? { animationDelay: `${delay}ms` } : {}), ...style };
   if (shape === "text") {
     return (
-      <div aria-hidden="true" className={cn("grid w-full gap-2", className)} {...props}>
+      <div aria-hidden="true" className={cn("grid w-full gap-2", className)} style={{ ...(width !== undefined ? { width } : {}), ...style }} {...props}>
         {Array.from({ length: lines }, (_, i) => (
-          <div key={i} className="ui-skeleton h-3 rounded-full" style={{ width: i === lines - 1 && lines > 1 ? "62%" : "100%" }} />
+          <div
+            key={i}
+            className={cn(anim, "h-3 rounded-full")}
+            style={{ width: i === lines - 1 && lines > 1 ? lastLineWidth : "100%", ...(delay !== undefined ? { animationDelay: `${delay + i * 90}ms` } : { animationDelay: `${i * 90}ms` }) }}
+          />
         ))}
       </div>
     );
@@ -331,7 +348,8 @@ export function Skeleton({ shape = "rect", lines = 3, className, ...props }: Ske
   return (
     <div
       aria-hidden="true"
-      className={cn("ui-skeleton", shape === "circle" ? "aspect-square rounded-full" : "rounded-control", className)}
+      className={cn(anim, shape === "circle" ? "aspect-square rounded-full" : shape === "pill" ? "rounded-full" : shape === "line" ? "h-3 rounded-full" : "rounded-control", className)}
+      style={base}
       {...props}
     />
   );

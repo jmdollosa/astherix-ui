@@ -198,3 +198,27 @@ export { IconButton } from "./components/button/IconButton";
 export type { IconButtonProps, IconButtonTone } from "./components/button/IconButton";
 export { SpotlightText } from "./components/animated/SpotlightText";
 export type { SpotlightTextProps } from "./components/animated/SpotlightText";
+export {
+  SkeletonText,
+  SkeletonAvatar,
+  SkeletonButton,
+  SkeletonImage,
+  SkeletonCard,
+  SkeletonList,
+  SkeletonTable,
+  SkeletonChart,
+  SkeletonSwap,
+  useDelayedLoading,
+} from "./components/animated/Skeletons";
+export type {
+  SkeletonTextProps,
+  SkeletonAvatarProps,
+  SkeletonButtonProps,
+  SkeletonImageProps,
+  SkeletonCardProps,
+  SkeletonListProps,
+  SkeletonTableProps,
+  SkeletonChartProps,
+  SkeletonSwapProps,
+  UseDelayedLoadingOptions,
+} from "./components/animated/Skeletons";

@@ -798,6 +798,25 @@ your app to re-brand without rebuilding:
 
 ## Animated components
 
+### Skeleton
+
+```tsx
+<SkeletonSwap loading={isLoading} skeleton={<SkeletonCard media footer />} label="Loading the invoice">
+  <Invoice … />
+</SkeletonSwap>
+
+<SkeletonList rows={5} />   <SkeletonTable rows={5} columns={4} />   <SkeletonChart variant="bars" />
+<SkeletonText lines={3} />  <SkeletonAvatar size="lg" />  <SkeletonButton />  <SkeletonImage ratio="4/3" />
+<Skeleton width={140} height={28} radius="999px" animation="pulse" delay={120} />
+```
+
+`Skeleton`: `shape` (`rect` `circle` `text` `pill` `line`), `lines`, `lastLineWidth`, `width`,
+`height`, `radius`, `animation` (`shimmer` `pulse` `none`), `delay` (stagger). Presets ripple down
+stacks of rows. `SkeletonSwap`: `loading`, `skeleton`, `label`, `delay` (180ms before showing —
+quick loads never flash one), `minDuration` (500ms minimum once shown), `fade`;
+`useDelayedLoading(loading, { delay, minDuration })` for your own markup. Decorative shapes are
+hidden from screen readers; reduced motion turns the shimmer into a slow fade.
+
 ### SpotlightText
 
 Text lit by a moving spotlight — the lit part glows, the rest sits in shadow.

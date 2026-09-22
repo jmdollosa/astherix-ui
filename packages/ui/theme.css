@@ -524,7 +524,17 @@
     background-repeat: no-repeat;
     animation: ui-shimmer 1.5s ease-in-out infinite;
   }
+  .ui-skeleton-pulse {
+    background-color: var(--color-secondary-hover);
+    animation: ui-breathe 1.8s ease-in-out infinite;
+  }
+  .ui-skeleton-still {
+    background-color: var(--color-secondary-hover);
+  }
   @media (prefers-reduced-motion: reduce) {
+    .ui-skeleton-pulse {
+      animation: ui-breathe 2.6s ease-in-out infinite;
+    }
     .ui-skeleton {
       background-image: none;
       animation: ui-breathe 2s ease-in-out infinite;
