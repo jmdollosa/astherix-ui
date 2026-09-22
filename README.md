@@ -13,6 +13,7 @@ packages/ui/
   src/components/input/  Field, Input, Textarea
   src/components/modal/  Modal
   src/components/select/ Select
+  src/components/tabs/   Tabs
 docs/                    User guide
   index.html             Built guide — open it in any browser, works offline
   src/main.tsx           Navigation and page list
@@ -315,6 +316,27 @@ Built on the native `<dialog>`: focus moves in on open (honours `autoFocus`) and
 to the opener on close, Tab stays inside, the page behind is inert and doesn't scroll.
 Theme tokens: `--radius-modal`, `--ui-shadow-modal`, `--ui-backdrop`, `--ui-backdrop-dark`,
 `--ui-backdrop-blur`, `--ui-backdrop-blur-radius`, `--ui-backdrop-solid`.
+
+## Tabs
+
+```tsx
+<Tabs defaultValue="overview" orientation="horizontal" variant="line">
+  <TabList aria-label="Project">
+    <Tab value="overview">Overview</Tab>
+    <Tab value="billing" disabled>Billing</Tab>
+  </TabList>
+  <TabPanel value="overview">…</TabPanel>
+</Tabs>
+
+// Editable: drag or Alt+arrows to move, double-click/F2 to rename, + to add, ×/Delete to close
+<TabList onReorder={(ids) => …} onRename={(id, name) => …} onAdd={() => newId} onClose={(id) => …} renameOnAdd>
+```
+
+`Tabs`: `value` / `defaultValue` / `onValueChange`, `orientation` (`horizontal` `vertical`),
+`variant` (`line` `enclosed` `pills`), `size` (`sm` `md`), `activation` (`automatic` `manual`).
+`TabList`: `onReorder`, `onRename`, `onAdd` (return the new value to select it), `addLabel`,
+`renameOnAdd`, `onClose`, `closeLabel`. `Tab`: `value`, `label`, `disabled`, `icon`, `badge`,
+`renamable`, `closable`. `TabPanel`: `value`, `keepMounted`.
 
 ## Theming
 
