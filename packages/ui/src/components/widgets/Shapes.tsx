@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn } from "../../lib/cn";
 import { renderIcon, type IconInput } from "../button/Button";
-import { DataTable, formatCompact, linearPath, monotonePath, seriesColor, useReducedMotion, useWidth } from "./chart-utils";
+import { DataTable, formatCompact, linearPath, monotonePath, seriesColor, useAnimate, useReducedMotion, useTweenedNumbers, useWidth } from "./chart-utils";
 
 /* DonutChart, Gauge, BarList, CalendarHeatmap and Sparkline. */
 
@@ -24,14 +24,19 @@ export interface DonutChartProps {
   centerLabel?: string;
   /** Legend beside ("side", default when there's room), "bottom", or none. */
   legend?: "side" | "bottom" | false;
+  /** Sweep in on first load. Default true (inside a DashboardGrid, follows its animate setting). */
+  animate?: boolean;
   "aria-label": string;
   className?: string;
 }
 
-export function DonutChart({ data, size = 180, thickness = 22, formatValue = formatCompact, centerLabel = "Total", legend = "side", className, ...rest }: DonutChartProps) {
-  const reduced = useReducedMotion();
+export function DonutChart({ data, size = 180, thickness = 22, formatValue = formatCompact, centerLabel = "Total", legend = "side", animate, className, ...rest }: DonutChartProps) {
+  const anim = useAnimate(animate);
   const [active, setActive] = React.useState<number | null>(null);
-  const total = data.reduce((s, d) => s + Math.max(0, d.value), 0);
+  // Slices sweep in from nothing on first load and glide when values change.
+  const tw = useTweenedNumbers(data.map((d) => Math.max(0, d.value)), { from: anim ? 0 : undefined, duration: 800 });
+  const realTotal = data.reduce((s, d) => s + Math.max(0, d.value), 0);
+  const total = Math.max(realTotal, tw.reduce((a, b) => a + b, 0));
   const r = (size - thickness) / 2;
   const c = 2 * Math.PI * r;
   const gap = data.length > 1 ? Math.min(4, c * 0.01) : 0; // small gaps between slices
@@ -44,7 +49,7 @@ export function DonutChart({ data, size = 180, thickness = 22, formatValue = for
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} role="img" aria-label={rest["aria-label"]} className="-rotate-90">
           <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--color-secondary-hover)" strokeWidth={thickness} />
           {data.map((d, i) => {
-            const len = total ? (Math.max(0, d.value) / total) * c : 0;
+            const len = total ? ((tw[i] ?? 0) / total) * c : 0;
             const seg = (
               <circle
                 key={d.label}
@@ -60,7 +65,6 @@ export function DonutChart({ data, size = 180, thickness = 22, formatValue = for
                 onPointerEnter={() => setActive(i)}
                 onPointerLeave={() => setActive(null)}
                 className="cursor-pointer transition-[stroke-width,opacity] duration-200"
-                style={reduced ? undefined : { animation: `ui-chart-fade 500ms ${i * 90}ms ease-out both` }}
               />
             );
             offset += len;
@@ -68,8 +72,11 @@ export function DonutChart({ data, size = 180, thickness = 22, formatValue = for
           })}
         </svg>
         <div className="pointer-events-none absolute inset-0 grid place-content-center text-center" aria-hidden="true">
-          <span className="text-2xl font-semibold tabular-nums tracking-[-0.02em] text-fg">{formatValue(shown ? shown.value : total)}</span>
-          <span className="text-xs text-fg-muted">{shown ? `${shown.label} · ${total ? Math.round((shown.value / total) * 100) : 0}%` : centerLabel}</span>
+          {/* Sized to fit the hole, so smaller donuts still leave space around the number. */}
+          <span className="font-semibold leading-tight tabular-nums tracking-[-0.02em] text-fg" style={{ fontSize: Math.max(14, Math.min(24, (size - thickness * 2) * 0.17)) }}>
+            {formatValue(shown ? shown.value : Math.round(tw.reduce((a, b) => a + b, 0)))}
+          </span>
+          <span className="text-xs text-fg-muted">{shown ? `${shown.label} · ${realTotal ? Math.round((shown.value / realTotal) * 100) : 0}%` : centerLabel}</span>
         </div>
       </div>
       {legend && (
@@ -87,12 +94,12 @@ export function DonutChart({ data, size = 180, thickness = 22, formatValue = for
               <span aria-hidden="true" className="size-2.5 shrink-0 rounded-[3px]" style={{ background: seriesColor(i, d.color) }} />
               <span className="min-w-0 flex-1 truncate text-fg-muted">{d.label}</span>
               <span className="tabular-nums font-medium text-fg">{formatValue(d.value)}</span>
-              <span className="w-10 text-end tabular-nums text-xs text-fg-muted">{total ? Math.round((d.value / total) * 100) : 0}%</span>
+              <span className="w-10 text-end tabular-nums text-xs text-fg-muted">{realTotal ? Math.round((d.value / realTotal) * 100) : 0}%</span>
             </li>
           ))}
         </ul>
       )}
-      <DataTable caption={rest["aria-label"]} columns={["Part", "Value", "Share"]} rows={data.map((d) => [d.label, formatValue(d.value), `${total ? Math.round((d.value / total) * 100) : 0}%`])} />
+      <DataTable caption={rest["aria-label"]} columns={["Part", "Value", "Share"]} rows={data.map((d) => [d.label, formatValue(d.value), `${realTotal ? Math.round((d.value / realTotal) * 100) : 0}%`])} />
     </div>
   );
 }
@@ -111,14 +118,18 @@ export interface GaugeProps {
   bands?: Array<{ upTo: number; color: string }>;
   /** Width in px. Default 220. */
   size?: number;
+  /** Sweep up from zero on first load. Default true (inside a DashboardGrid, follows its animate setting). */
+  animate?: boolean;
   "aria-label"?: string;
   className?: string;
 }
 
 /** A half-circle meter for attainment against a goal. */
-export function Gauge({ value, max, min = 0, target, label, formatValue = formatCompact, bands, size = 220, className, ...rest }: GaugeProps) {
-  const reduced = useReducedMotion();
-  const t = Math.min(1, Math.max(0, (value - min) / (max - min || 1)));
+export function Gauge({ value, max, min = 0, target, label, formatValue = formatCompact, bands, size = 220, animate, className, ...rest }: GaugeProps) {
+  const anim = useAnimate(animate);
+  // Sweeps up on first load and glides when the value changes.
+  const [tv] = useTweenedNumbers([value], { from: anim ? min : undefined, duration: 900 });
+  const t = Math.min(1, Math.max(0, (tv - min) / (max - min || 1)));
   const stroke = Math.round(size * 0.1);
   const r = size / 2 - stroke / 2 - 2;
   const cx = size / 2;
@@ -134,7 +145,7 @@ export function Gauge({ value, max, min = 0, target, label, formatValue = format
   };
   const color = bands?.find((b) => t <= b.upTo)?.color ?? bands?.[bands.length - 1]?.color ?? "var(--color-primary)";
   const tt = target !== undefined ? Math.min(1, Math.max(0, (target - min) / (max - min || 1))) : null;
-  const pct = Math.round(t * 100);
+  const pct = Math.round(Math.min(1, Math.max(0, (value - min) / (max - min || 1))) * 100);
 
   return (
     <div className={cn("grid justify-items-center gap-1", className)}>
@@ -157,9 +168,6 @@ export function Gauge({ value, max, min = 0, target, label, formatValue = format
           stroke={color}
           strokeWidth={stroke}
           strokeLinecap="round"
-          pathLength={1}
-          strokeDasharray={reduced ? undefined : "1"}
-          style={reduced ? undefined : { animation: "ui-chart-draw 1s cubic-bezier(0.3,1,0.4,1) both" }}
         />
         {tt !== null && (() => {
           const a = Math.PI * (1 - tt);
@@ -170,7 +178,7 @@ export function Gauge({ value, max, min = 0, target, label, formatValue = format
       </svg>
       {/* The number sits inside the arc; the caption goes underneath so it never touches the ends. */}
       <span className="absolute inset-x-0 bottom-1 text-center text-2xl font-semibold tabular-nums tracking-[-0.02em] text-fg" aria-hidden="true">
-        {formatValue(value)}
+        {formatValue(Math.round(tv))}
       </span>
       </div>
       <div className="grid justify-items-center text-center" aria-hidden="true">
@@ -203,23 +211,53 @@ export interface BarListProps {
   /** Show at most this many (a "Show all" button reveals the rest). */
   limit?: number;
   color?: string;
+  /** Grow the bars in on first load. Default true (inside a DashboardGrid, follows its animate setting). */
+  animate?: boolean;
   "aria-label"?: string;
   className?: string;
 }
 
-/** A ranked list with bars behind the labels — top clients, pages, products. */
-export function BarList({ items, formatValue = formatCompact, sort = true, limit, color = "var(--ui-chart-1)", className, ...rest }: BarListProps) {
+/** A ranked list with bars behind the labels — top clients, pages, products. Rows slide when the order changes. */
+export function BarList({ items, formatValue = formatCompact, sort = true, limit, color = "var(--ui-chart-1)", animate, className, ...rest }: BarListProps) {
+  const anim = useAnimate(animate);
+  const prefersReduced = useReducedMotion();
   const [all, setAll] = React.useState(false);
+  const [grown, setGrown] = React.useState(!anim);
+  React.useEffect(() => {
+    if (grown) return;
+    const r = requestAnimationFrame(() => setGrown(true));
+    return () => cancelAnimationFrame(r);
+  }, [grown]);
+
+  // FLIP: remember where each row was, and slide it from there to its new place.
+  const listRef = React.useRef<HTMLOListElement>(null);
+  const tops = React.useRef(new Map<string, number>());
+  React.useLayoutEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+    // Positions relative to the list (not the screen), so scrolling the page isn't mistaken for movement.
+    const origin = list.getBoundingClientRect().top;
+    const rows = [...list.querySelectorAll<HTMLElement>("[data-row]")];
+    rows.forEach((el) => {
+      const key = el.dataset.row!;
+      const now = el.getBoundingClientRect().top - origin;
+      const before = tops.current.get(key);
+      if (before !== undefined && before !== now && !prefersReduced) {
+        el.animate([{ transform: `translateY(${before - now}px)` }, { transform: "translateY(0)" }], { duration: 450, easing: "cubic-bezier(0.2,0.9,0.3,1)" });
+      }
+      tops.current.set(key, now);
+    });
+  });
   const list = sort ? [...items].sort((a, b) => b.value - a.value) : items;
   const shown = limit && !all ? list.slice(0, limit) : list;
   const max = Math.max(1, ...list.map((i) => i.value));
   return (
     <div className={cn("grid gap-2", className)}>
-      <ol className="grid gap-1.5" aria-label={rest["aria-label"]}>
+      <ol ref={listRef} className="grid gap-1.5" aria-label={rest["aria-label"]}>
         {shown.map((it) => {
           const Row = it.href ? "a" : "div";
           return (
-            <li key={it.label}>
+            <li key={it.label} data-row={it.label}>
               <Row
                 {...(it.href ? { href: it.href } : {})}
                 className={cn("relative flex h-8 items-center gap-2 overflow-hidden rounded-control-sm px-2.5 text-sm", it.href && "outline-none hover:bg-secondary-hover focus-visible:outline-2 focus-visible:outline-ring")}
@@ -227,7 +265,7 @@ export function BarList({ items, formatValue = formatCompact, sort = true, limit
                 <span
                   aria-hidden="true"
                   className="absolute inset-y-0 start-0 rounded-control-sm transition-[width] duration-500 ease-out"
-                  style={{ width: `${(it.value / max) * 100}%`, background: `color-mix(in srgb, ${color} 16%, transparent)` }}
+                  style={{ width: grown ? `${(it.value / max) * 100}%` : "0%", background: `color-mix(in srgb, ${color} 16%, transparent)` }}
                 />
                 {it.icon && <span className="relative text-fg-muted [&_svg]:size-4">{renderIcon(it.icon)}</span>}
                 <span className="relative min-w-0 flex-1 truncate text-fg">{it.label}</span>
@@ -356,8 +394,9 @@ export interface SparklineProps {
 }
 
 /** A tiny chart for trends inside cards and tables. */
-export function Sparkline({ data, type = "line", color = "var(--ui-chart-1)", height = 36, showLast = true, className, ...rest }: SparklineProps) {
+export function Sparkline({ data: target, type = "line", color = "var(--ui-chart-1)", height = 36, showLast = true, className, ...rest }: SparklineProps) {
   const [ref, w] = useWidth<HTMLDivElement>();
+  const data = useTweenedNumbers(target, { duration: 500 });
   const gid = React.useId().replace(/:/g, "");
   // Bars start from zero so their heights stay honest; lines use the data's own range.
   const min = type === "bar" ? Math.min(0, ...data) : Math.min(...data);

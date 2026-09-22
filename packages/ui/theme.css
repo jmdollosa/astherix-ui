@@ -722,3 +722,35 @@
     opacity: 0;
   }
 }
+
+/* Dashboard: widgets rise in one after another on first load (DashboardGrid animate). */
+@keyframes ui-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+}
+@layer components {
+  @media (prefers-reduced-motion: no-preference) {
+    .ui-dash-enter > * {
+      animation: ui-rise 560ms cubic-bezier(0.2, 0.9, 0.3, 1) both;
+    }
+    .ui-dash-enter > :nth-child(2) { animation-delay: 60ms; }
+    .ui-dash-enter > :nth-child(3) { animation-delay: 120ms; }
+    .ui-dash-enter > :nth-child(4) { animation-delay: 180ms; }
+    .ui-dash-enter > :nth-child(5) { animation-delay: 240ms; }
+    .ui-dash-enter > :nth-child(6) { animation-delay: 300ms; }
+    .ui-dash-enter > :nth-child(7) { animation-delay: 360ms; }
+    .ui-dash-enter > :nth-child(8) { animation-delay: 420ms; }
+    .ui-dash-enter > :nth-child(n + 9) { animation-delay: 480ms; }
+  }
+}
+/* A KPI value glows briefly when it changes (live updates). */
+@keyframes ui-kpi-flash {
+  0% {
+    background-color: color-mix(in srgb, var(--kpi-flash, var(--color-primary)) 18%, transparent);
+  }
+  100% {
+    background-color: transparent;
+  }
+}

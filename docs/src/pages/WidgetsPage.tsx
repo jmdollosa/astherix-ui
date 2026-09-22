@@ -11,6 +11,9 @@ import {
   BarList,
   CalendarHeatmap,
   Sparkline,
+  LiveIndicator,
+  Switch,
+  Avatar,
   PillGroup,
   PillOption,
   Button,
@@ -64,6 +67,8 @@ const clients = [
 function Dashboard() {
   const [range, setRange] = React.useState<string | null>("12");
   const [loading, setLoading] = React.useState(false);
+  const [animate, setAnimate] = React.useState(true);
+  const [run, setRun] = React.useState(0);
   const data = revenue.slice(-Number(range ?? 12));
   const reload = () => {
     setLoading(true);
@@ -72,14 +77,17 @@ function Dashboard() {
   return (
     <div className="grid w-full gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-fg-muted">A billing dashboard built only from these widgets.</p>
-        <Button size="sm" variant="secondary" leadingIcon="bi bi-arrow-clockwise" onClick={reload}>Show loading state</Button>
+        <Switch size="sm" variant="mark" label="Animate on load" checked={animate} onCheckedChange={(on) => { setAnimate(on); setRun((r) => r + 1); }} />
+        <div className="flex gap-2">
+          <Button size="sm" variant="secondary" leadingIcon="bi bi-play" onClick={() => setRun((r) => r + 1)}>Replay</Button>
+          <Button size="sm" variant="secondary" leadingIcon="bi bi-arrow-clockwise" onClick={reload}>Show loading</Button>
+        </div>
       </div>
-      <DashboardGrid columns={4}>
-        <KpiCard label="Revenue this month" value={peso(318400)} change={8.2} changeLabel="vs August" icon="bi bi-graph-up-arrow" sparkline={revenue.map((r) => r.invoiced)} loading={loading} />
-        <KpiCard label="Outstanding" value={peso(86400)} change={-4.1} invertTrend changeLabel="vs August" icon="bi bi-hourglass-split" sparkline={[120, 132, 118, 110, 104, 98, 96, 91, 94, 90, 88, 86]} loading={loading} />
+      <DashboardGrid key={run} columns={4} animate={animate}>
+        <KpiCard label="Revenue this month" value={318400} formatValue={peso} change={8.2} changeLabel="vs August" icon="bi bi-graph-up-arrow" sparkline={revenue.map((r) => r.invoiced)} loading={loading} />
+        <KpiCard label="Outstanding" value={86400} formatValue={peso} change={-4.1} invertTrend changeLabel="vs August" icon="bi bi-hourglass-split" sparkline={[120, 132, 118, 110, 104, 98, 96, 91, 94, 90, 88, 86]} loading={loading} />
         <KpiCard label="Average days to pay" value="18 days" change={6} invertTrend changeLabel="slower than August" icon="bi bi-clock-history" sparkline={[22, 21, 20, 19, 18, 17, 17, 16, 16, 17, 17, 18]} sparklineType="bar" loading={loading} />
-        <KpiCard label="Quarter target" value={peso(812000)} icon="bi bi-bullseye" progress={{ value: 0.78, label: "78% of ₱1.04M · 9 days left" }} loading={loading} />
+        <KpiCard label="Quarter target" value={812000} formatValue={peso} icon="bi bi-bullseye" progress={{ value: 0.78, label: "78% of ₱1.04M · 9 days left" }} loading={loading} />
 
         <WidgetCard
           data-span="3"
@@ -149,6 +157,120 @@ function Dashboard() {
   );
 }
 
+
+/* ---------- Live demo: a simulated stream of payments ---------- */
+
+type Payment = { id: number; client: string; amount: number; method: "GCash" | "Card" | "Bank"; at: number };
+const liveClients = ["Luzon Freight", "Bayanihan Build", "Northwind Traders", "Northgate Clinic", "Blue Harbor Café", "Mabuhay Tours", "Pixel & Pine", "Kape Kultura"];
+const METHODS: Payment["method"][] = ["GCash", "Card", "Bank"];
+
+function useFakePaymentStream(running: boolean, speed: number) {
+  const [payments, setPayments] = React.useState<Payment[]>([]);
+  const [buckets, setBuckets] = React.useState<Array<{ time: string; amount: number; count: number }>>(() => {
+    const now = Date.now();
+    return Array.from({ length: 12 }, (_, i) => {
+      const t = new Date(now - (11 - i) * 10000);
+      return { time: t.toLocaleTimeString([], { minute: "2-digit", second: "2-digit" }), amount: Math.round(8000 + Math.random() * 30000), count: 1 + Math.floor(Math.random() * 4) };
+    });
+  });
+  const [updatedAt, setUpdatedAt] = React.useState(Date.now());
+  const id = React.useRef(0);
+
+  // A new payment every so often…
+  React.useEffect(() => {
+    if (!running) return;
+    const t = window.setInterval(() => {
+      const p: Payment = {
+        id: ++id.current,
+        client: liveClients[Math.floor(Math.random() ** 1.6 * liveClients.length)],
+        amount: Math.round((500 + Math.random() * 24500) / 50) * 50,
+        method: METHODS[Math.floor(Math.random() ** 0.8 * 3)],
+        at: Date.now(),
+      };
+      setPayments((ps) => [p, ...ps].slice(0, 200));
+      setBuckets((bs) => {
+        const next = [...bs];
+        const last = next[next.length - 1];
+        next[next.length - 1] = { ...last, amount: last.amount + p.amount, count: last.count + 1 };
+        return next;
+      });
+      setUpdatedAt(Date.now());
+    }, 1400 / speed);
+    return () => window.clearInterval(t);
+  }, [running, speed]);
+
+  // …and the chart window slides along every 10 seconds (faster when sped up).
+  React.useEffect(() => {
+    if (!running) return;
+    const t = window.setInterval(() => {
+      setBuckets((bs) => [...bs.slice(1), { time: new Date().toLocaleTimeString([], { minute: "2-digit", second: "2-digit" }), amount: 0, count: 0 }]);
+    }, 10000 / speed);
+    return () => window.clearInterval(t);
+  }, [running, speed]);
+
+  return { payments, buckets, updatedAt };
+}
+
+function LiveDashboard() {
+  const [running, setRunning] = React.useState(true);
+  const [fast, setFast] = React.useState(false);
+  const { payments, buckets, updatedAt } = useFakePaymentStream(running, fast ? 3 : 1);
+  const base = 184250; // collected earlier today
+  const collected = base + payments.reduce((s, p) => s + p.amount, 0);
+  const count = 41 + payments.length;
+  const byMethod = METHODS.map((m, i) => ({ label: m, value: [52000, 38000, 21000][i] + payments.filter((p) => p.method === m).reduce((s, p) => s + p.amount, 0) }));
+  const byClient = liveClients.map((c, i) => ({ label: c, value: [48000, 36000, 30000, 22000, 18000, 12000, 9000, 6000][i] + payments.filter((p) => p.client === c).reduce((s, p) => s + p.amount, 0) }));
+
+  return (
+    <div className="grid w-full gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <LiveIndicator updatedAt={updatedAt} paused={!running} />
+        <div className="flex gap-2">
+          <Button size="sm" variant="secondary" leadingIcon={running ? "bi bi-pause" : "bi bi-play"} onClick={() => setRunning((r) => !r)}>
+            {running ? "Pause" : "Resume"}
+          </Button>
+          <Button size="sm" variant={fast ? "primary" : "secondary"} leadingIcon="bi bi-fast-forward" onClick={() => setFast((f) => !f)}>
+            {fast ? "Fast" : "Normal speed"}
+          </Button>
+        </div>
+      </div>
+      <DashboardGrid columns={4}>
+        <KpiCard label="Collected today" value={collected} formatValue={peso} icon="bi bi-cash-coin" progress={{ value: collected / 400000, label: `${Math.round((collected / 400000) * 100)}% of today's ₱400K goal` }} />
+        <KpiCard label="Payments today" value={count} icon="bi bi-receipt" sparkline={buckets.map((b) => b.count)} sparklineType="bar" />
+        <KpiCard label="Average payment" value={Math.round(collected / count)} formatValue={peso} icon="bi bi-calculator" />
+        <WidgetCard title="Daily goal">
+          <Gauge value={collected} max={400000} target={300000} formatValue={pesoShort} size={180} />
+        </WidgetCard>
+
+        <WidgetCard data-span="3" title="Money coming in" description="Per 10 seconds, sliding window" live={updatedAt}>
+          <AreaChart data={buckets} index="time" series={[{ key: "amount", label: "Collected", color: "var(--color-success)" }]} formatValue={pesoShort} height={220} dots={false} aria-label="Money collected per ten seconds" />
+        </WidgetCard>
+        <WidgetCard title="By method">
+          <DonutChart data={byMethod} size={150} legend="bottom" formatValue={pesoShort} centerLabel="Today" aria-label="Collected today by payment method" />
+        </WidgetCard>
+
+        <WidgetCard data-span="2" title="Top clients today" description="Rows slide when the ranking changes">
+          <BarList items={byClient} formatValue={pesoShort} limit={6} color="var(--color-success)" aria-label="Top clients today" />
+        </WidgetCard>
+        <WidgetCard data-span="2" title="Latest payments">
+          <ul className="grid gap-1" aria-live="polite" aria-relevant="additions">
+            {payments.slice(0, 6).map((p) => (
+              <li key={p.id} className="flex items-center gap-3 rounded-control-sm px-1 py-1.5 text-sm animate-[ui-menu-down_300ms_ease-out]">
+                <Avatar name={p.client} size="sm" decorative />
+                <span className="min-w-0 flex-1 truncate">
+                  <span className="font-medium">{p.client}</span> <span className="text-fg-muted">· {p.method}</span>
+                </span>
+                <span className="font-medium tabular-nums text-success">+{peso(p.amount)}</span>
+              </li>
+            ))}
+            {payments.length === 0 && <li className="py-6 text-center text-sm text-fg-muted">Waiting for the first payment…</li>}
+          </ul>
+        </WidgetCard>
+      </DashboardGrid>
+    </div>
+  );
+}
+
 function Frame({ children }: { children: React.ReactNode }) {
   return <div className="w-full rounded-card border border-border bg-surface p-4">{children}</div>;
 }
@@ -168,13 +290,13 @@ export function WidgetsPage() {
       <Section
         wide
         title="A complete dashboard"
-        desc="Hover or touch the charts for values, click legend items to hide a series, switch the period, or show the loading state. DashboardGrid lays widgets out in four columns on wide screens, two on tablets and one on phones; data-span makes a widget wider."
+        desc="Hover or touch the charts for values, click legend items to hide a series, switch the period, or show the loading state. With animate, widgets rise in one after another, numbers count up and charts draw in — press Replay. DashboardGrid lays widgets out in four columns on wide screens, two on tablets and one on phones; data-span makes a widget wider."
         code={`
-<DashboardGrid columns={4}>
-  <KpiCard label="Revenue this month" value="₱318,400" change={8.2} changeLabel="vs August"
-    icon="bi bi-graph-up-arrow" sparkline={monthly} />
-  <KpiCard label="Outstanding" value="₱86,400" change={-4.1} invertTrend … />
-  <KpiCard label="Quarter target" value="₱812,000" progress={{ value: 0.78, label: "78% of ₱1.04M" }} />
+<DashboardGrid columns={4} animate>      {/* optional: animate on first load */}
+  <KpiCard label="Revenue this month" value={318400} formatValue={peso} change={8.2}
+    changeLabel="vs August" icon="bi bi-graph-up-arrow" sparkline={monthly} />
+  <KpiCard label="Outstanding" value={86400} formatValue={peso} change={-4.1} invertTrend … />
+  <KpiCard label="Quarter target" value={812000} formatValue={peso} progress={{ value: 0.78, label: "78% of ₱1.04M" }} />
 
   <WidgetCard data-span="3" title="Invoiced vs collected" action={<PeriodPicker />} loading={isLoading}>
     <AreaChart data={rows} index="month" series={[{ key: "invoiced" }, { key: "collected" }]}
@@ -185,6 +307,55 @@ export function WidgetsPage() {
 </DashboardGrid>`}
       >
         <Dashboard />
+      </Section>
+
+      <Section
+        wide
+        title="Live updates"
+        desc="Widgets glide to new values instead of jumping: numbers roll and glow (green for good news, red for bad), the chart window slides, the donut and gauge sweep, and the top-clients list slides rows into their new order. Nothing here is special code — just set new data. This demo simulates payments arriving; pause it, or speed it up."
+        code={`
+// 1) Polling — simplest; works everywhere
+const [data, setData] = useState(initial);
+useEffect(() => {
+  const load = async () => setData(await (await fetch("/api/dashboard")).json());
+  const t = setInterval(load, 10_000);
+  return () => clearInterval(t);
+}, []);
+
+// 2) Laravel broadcasting (Reverb or Pusher) with Echo — instant pushes
+//    app/Events/PaymentReceived.php
+class PaymentReceived implements ShouldBroadcast {
+  public function __construct(public Payment $payment) {}
+  public function broadcastOn() { return new PrivateChannel("team.{$this->payment->team_id}"); }
+}
+//    resources/js — update the numbers when an event arrives
+useEffect(() => {
+  const channel = window.Echo.private(\`team.\${team.id}\`)
+    .listen("PaymentReceived", ({ payment }) => {
+      setCollected((c) => c + payment.amount);
+      setPayments((ps) => [payment, ...ps]);
+      setUpdatedAt(Date.now());
+    });
+  return () => window.Echo.leave(\`team.\${team.id}\`);
+}, [team.id]);
+
+// 3) Server-Sent Events — one-way stream from any backend
+useEffect(() => {
+  const es = new EventSource("/api/dashboard/stream");
+  es.onmessage = (e) => setData(JSON.parse(e.data));
+  es.onerror = () => setReconnecting(true);   // EventSource reconnects by itself
+  es.onopen = () => setReconnecting(false);
+  return () => es.close();
+}, []);
+
+// Show freshness: in a widget header, or anywhere
+<WidgetCard title="Money coming in" live={updatedAt}>…</WidgetCard>
+<LiveIndicator updatedAt={updatedAt} paused={!running} reconnecting={reconnecting} />
+
+// Numbers roll to new values when passed as numbers
+<KpiCard label="Collected today" value={collected} formatValue={peso} />`}
+      >
+        <LiveDashboard />
       </Section>
 
       <Section

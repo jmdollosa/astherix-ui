@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cn } from "../../lib/cn";
-import { DataTable, formatCompact, linearPath, monotonePath, niceTicks, seriesColor, useReducedMotion, useWidth } from "./chart-utils";
+import { DataTable, formatCompact, linearPath, monotonePath, niceTicks, seriesColor, useAnimate, useReducedMotion, useTweenedRows, useWidth } from "./chart-utils";
 
 /*
  * LineChart (and AreaChart) and BarChart — hand-built SVG, no chart library.
@@ -34,6 +34,10 @@ export interface BaseChartProps {
   referenceLine?: { value: number; label?: string };
   /** Accessible summary, e.g. "Revenue by month, January to December". */
   "aria-label": string;
+  /** Draw in on first load. Default true (inside a DashboardGrid, follows its animate setting). */
+  animate?: boolean;
+  /** Glide to new values when the data changes (live dashboards). Default true. */
+  transition?: boolean;
   className?: string;
 }
 
@@ -159,8 +163,12 @@ export interface LineChartProps extends BaseChartProps {
 export function LineChart(props: LineChartProps) {
   const { data, index, series, height = 240, formatValue = formatCompact, formatIndex = String, area = false, curve = "smooth", dots, showGrid = true, referenceLine, className } = props;
   const [ref, w] = useWidth<HTMLDivElement>();
-  const reduced = useReducedMotion();
-  const { hidden, setHidden, visible, ticks, lo, hi } = useChartFrame(props);
+  const wantsAnimation = useAnimate(props.animate);
+  const prefersReduced = useReducedMotion();
+  const reduced = !wantsAnimation || prefersReduced;
+  // Geometry uses smoothly-moving values; tooltips and the data table use the real ones.
+  const shown = useTweenedRows(data, series.map((s) => s.key), { enabled: props.transition ?? true });
+  const { hidden, setHidden, visible, ticks, lo, hi } = useChartFrame({ ...props, data: shown });
   const [hover, setHover] = React.useState<Hover>(null);
   const gid = React.useId().replace(/:/g, "");
   const n = data.length;
@@ -215,7 +223,7 @@ export function LineChart(props: LineChartProps) {
             <Axes w={w} h={height} ticks={ticks} y={y} labels={labels} x={x} fmt={formatValue} showGrid={showGrid} referenceLine={referenceLine} />
             {visible.map((s) => {
               const i = series.indexOf(s);
-              const pts = data.map((d, j) => [x(j), y(Number(d[s.key] ?? 0))] as [number, number]);
+              const pts = shown.map((d, j) => [x(j), y(Number(d[s.key] ?? 0))] as [number, number]);
               const line = path(pts);
               const color = seriesColor(i, s.color);
               return (
@@ -250,7 +258,7 @@ export function LineChart(props: LineChartProps) {
                 <line x1={hover.x} x2={hover.x} y1={PAD.top} y2={height - PAD.bottom} stroke="var(--color-fg-muted)" strokeOpacity={0.35} />
                 {visible.map((s) => {
                   const i = series.indexOf(s);
-                  return <circle key={s.key} cx={hover.x} cy={y(Number(data[hover.i][s.key] ?? 0))} r={5} fill={seriesColor(i, s.color)} stroke="var(--color-surface)" strokeWidth={2} />;
+                  return <circle key={s.key} cx={hover.x} cy={y(Number(shown[hover.i]?.[s.key] ?? 0))} r={5} fill={seriesColor(i, s.color)} stroke="var(--color-surface)" strokeWidth={2} />;
                 })}
               </g>
             )}
@@ -286,8 +294,11 @@ export interface BarChartProps extends BaseChartProps {
 export function BarChart(props: BarChartProps) {
   const { data, index, series, height = 240, formatValue = formatCompact, formatIndex = String, stacked = false, showGrid = true, referenceLine, className } = props;
   const [ref, w] = useWidth<HTMLDivElement>();
-  const reduced = useReducedMotion();
-  const { hidden, setHidden, visible, ticks, lo, hi } = useChartFrame(props, stacked ? (vis) => Math.max(0, ...data.map((d) => vis.reduce((s, x) => s + Number(d[x.key] ?? 0), 0))) : undefined);
+  const wantsAnimation = useAnimate(props.animate);
+  const prefersReduced = useReducedMotion();
+  const reduced = !wantsAnimation || prefersReduced;
+  const shown = useTweenedRows(data, series.map((s) => s.key), { enabled: props.transition ?? true });
+  const { hidden, setHidden, visible, ticks, lo, hi } = useChartFrame({ ...props, data: shown }, stacked ? (vis) => Math.max(0, ...shown.map((d) => vis.reduce((s, x) => s + Number(d[x.key] ?? 0), 0))) : undefined);
   const [hover, setHover] = React.useState<Hover>(null);
   const n = data.length;
   const inner = w - PAD.left - PAD.right;
@@ -331,7 +342,7 @@ export function BarChart(props: BarChartProps) {
           <svg width={w} height={height} className="block overflow-visible">
             {hover && <rect x={x(hover.i) - band / 2 + 2} y={PAD.top} width={band - 4} height={height - PAD.top - PAD.bottom} rx={6} fill="var(--color-fg)" fillOpacity={0.05} />}
             <Axes w={w} h={height} ticks={ticks} y={y} labels={labels} x={x} fmt={formatValue} showGrid={showGrid} referenceLine={undefined} />
-            {data.map((d, j) => {
+            {shown.map((d, j) => {
               let acc = 0;
               return (
                 <g key={j} style={reduced ? undefined : { transformOrigin: `0 ${base}px`, animation: `ui-chart-grow 600ms ${j * 30}ms cubic-bezier(0.3,1.1,0.5,1) both` }}>

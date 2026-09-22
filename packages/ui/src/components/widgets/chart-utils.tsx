@@ -104,3 +104,61 @@ export function DataTable({ caption, columns, rows }: { caption: string; columns
     </div>
   );
 }
+
+/* ---------- animation settings shared by a dashboard ---------- */
+
+/** Set by DashboardGrid: whether widgets should animate on first load. */
+export const DashboardAnimationContext = React.createContext<boolean | undefined>(undefined);
+
+/** A widget's own `animate` prop wins; then the surrounding DashboardGrid; then the default. */
+export function useAnimate(own: boolean | undefined, fallback = true) {
+  const ctx = React.useContext(DashboardAnimationContext);
+  return own ?? ctx ?? fallback;
+}
+
+const easeOut = (t: number) => 1 - (1 - t) ** 3;
+
+/**
+ * Smoothly move a list of numbers to new targets (for live updates). New entries start from the
+ * previous last value (so an appended point grows out of the line), or from `from` on first mount.
+ */
+export function useTweenedNumbers(target: number[], { duration = 600, enabled = true, from }: { duration?: number; enabled?: boolean; from?: number } = {}) {
+  const reduced = useReducedMotion();
+  const [shown, setShown] = React.useState<number[]>(() => (enabled && from !== undefined ? target.map(() => from) : target));
+  const shownRef = React.useRef(shown);
+  shownRef.current = shown;
+  const key = target.join(",");
+  React.useEffect(() => {
+    if (!enabled || reduced) {
+      setShown(target);
+      return;
+    }
+    const start = shownRef.current;
+    const lastKnown = start.length ? start[start.length - 1] : (from ?? 0);
+    const begin = target.map((_, i) => (i < start.length ? start[i] : lastKnown));
+    if (begin.length === target.length && begin.every((v, i) => v === target[i])) return;
+    let raf = 0;
+    const t0 = performance.now();
+    const step = (now: number) => {
+      const t = Math.min(1, (now - t0) / duration);
+      const e = easeOut(t);
+      setShown(target.map((v, i) => begin[i] + (v - begin[i]) * e));
+      if (t < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key, enabled, reduced, duration]);
+  return shown;
+}
+
+/** Tween the chosen numeric fields of chart rows. */
+export function useTweenedRows<T extends Record<string, unknown>>(rows: T[], keys: string[], opts: { enabled?: boolean; from?: number } = {}) {
+  const flat = rows.flatMap((r) => keys.map((k) => Number(r[k] ?? 0)));
+  const tw = useTweenedNumbers(flat, opts);
+  return rows.map((r, i) => {
+    const out: Record<string, unknown> = { ...r };
+    keys.forEach((k, j) => (out[k] = tw[i * keys.length + j] ?? Number(r[k] ?? 0)));
+    return out as T;
+  });
+}

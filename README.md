@@ -469,7 +469,16 @@ responsive, keyboard- and screen-reader-friendly.
   `target`, `bands`), `BarList` (`items`, `limit`), `CalendarHeatmap` (`data`, `weeks`),
   `Sparkline` (`data`, `type`)
 - `WidgetCard`: `title`, `description`, `action`, `value`, `loading`, `empty`, `error`,
-  `onRetry`, `footer`; `DashboardGrid`: `columns`, children use `data-span="2|3|4|full"`
+  `onRetry`, `footer`, `live`; `DashboardGrid`: `columns`, `animate`, children use
+  `data-span="2|3|4|full"`; `LiveIndicator`: `updatedAt`, `paused`, `reconnecting`
+
+**Animate on first load (optional):** `<DashboardGrid animate>` — widgets rise in one after another,
+KPI numbers count up (pass `value` as a number with `formatValue`), charts draw in, donuts and
+gauges sweep. Per-widget `animate` overrides it. Skipped with reduced motion.
+
+**Live data:** just pass new data. Numbers roll and glow (green good / red bad), lines and bars
+morph, donut and gauge sweep, BarList rows slide into their new order (`transition={false}` on a
+chart turns it off). Works with polling, Laravel Echo (Reverb/Pusher) or Server-Sent Events.
 
 ## Dropdown menu
 

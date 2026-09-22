@@ -3,15 +3,29 @@ import { cn } from "../../lib/cn";
 import { renderIcon, type IconInput } from "../button/Button";
 import { Skeleton } from "../activity/Activity";
 import { Sparkline } from "./Shapes";
+import { DashboardAnimationContext, useAnimate, useReducedMotion, useTweenedNumbers } from "./chart-utils";
 
 /* KpiCard, WidgetCard and DashboardGrid. */
 
 /* ---------- KpiCard ---------- */
 
+/** While counting, show the same number of decimals as the real value (whole numbers stay whole). */
+function roundLike(n: number, like: number) {
+  const places = (String(like).split(".")[1] ?? "").length;
+  return +n.toFixed(places);
+}
+
 export interface KpiCardProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
   label: React.ReactNode;
-  /** The headline number, already formatted: "₱312,400". */
-  value: React.ReactNode;
+  /**
+   * The headline number. Pass a number (with formatValue) to have it count up on first load and
+   * roll to new values on live updates — or pre-formatted text like "18 days".
+   */
+  value: React.ReactNode | number;
+  /** Formats a numeric value, e.g. (v) => `₱${v.toLocaleString()}`. Default: whole number with separators. */
+  formatValue?: (value: number) => string;
+  /** Count up on first load. Default false (inside a DashboardGrid, follows its animate setting). */
+  animate?: boolean;
   /** Change vs the previous period, as a percentage (8.2 or -4.1). */
   change?: number;
   /** Text after the change. Default "vs last period". */
@@ -32,6 +46,8 @@ export interface KpiCardProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
 export function KpiCard({
   label,
   value,
+  formatValue = (v) => Math.round(v).toLocaleString(),
+  animate,
   change,
   changeLabel = "vs last period",
   invertTrend = false,
@@ -50,6 +66,23 @@ export function KpiCard({
   const bad = invertTrend ? up : down;
   const trendColor = good ? "var(--color-success)" : bad ? "var(--color-danger)" : "var(--ui-chart-1)";
   const Root = href ? "a" : "div";
+
+  // Numbers count up on first load (if animating) and roll to new values on updates,
+  // with a brief glow so a change on a live dashboard catches the eye.
+  const numeric = typeof value === "number";
+  const anim = useAnimate(animate, false);
+  const [shownNum] = useTweenedNumbers([numeric ? (value as number) : 0], { enabled: numeric, from: anim ? 0 : undefined, duration: anim ? 1100 : 700 });
+  const prefersReduced = useReducedMotion();
+  // Remember the direction at the moment of change: green for good news, red for bad.
+  const [flash, setFlash] = React.useState<{ n: number; good: boolean }>({ n: 0, good: true });
+  const prev = React.useRef(value);
+  React.useEffect(() => {
+    if (prev.current !== value && numeric && typeof prev.current === "number" && !prefersReduced) {
+      const rose = (value as number) > (prev.current as number);
+      setFlash((f) => ({ n: f.n + 1, good: rose !== invertTrend }));
+    }
+    prev.current = value;
+  }, [value, numeric, prefersReduced, invertTrend]);
 
   return (
     <Root
@@ -78,7 +111,18 @@ export function KpiCard({
       ) : (
         <>
           <div className="grid gap-1">
-            <p className="text-[1.75rem] font-semibold leading-none tracking-[-0.02em] tabular-nums text-fg">{value}</p>
+            <p className="-mx-1 justify-self-start rounded-control-sm px-1 text-[1.75rem] font-semibold leading-none tracking-[-0.02em] tabular-nums text-fg">
+              <span
+                key={flash.n}
+                aria-hidden={numeric || undefined}
+                className="-mx-1 -my-0.5 rounded-control-sm px-1 py-0.5"
+                style={flash.n ? { animation: "ui-kpi-flash 1.2s ease-out both", ["--kpi-flash" as string]: flash.good ? "var(--color-success)" : "var(--color-danger)" } : undefined}
+              >
+                {numeric ? formatValue(roundLike(shownNum, value as number)) : value}
+              </span>
+              {/* Screen readers get the final value, not every step of the count. */}
+              {numeric && <span className="sr-only">{formatValue(value as number)}</span>}
+            </p>
             {change !== undefined && (
               <p className="flex flex-wrap items-center gap-x-1.5 text-xs text-fg-muted">
                 <span
@@ -132,10 +176,12 @@ export interface WidgetCardProps extends Omit<React.HTMLAttributes<HTMLElement>,
   error?: React.ReactNode;
   onRetry?: () => void;
   footer?: React.ReactNode;
+  /** Show a LiveIndicator in the header: true, or the time the data last changed. */
+  live?: boolean | Date | number;
 }
 
 /** The frame for a dashboard widget: title, controls, and loading / empty / error states. */
-export function WidgetCard({ title, description, action, value, loading, empty, error, onRetry, footer, className, children, ...props }: WidgetCardProps) {
+export function WidgetCard({ title, description, action, value, loading, empty, error, onRetry, footer, live, className, children, ...props }: WidgetCardProps) {
   const id = React.useId();
   return (
     <section
@@ -150,7 +196,12 @@ export function WidgetCard({ title, description, action, value, loading, empty, 
           {description && <p className="text-xs text-fg-muted">{description}</p>}
           {value !== undefined && !loading && <p className="mt-1 text-2xl font-semibold tracking-[-0.02em] tabular-nums text-fg">{value}</p>}
         </div>
-        {action && <div className="flex shrink-0 items-center gap-2">{action}</div>}
+        {(action || live) && (
+          <div className="flex shrink-0 items-center gap-3">
+            {live && <LiveIndicator updatedAt={live === true ? undefined : live} />}
+            {action}
+          </div>
+        )}
       </header>
       <div className="relative min-w-0 flex-1">
         {loading ? (
@@ -187,14 +238,21 @@ export function WidgetCard({ title, description, action, value, loading, empty, 
 export interface DashboardGridProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Columns on wide screens. Default 4. It steps down to 2 and then 1 as space shrinks. */
   columns?: 2 | 3 | 4 | 6 | 12;
+  /**
+   * Animate on first load: widgets rise in one after another, KPI numbers count up, charts draw in,
+   * donuts and gauges sweep. Off by default; skipped for people who prefer reduced motion.
+   */
+  animate?: boolean;
 }
 
 /** A responsive grid for widgets. Give a child `data-span="2"` (or use DashboardGrid.Item) to make it wider. */
-export function DashboardGrid({ columns = 4, className, style, ...props }: DashboardGridProps) {
+export function DashboardGrid({ columns = 4, animate = false, className, style, ...props }: DashboardGridProps) {
   return (
+    <DashboardAnimationContext.Provider value={animate}>
     <div className="@container w-full">
       <div
         className={cn(
+          animate && "ui-dash-enter",
           "grid grid-cols-1 gap-4 @[36rem]:grid-cols-2 @[64rem]:grid-cols-[repeat(var(--dg-cols),minmax(0,1fr))]",
           "[&>[data-span='2']]:@[36rem]:col-span-2 [&>[data-span='3']]:@[36rem]:col-span-2 [&>[data-span='3']]:@[64rem]:col-span-3 [&>[data-span='4']]:@[36rem]:col-span-2 [&>[data-span='4']]:@[64rem]:col-span-4 [&>[data-span='full']]:col-span-full",
           className
@@ -203,5 +261,48 @@ export function DashboardGrid({ columns = 4, className, style, ...props }: Dashb
         {...props}
       />
     </div>
+    </DashboardAnimationContext.Provider>
+  );
+}
+
+/* ---------- LiveIndicator ---------- */
+
+export interface LiveIndicatorProps {
+  /** When the data last changed. Shows "updated 3s ago", ticking. */
+  updatedAt?: Date | number | null;
+  /** Show "Paused" instead of "Live". */
+  paused?: boolean;
+  /** Connection trouble: shows "Reconnecting…" in amber. */
+  reconnecting?: boolean;
+  className?: string;
+}
+
+function ago(t: number) {
+  const s = Math.max(0, Math.round((Date.now() - t) / 1000));
+  if (s < 5) return "just now";
+  if (s < 60) return `${s}s ago`;
+  const m = Math.round(s / 60);
+  return m < 60 ? `${m}m ago` : `${Math.round(m / 60)}h ago`;
+}
+
+/** A pulsing "Live" badge with how long ago the data changed. */
+export function LiveIndicator({ updatedAt, paused = false, reconnecting = false, className }: LiveIndicatorProps) {
+  const [, tick] = React.useState(0);
+  React.useEffect(() => {
+    if (!updatedAt) return;
+    const t = window.setInterval(() => tick((n) => n + 1), 1000);
+    return () => window.clearInterval(t);
+  }, [updatedAt]);
+  const tone = reconnecting ? "var(--color-warning)" : paused ? "var(--color-fg-muted)" : "var(--color-success)";
+  const at = updatedAt ? new Date(updatedAt).getTime() : null;
+  return (
+    <span className={cn("inline-flex items-center gap-1.5 whitespace-nowrap text-xs text-fg-muted", className)}>
+      <span className="relative grid size-2 place-items-center" aria-hidden="true">
+        {!paused && !reconnecting && <span className="absolute size-full animate-[ui-beacon_1.8s_cubic-bezier(0,0,0.2,1)_infinite] rounded-full motion-reduce:hidden" style={{ background: tone, opacity: 0.5 }} />}
+        <span className="relative size-2 rounded-full" style={{ background: tone }} />
+      </span>
+      <span className="font-medium" style={{ color: reconnecting ? tone : undefined }}>{reconnecting ? "Reconnecting…" : paused ? "Paused" : "Live"}</span>
+      {at && !reconnecting && <span className="tabular-nums">· updated {ago(at)}</span>}
+    </span>
   );
 }
