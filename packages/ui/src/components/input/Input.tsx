@@ -38,6 +38,8 @@ export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
   revealable?: boolean;
   /** Class for the outer frame. `className` goes on the <input> itself. */
   frameClassName?: string;
+  /** Content layered exactly over the text box (same font and position), e.g. an inline completion. */
+  overlay?: React.ReactNode;
 }
 
 const EyeIcon = ({ off }: { off?: boolean }) => (
@@ -93,6 +95,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       onClear,
       revealable = true,
       frameClassName,
+      overlay,
       className,
       type = "text",
       id: idProp,
@@ -136,8 +139,30 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const trail = renderIcon(trailingIcon);
     const showClear = clearable && hasValue && !control.disabled && !readOnly;
 
+    const inputEl = (
+      <input
+        ref={setRefs}
+        type={effectiveType}
+        readOnly={readOnly}
+        value={value}
+        defaultValue={defaultValue}
+        onChange={(event) => {
+          if (value === undefined) setHasValue(event.target.value !== "");
+          onChange?.(event);
+        }}
+        className={cn(
+          "h-full w-0 min-w-0 flex-1 bg-transparent text-fg outline-none placeholder:text-fg-muted/70",
+          "disabled:cursor-not-allowed [&::-webkit-search-cancel-button]:appearance-none",
+          className
+        )}
+        {...control}
+        {...props}
+      />
+    );
+
     return (
       <div
+        data-control-frame=""
         data-invalid={invalid ? "" : undefined}
         data-disabled={control.disabled ? "" : undefined}
         data-readonly={readOnly ? "" : undefined}
@@ -158,24 +183,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       >
         {lead}
         {prefix !== undefined && <span className="shrink-0 select-none whitespace-nowrap text-fg-muted">{prefix}</span>}
-        <input
-          ref={setRefs}
-          type={effectiveType}
-          readOnly={readOnly}
-          value={value}
-          defaultValue={defaultValue}
-          onChange={(event) => {
-            if (value === undefined) setHasValue(event.target.value !== "");
-            onChange?.(event);
-          }}
-          className={cn(
-            "h-full w-0 min-w-0 flex-1 bg-transparent text-fg outline-none placeholder:text-fg-muted/70",
-            "disabled:cursor-not-allowed [&::-webkit-search-cancel-button]:appearance-none",
-            className
-          )}
-          {...control}
-          {...props}
-        />
+        {overlay !== undefined ? (
+          <span className="relative flex h-full min-w-0 flex-1">
+            {inputEl}
+            {overlay}
+          </span>
+        ) : (
+          inputEl
+        )}
         {suffix !== undefined && <span className="shrink-0 select-none whitespace-nowrap text-fg-muted">{suffix}</span>}
         {showClear && (
           <ControlButton

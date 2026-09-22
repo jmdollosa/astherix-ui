@@ -183,3 +183,5 @@ export type {
   SidebarNavItem,
   SidebarNavProps,
 } from "./components/sidebar/Sidebar";
+export { Autocomplete } from "./components/input/Autocomplete";
+export type { AutocompleteProps, AutocompleteItem } from "./components/input/Autocomplete";

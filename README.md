@@ -345,6 +345,22 @@ controls can read it with `useField()`.
 `disabled`. `PillOption`: `value`, `icon`, `count`, `disabled`.
 Status colors are theme tokens: `--ui-success`, `--ui-warning`, `--ui-info` (+ `-fg`).
 
+## Autocomplete
+
+A text field that suggests as you type — the value is free text (use Select when it must be from a list).
+
+```tsx
+<Autocomplete value={city} onChange={setCity} suggestions={cities} />
+<Autocomplete loadSuggestions={(q, { signal }) => api.searchClients(q, signal)} minLength={2} />
+<Autocomplete type="search" recentKey="recent-searches" onSubmit={runSearch} suggestions={items} />
+```
+
+Props (plus Input's: `size`, `rounded`, icons, `clearable`, …): `value` / `defaultValue` / `onChange`
+(string), `suggestions` (array of strings or `{ value, label, description, icon, group }`, or a
+function of the query), `loadSuggestions`, `minLength`, `debounce`, `maxSuggestions`,
+`inlineComplete` (faint completion; Tab/→ accepts), `onSelectSuggestion`, `onSubmit`, `recentKey`,
+`maxRecent`, `emptyMessage`, `filter`.
+
 ## Select
 
 A searchable dropdown in the spirit of Select2.
