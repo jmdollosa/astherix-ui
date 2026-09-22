@@ -258,6 +258,20 @@ Radio.displayName = "Radio";
 
 export type SwitchVariant = "labelled" | "mark" | "liquid";
 
+/** Theme colors for the "on" state, or any CSS color (e.g. "#16a34a", "oklch(0.7 0.2 150)"). */
+export type SwitchColor = "primary" | "secondary" | "tertiary" | "success" | "warning" | "danger" | "info" | (string & {});
+
+// Each theme color sets the fill and the text/mark color that sits on it.
+const switchColors: Record<string, [string, string]> = {
+  primary: ["var(--color-primary)", "var(--color-primary-fg)"],
+  secondary: ["var(--color-tone-secondary)", "var(--color-tone-secondary-fg)"],
+  tertiary: ["var(--color-tone-tertiary)", "var(--color-tone-tertiary-fg)"],
+  success: ["var(--color-success)", "var(--color-success-fg)"],
+  warning: ["var(--color-warning)", "var(--color-warning-fg)"],
+  danger: ["var(--color-danger)", "var(--color-danger-fg)"],
+  info: ["var(--color-info)", "var(--color-info-fg)"],
+};
+
 export interface SwitchProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type" | "size" | "onChange"> {
   label?: React.ReactNode;
   description?: React.ReactNode;
@@ -267,6 +281,13 @@ export interface SwitchProps extends Omit<React.InputHTMLAttributes<HTMLInputEle
    * - "liquid": an outlined pill that floods blue from the knob when turned on
    */
   variant?: SwitchVariant;
+  /**
+   * Color when on. "primary" (the default blue), "secondary" (green), "tertiary" (orange) —
+   * theme tokens you can rebrand — or success, warning, danger, info, or any CSS color.
+   */
+  color?: SwitchColor;
+  /** Text color on a custom `color` (for "labelled"). Default white. */
+  colorForeground?: string;
   /**
    * Called when flipped. Return a Promise (e.g. saving the setting) and the knob shows a
    * spinner until it settles — and flips back if it fails.
@@ -298,6 +319,8 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
       label,
       description,
       variant = "labelled",
+      color = "primary",
+      colorForeground,
       onCheckedChange,
       onChange,
       size = "md",
@@ -347,11 +370,13 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
       "--sw-k": `${g.k}px`,
       "--sw-pad": `${g.pad}px`,
       "--sw-travel": `${g.w - g.k - 2 * g.pad}px`,
+      "--sw-on": (switchColors[color] ?? [color])[0],
+      "--sw-on-fg": colorForeground ?? (switchColors[color] ?? [color, "#ffffff"])[1],
     } as React.CSSProperties;
     const textSize = size === "sm" ? "text-[0.625rem]" : "text-[0.72rem]";
 
     const spinner = (
-      <svg viewBox="0 0 16 16" fill="none" className={cn("animate-spin text-primary", size === "sm" ? "size-2.5" : "size-3.5")} aria-hidden="true">
+      <svg viewBox="0 0 16 16" fill="none" className={cn("animate-spin text-[color:var(--sw-on)]", size === "sm" ? "size-2.5" : "size-3.5")} aria-hidden="true">
         <circle cx="8" cy="8" r="5.5" stroke="currentColor" strokeOpacity="0.25" strokeWidth="2.2" />
         <path d="M13.5 8A5.5 5.5 0 0 0 8 2.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
       </svg>
@@ -383,8 +408,8 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
               "focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:ring-offset-2 focus-visible:ring-offset-bg",
               "disabled:cursor-not-allowed aria-busy:cursor-progress",
               liquid
-                ? "bg-surface shadow-[inset_0_0_0_1.5px_var(--color-border-strong),inset_0_1px_2px_rgb(var(--ui-shadow-color)/0.12)] checked:shadow-[inset_0_0_0_1.5px_var(--color-primary)]"
-                : "bg-border-strong shadow-[inset_0_1px_2px_rgb(var(--ui-shadow-color)/0.2)] checked:bg-primary"
+                ? "bg-surface shadow-[inset_0_0_0_1.5px_var(--color-border-strong),inset_0_1px_2px_rgb(var(--ui-shadow-color)/0.12)] checked:shadow-[inset_0_0_0_1.5px_var(--sw-on)]"
+                : "bg-border-strong shadow-[inset_0_1px_2px_rgb(var(--ui-shadow-color)/0.2)] checked:bg-[color:var(--sw-on)]"
             )}
             {...control}
             {...props}
@@ -395,7 +420,7 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
             <span
               aria-hidden="true"
               className={cn(
-                "pointer-events-none absolute inset-0 rounded-full bg-primary transition-[clip-path] duration-[450ms] ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none",
+                "pointer-events-none absolute inset-0 rounded-full bg-[color:var(--sw-on)] transition-[clip-path] duration-[450ms] ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none",
                 "[clip-path:circle(0%_at_calc(var(--sw-pad)+var(--sw-k)/2)_50%)] peer-checked:[clip-path:circle(125%_at_calc(var(--sw-w)-var(--sw-pad)-var(--sw-k)/2)_50%)]"
               )}
             />
@@ -407,7 +432,7 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
               <span
                 aria-hidden="true"
                 className={cn(
-                  "pointer-events-none absolute inset-y-0 start-0 grid place-items-center font-bold text-primary-fg opacity-0 transition-opacity duration-200 peer-checked:opacity-100",
+                  "pointer-events-none absolute inset-y-0 start-0 grid place-items-center font-bold text-[color:var(--sw-on-fg)] opacity-0 transition-opacity duration-200 peer-checked:opacity-100",
                   textSize
                 )}
                 style={{ width: g.w - g.k - g.pad }}
@@ -457,7 +482,7 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
                       viewBox="0 0 14 14"
                       aria-hidden="true"
                       className={cn(
-                        "col-start-1 row-start-1 scale-[0.4] -rotate-45 fill-none stroke-primary opacity-0 [stroke-linecap:round] [stroke-linejoin:round] [stroke-width:2.4]",
+                        "col-start-1 row-start-1 scale-[0.4] -rotate-45 fill-none stroke-[color:var(--sw-on)] opacity-0 [stroke-linecap:round] [stroke-linejoin:round] [stroke-width:2.4]",
                         size === "sm" ? "size-2.5" : "size-3.5",
                         `transition-[opacity,scale,rotate] duration-300 ${spring} [.peer:checked~*_&]:scale-100 [.peer:checked~*_&]:rotate-0 [.peer:checked~*_&]:opacity-100`
                       )}

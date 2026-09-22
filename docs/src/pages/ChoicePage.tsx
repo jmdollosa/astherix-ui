@@ -55,9 +55,40 @@ function VariantsDemo() {
   );
 }
 
+function ColorsDemo() {
+  const colors = [
+    ["primary", "Primary"],
+    ["secondary", "Secondary"],
+    ["tertiary", "Tertiary"],
+    ["#7c3aed", "Custom"],
+  ] as const;
+  return (
+    <div className="grid w-full max-w-md gap-3">
+      <Card padding="sm">
+        <CardContent className="grid gap-4">
+          {(["labelled", "mark", "liquid"] as const).map((v) => (
+            <div key={v} className="grid gap-2">
+              <p className="text-[0.8125rem] font-medium capitalize text-fg-muted">{v}</p>
+              <div className="flex flex-wrap items-center gap-4">
+                {colors.map(([c, name]) => (
+                  <div key={c} className="grid justify-items-center gap-1.5">
+                    <Switch variant={v} color={c} defaultChecked aria-label={`${name} ${v} switch`} />
+                    <span className="text-[0.6875rem] text-fg-muted">{name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
 function SettingsDemo() {
   const [fail, setFail] = React.useState(false);
   const [variant, setVariant] = React.useState<string | null>("labelled");
+  const [color, setColor] = React.useState<string | null>("primary");
   const save = (label: string) => async (on: boolean) => {
     await wait(900);
     if (fail) {
@@ -74,13 +105,18 @@ function SettingsDemo() {
         <PillOption value="mark">Mark</PillOption>
         <PillOption value="liquid">Liquid</PillOption>
       </PillGroup>
+      <PillGroup value={color} onValueChange={setColor} size="sm" aria-label="Switch color">
+        <PillOption value="primary">Primary</PillOption>
+        <PillOption value="secondary">Secondary</PillOption>
+        <PillOption value="tertiary">Tertiary</PillOption>
+      </PillGroup>
       <Card>
         <CardHeader title="Notifications" description="Changes save as soon as you flip a switch." />
         <CardContent className="grid gap-4">
-          <Switch variant={v} labelPosition="start" defaultChecked label="Payment received" description="When a client pays an invoice." onCheckedChange={save("Payment received")} />
-          <Switch variant={v} labelPosition="start" defaultChecked label="Invoice viewed" description="The first time a client opens it." onCheckedChange={save("Invoice viewed")} />
-          <Switch variant={v} labelPosition="start" label="Weekly summary" description="Every Monday at 8 AM." onCheckedChange={save("Weekly summary")} />
-          <Switch variant={v} labelPosition="start" label="Product news" disabled description="Turned off by your workspace admin." />
+          <Switch variant={v} color={color ?? "primary"} labelPosition="start" defaultChecked label="Payment received" description="When a client pays an invoice." onCheckedChange={save("Payment received")} />
+          <Switch variant={v} color={color ?? "primary"} labelPosition="start" defaultChecked label="Invoice viewed" description="The first time a client opens it." onCheckedChange={save("Invoice viewed")} />
+          <Switch variant={v} color={color ?? "primary"} labelPosition="start" label="Weekly summary" description="Every Monday at 8 AM." onCheckedChange={save("Weekly summary")} />
+          <Switch variant={v} color={color ?? "primary"} labelPosition="start" label="Product news" disabled description="Turned off by your workspace admin." />
         </CardContent>
       </Card>
       <label className="flex items-center gap-2 text-sm text-fg-muted">
@@ -212,6 +248,34 @@ export function ChoicePage() {
 <Switch onLabel="Yes" offLabel="No" … />               {/* your own words (labelled) */}`}
       >
         <VariantsDemo />
+      </Section>
+
+      <Section
+        title="Colors"
+        desc={
+          <>
+            Pick the “on” color with <code className="font-mono text-[0.8125rem]">color</code>: primary (blue, the
+            default), secondary (green) or tertiary (orange). They're theme tokens, so you can rebrand them — or pass
+            success, warning, danger, info, or any CSS color.
+          </>
+        }
+        code={`
+<Switch color="primary" … />       {/* blue, the default */}
+<Switch color="secondary" … />     {/* green */}
+<Switch color="tertiary" … />      {/* orange */}
+<Switch color="#7c3aed" … />       {/* any CSS color */}
+
+/* Rebrand secondary and tertiary for your app, after the theme import */
+:root {
+  --ui-tone-secondary: #0f766e;  --ui-tone-secondary-fg: #ffffff;
+  --ui-tone-tertiary:  #db2777;  --ui-tone-tertiary-fg:  #ffffff;
+}
+.dark {
+  --ui-tone-secondary: #2dd4bf;  --ui-tone-secondary-fg: #042f2e;
+  --ui-tone-tertiary:  #f472b6;  --ui-tone-tertiary-fg:  #500724;
+}`}
+      >
+        <ColorsDemo />
       </Section>
 
       <Section

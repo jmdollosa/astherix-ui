@@ -81,6 +81,12 @@
   --ui-info: #0369a1;
   --ui-info-fg: #ffffff;
 
+  /* Extra brand accents for controls that can take a color (e.g. Switch color="secondary"). */
+  --ui-tone-secondary: #15803d;
+  --ui-tone-secondary-fg: #ffffff;
+  --ui-tone-tertiary: #ea580c;
+  --ui-tone-tertiary-fg: #2a0f03;
+
   /* Drop shadows for buttons (the `shadow` prop). Two layers: a tight contact
      shadow plus a softer, wider one; heavier levels spread further. */
   --ui-shadow-color: 29 33 38;
@@ -127,6 +133,11 @@
   --ui-info: #38bdf8;
   --ui-info-fg: #04203a;
 
+  --ui-tone-secondary: #4ade80;
+  --ui-tone-secondary-fg: #052e16;
+  --ui-tone-tertiary: #fb923c;
+  --ui-tone-tertiary-fg: #3b1204;
+
   /* Dark backgrounds need deeper, darker shadows to read at all. */
   --ui-shadow-color: 0 0 0;
   --ui-shadow-sm: 0 1px 2px rgb(var(--ui-shadow-color) / 0.4);
@@ -165,6 +176,10 @@
   --color-warning-fg: var(--ui-warning-fg);
   --color-info: var(--ui-info);
   --color-info-fg: var(--ui-info-fg);
+  --color-tone-secondary: var(--ui-tone-secondary);
+  --color-tone-secondary-fg: var(--ui-tone-secondary-fg);
+  --color-tone-tertiary: var(--ui-tone-tertiary);
+  --color-tone-tertiary-fg: var(--ui-tone-tertiary-fg);
 }
 
 @layer base {

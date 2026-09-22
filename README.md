@@ -258,7 +258,8 @@ Real inputs underneath (keyboard, screen readers and form posts work natively). 
 props. `CheckboxGroup`: `label`, `options`, `value` / `defaultValue` / `onValueChange`, `name`,
 `orientation`. `RadioGroup`: `label`, `value` / `defaultValue` / `onValueChange`, `name`,
 `orientation`, `size`, `disabled`, `invalid`, `required`; `Radio`: `value`, `label`, `description`.
-`Switch`: `variant` (`labelled` — the word in the pill, `mark` — × / ✓ on the knob, `liquid` —
+`Switch`: `color` (`primary` `secondary` `tertiary` `success` `warning` `danger` `info` or any CSS
+color; tokens `--ui-tone-secondary` / `--ui-tone-tertiary` + `-fg`), `colorForeground`, `variant` (`labelled` — the word in the pill, `mark` — × / ✓ on the knob, `liquid` —
 blue floods from the knob), `label`, `description`, `onCheckedChange` (may return a Promise:
 spinner, flips back on failure), `size`, `labelPosition`, `onLabel`, `offLabel`.
 
