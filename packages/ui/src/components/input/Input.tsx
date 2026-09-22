@@ -169,7 +169,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             onChange?.(event);
           }}
           className={cn(
-            "h-full min-w-0 flex-1 bg-transparent text-fg outline-none placeholder:text-fg-muted/70",
+            "h-full w-0 min-w-0 flex-1 bg-transparent text-fg outline-none placeholder:text-fg-muted/70",
             "disabled:cursor-not-allowed [&::-webkit-search-cancel-button]:appearance-none",
             className
           )}

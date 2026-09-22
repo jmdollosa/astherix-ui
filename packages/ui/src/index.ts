@@ -160,3 +160,6 @@ export { Checkbox, CheckboxGroup, RadioGroup, Radio, Switch } from "./components
 export type { CheckboxProps, CheckboxGroupProps, RadioGroupProps, RadioProps, SwitchProps, SwitchVariant, SwitchColor } from "./components/choice/Choice";
 export { toast, Toaster } from "./components/toast/Toast";
 export type { ToastOptions, ToastData, ToastType, ToasterProps, ToasterPosition } from "./components/toast/Toast";
+export { ThemeProvider } from "./components/theme/ThemeProvider";
+export type { ThemeProviderProps } from "./components/theme/ThemeProvider";
+export type { ThemeConfig } from "./theme/index";

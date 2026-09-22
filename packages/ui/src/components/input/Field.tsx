@@ -90,7 +90,7 @@ export function Field({
 
   return (
     <FieldContext.Provider value={value}>
-      <div className={cn("grid gap-1.5", className)} {...props}>
+      <div className={cn("grid content-start gap-1.5", className)} {...props}>
         <label id={value.labelId} htmlFor={id} className="w-fit text-sm font-medium leading-snug text-fg">
           {label}
           {required && (

@@ -583,6 +583,44 @@ scroll where supported). `TimelineGroup`: `label` or `date`. `TimelineItem`: `ti
 `asChild`. `Prose`: `size`, `html`. `Stat`: `label`, `value`, `change`, `trend`,
 `invertTrend`, `description`, `size`. Set `--font-heading` for a separate heading font.
 
+## Theme config (ui.theme.json)
+
+Describe your brand once; every component follows.
+
+```json
+{
+  "$schema": "./node_modules/@jm/ui/ui.theme.schema.json",
+  "colors": { "primary": "#047857", "secondary": "#0e7490", "tertiary": "#b45309" },
+  "fonts": { "sans": "\"DM Sans\", ui-sans-serif, system-ui, sans-serif", "googleFonts": ["DM Sans:wght@400..700"] },
+  "radius": "sm",
+  "density": "compact",
+  "shadows": "subtle"
+}
+```
+
+Settings: `colors` (`primary` `secondary` `tertiary` `success` `warning` `danger` `info` as a hex or
+`{ light, dark, foreground, darkForeground }`; `background` `surface` `foreground` `muted` `border`),
+`fonts` (`sans` `heading` `mono` `googleFonts`), `radius` (`none` `sm` `md` `lg` or exact values),
+`density` (`compact` `comfortable` `spacious` or a multiplier), `shadows` (`none` `subtle` `default`
+`strong`), `baseFontSize`. Hover, pressed-edge, readable text and dark-mode shades are derived
+from each color.
+
+**Build time** (recommended):
+
+```bash
+npx jm-ui init                                   # starter ui.theme.json
+npx jm-ui theme ui.theme.json --out resources/css/ui-theme.css [--watch]
+```
+
+```css
+@import "tailwindcss";
+@import "@jm/ui/theme.css";
+@import "./ui-theme.css";
+```
+
+**Runtime**: `<ThemeProvider theme={json} selector?>` (e.g. a theme per customer).
+**From code**: `import { createThemeCss, validateTheme, defineTheme } from "@jm/ui/theme"`.
+
 ## Theming
 
 Components only use semantic variables (`--ui-primary`, `--ui-border`, …). Override them in

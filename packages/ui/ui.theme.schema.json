@@ -1,0 +1,462 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "@jm/ui theme",
+  "description": "Theme settings for @jm/ui. Turn into CSS with `npx jm-ui theme`, or apply at runtime with <ThemeProvider>.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "colors": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "primary": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+              "description": "A hex color. Hover, pressed and dark-mode shades are worked out from it."
+            },
+            {
+              "type": "object",
+              "required": [
+                "light"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "light": {
+                  "type": "string",
+                  "description": "The color in light mode (hex)."
+                },
+                "dark": {
+                  "type": "string",
+                  "description": "The color in dark mode. Worked out from light if left out."
+                },
+                "foreground": {
+                  "type": "string",
+                  "description": "Text and icons on the color in light mode."
+                },
+                "darkForeground": {
+                  "type": "string",
+                  "description": "Text and icons on the color in dark mode."
+                }
+              }
+            }
+          ],
+          "description": "Buttons, links, focus rings and selected states."
+        },
+        "secondary": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+              "description": "A hex color. Hover, pressed and dark-mode shades are worked out from it."
+            },
+            {
+              "type": "object",
+              "required": [
+                "light"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "light": {
+                  "type": "string",
+                  "description": "The color in light mode (hex)."
+                },
+                "dark": {
+                  "type": "string",
+                  "description": "The color in dark mode. Worked out from light if left out."
+                },
+                "foreground": {
+                  "type": "string",
+                  "description": "Text and icons on the color in light mode."
+                },
+                "darkForeground": {
+                  "type": "string",
+                  "description": "Text and icons on the color in dark mode."
+                }
+              }
+            }
+          ],
+          "description": "Second accent (e.g. Switch color=\"secondary\")."
+        },
+        "tertiary": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+              "description": "A hex color. Hover, pressed and dark-mode shades are worked out from it."
+            },
+            {
+              "type": "object",
+              "required": [
+                "light"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "light": {
+                  "type": "string",
+                  "description": "The color in light mode (hex)."
+                },
+                "dark": {
+                  "type": "string",
+                  "description": "The color in dark mode. Worked out from light if left out."
+                },
+                "foreground": {
+                  "type": "string",
+                  "description": "Text and icons on the color in light mode."
+                },
+                "darkForeground": {
+                  "type": "string",
+                  "description": "Text and icons on the color in dark mode."
+                }
+              }
+            }
+          ],
+          "description": "Third accent (e.g. Switch color=\"tertiary\")."
+        },
+        "success": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+              "description": "A hex color. Hover, pressed and dark-mode shades are worked out from it."
+            },
+            {
+              "type": "object",
+              "required": [
+                "light"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "light": {
+                  "type": "string",
+                  "description": "The color in light mode (hex)."
+                },
+                "dark": {
+                  "type": "string",
+                  "description": "The color in dark mode. Worked out from light if left out."
+                },
+                "foreground": {
+                  "type": "string",
+                  "description": "Text and icons on the color in light mode."
+                },
+                "darkForeground": {
+                  "type": "string",
+                  "description": "Text and icons on the color in dark mode."
+                }
+              }
+            }
+          ]
+        },
+        "warning": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+              "description": "A hex color. Hover, pressed and dark-mode shades are worked out from it."
+            },
+            {
+              "type": "object",
+              "required": [
+                "light"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "light": {
+                  "type": "string",
+                  "description": "The color in light mode (hex)."
+                },
+                "dark": {
+                  "type": "string",
+                  "description": "The color in dark mode. Worked out from light if left out."
+                },
+                "foreground": {
+                  "type": "string",
+                  "description": "Text and icons on the color in light mode."
+                },
+                "darkForeground": {
+                  "type": "string",
+                  "description": "Text and icons on the color in dark mode."
+                }
+              }
+            }
+          ]
+        },
+        "danger": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+              "description": "A hex color. Hover, pressed and dark-mode shades are worked out from it."
+            },
+            {
+              "type": "object",
+              "required": [
+                "light"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "light": {
+                  "type": "string",
+                  "description": "The color in light mode (hex)."
+                },
+                "dark": {
+                  "type": "string",
+                  "description": "The color in dark mode. Worked out from light if left out."
+                },
+                "foreground": {
+                  "type": "string",
+                  "description": "Text and icons on the color in light mode."
+                },
+                "darkForeground": {
+                  "type": "string",
+                  "description": "Text and icons on the color in dark mode."
+                }
+              }
+            }
+          ]
+        },
+        "info": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+              "description": "A hex color. Hover, pressed and dark-mode shades are worked out from it."
+            },
+            {
+              "type": "object",
+              "required": [
+                "light"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "light": {
+                  "type": "string",
+                  "description": "The color in light mode (hex)."
+                },
+                "dark": {
+                  "type": "string",
+                  "description": "The color in dark mode. Worked out from light if left out."
+                },
+                "foreground": {
+                  "type": "string",
+                  "description": "Text and icons on the color in light mode."
+                },
+                "darkForeground": {
+                  "type": "string",
+                  "description": "Text and icons on the color in dark mode."
+                }
+              }
+            }
+          ]
+        },
+        "background": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "light"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "light": {
+                  "type": "string"
+                },
+                "dark": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "description": "Page background."
+        },
+        "surface": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "light"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "light": {
+                  "type": "string"
+                },
+                "dark": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "description": "Cards, fields and menus."
+        },
+        "foreground": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "light"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "light": {
+                  "type": "string"
+                },
+                "dark": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "description": "Main text."
+        },
+        "muted": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "light"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "light": {
+                  "type": "string"
+                },
+                "dark": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "description": "Secondary text."
+        },
+        "border": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "required": [
+                "light"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "light": {
+                  "type": "string"
+                },
+                "dark": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "description": "Hairlines and field borders."
+        }
+      }
+    },
+    "fonts": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sans": {
+          "type": "string",
+          "description": "Body font stack, e.g. \"Inter, system-ui, sans-serif\"."
+        },
+        "heading": {
+          "type": "string",
+          "description": "Heading font stack (defaults to sans)."
+        },
+        "mono": {
+          "type": "string"
+        },
+        "googleFonts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Google Fonts to load, e.g. [\"Inter:wght@400..700\"]."
+        }
+      }
+    },
+    "radius": {
+      "description": "Corner roundness.",
+      "oneOf": [
+        {
+          "enum": [
+            "none",
+            "sm",
+            "md",
+            "lg"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "control": {
+              "type": "string"
+            },
+            "controlSm": {
+              "type": "string"
+            },
+            "controlLg": {
+              "type": "string"
+            },
+            "card": {
+              "type": "string"
+            },
+            "modal": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "density": {
+      "description": "Spacing and control sizes.",
+      "oneOf": [
+        {
+          "enum": [
+            "compact",
+            "comfortable",
+            "spacious"
+          ]
+        },
+        {
+          "type": "number",
+          "minimum": 0.6,
+          "maximum": 1.6
+        }
+      ]
+    },
+    "shadows": {
+      "enum": [
+        "none",
+        "subtle",
+        "default",
+        "strong"
+      ],
+      "description": "Shadow strength."
+    },
+    "baseFontSize": {
+      "type": "string",
+      "description": "Root font size, e.g. \"16px\". Scales everything sized in rem."
+    }
+  }
+}

@@ -7,7 +7,7 @@
   "scripts": {
     "build": "npm run build -w @jm/ui",
     "typecheck": "npm run typecheck -w @jm/ui",
-    "docs": "npm run build && esbuild docs/src/main.tsx --bundle --minify --format=iife --jsx=automatic --alias:@jm/ui/editor=./packages/ui/src/editor.ts --alias:@jm/ui=./packages/ui/src/index.ts --define:process.env.NODE_ENV='\"production\"' --outfile=docs/build/app.js && tailwindcss -i docs/input.css -o docs/build/app.css --minify && node docs/assemble.mjs"
+    "docs": "npm run build && esbuild docs/src/main.tsx --bundle --minify --format=iife --jsx=automatic --alias:@jm/ui/theme=./packages/ui/src/theme-entry.ts --alias:@jm/ui/editor=./packages/ui/src/editor.ts --alias:@jm/ui=./packages/ui/src/index.ts --define:process.env.NODE_ENV='\"production\"' --outfile=docs/build/app.js && tailwindcss -i docs/input.css -o docs/build/app.css --minify && node docs/assemble.mjs"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.0.0",

@@ -9,6 +9,9 @@
       ],
       "@jm/ui/editor": [
         "../packages/ui/src/editor.ts"
+      ],
+      "@jm/ui/theme": [
+        "../packages/ui/src/theme-entry.ts"
       ]
     }
   },
