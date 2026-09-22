@@ -77,3 +77,12 @@ export type {
   StatProps,
   StatGroupProps,
 } from "./components/typography/Typography";
+export { Avatar, AvatarGroup, AvatarLabel, AvatarUpload, getInitials } from "./components/avatar/Avatar";
+export type {
+  AvatarProps,
+  AvatarGroupProps,
+  AvatarLabelProps,
+  AvatarUploadProps,
+  AvatarSize,
+  AvatarStatus,
+} from "./components/avatar/Avatar";

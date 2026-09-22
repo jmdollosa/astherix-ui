@@ -530,3 +530,15 @@
     background-position: 0 0;
   }
 }
+
+/* Avatar initials: a soft color picked from the name (the hue is set per avatar). */
+@layer components {
+  .ui-avatar-initials {
+    background: hsl(var(--av-h, 215) 58% 91%);
+    color: hsl(var(--av-h, 215) 42% 30%);
+  }
+  .dark .ui-avatar-initials {
+    background: hsl(var(--av-h, 215) 28% 24%);
+    color: hsl(var(--av-h, 215) 62% 84%);
+  }
+}

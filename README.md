@@ -9,6 +9,7 @@ packages/ui/
   theme.css              Tokens (colors, font, radius), light/dark themes
   src/lib/cn.ts          Class merging helper
   src/components/activity/ ActivityIndicator, ProgressBar, ProgressRing, Skeleton, ActivitySteps, LoadingOverlay
+  src/components/avatar/ Avatar, AvatarGroup, AvatarLabel, AvatarUpload
   src/components/button/ Button
   src/components/editor/ Editor (entry: @jm/ui/editor)
   src/components/input/  Field, Input, Textarea
@@ -96,6 +97,23 @@ indeterminate), `max`, `label`, `showValue`, `valueText`, `size`, `tone`, `strip
 `Skeleton`: `shape` (`rect` `circle` `text`), `lines`. `ActivitySteps`: `steps` (`label`,
 `description`, `status`: `done` `active` `pending` `error` `skipped`, `meta`), `orientation`,
 `size`. `LoadingOverlay`: `loading`, `label`, `variant`, `delay`.
+
+## Avatar
+
+```tsx
+<Avatar src={user.avatarUrl} name="Maria Santos" status="online" />
+<Avatar name="Dan Torres" />                              {/* initials, color from the name */}
+<Avatar shape="square" icon="bi bi-building" name="Northwind" />
+<AvatarGroup max={5} onOverflowClick={openMembers}>{…}</AvatarGroup>
+<AvatarLabel src={…} name="Maria Santos" description="Product designer" end={<Pill>Admin</Pill>} />
+<AvatarUpload name={user.name} value={user.avatarUrl} onChange={setFile} inputName="avatar" />
+```
+
+`Avatar`: `src`, `name`, `size` (`xs` `sm` `md` `lg` `xl` `2xl`), `shape` (`circle` `square`),
+`status` (`online` `away` `busy` `offline`), `icon`, `badge`, `ring`, `decorative`, `fallback`.
+`AvatarGroup`: `size`, `shape`, `max`, `spacing`, `onOverflowClick`. `AvatarLabel`: Avatar props
++ `description`, `end`. `AvatarUpload`: `value`, `onChange`, `name`, `size`, `shape`,
+`maxSizeMB`, `accept`, `inputName`, `disabled`. `getInitials(name)` is exported too.
 
 ## Button
 
