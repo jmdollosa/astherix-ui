@@ -11,6 +11,7 @@ packages/ui/
   src/components/button/ Button
   src/components/input/  Field, Input, Textarea
   src/components/modal/  Modal
+  src/components/select/ Select
 docs/                    User guide
   index.html             Built guide — open it in any browser, works offline
   src/main.tsx           Navigation and page list
@@ -219,6 +220,31 @@ controls can read it with `useField()`.
 **Textarea** — `size`, `rounded` (`none` … `lg`), `invalid`, `autoResize` with `minRows` /
 `maxRows`, `showCount` (with `maxLength` shows "12 / 280"), `resize` (`vertical` `none`),
 `frameClassName`.
+
+## Select
+
+A searchable dropdown in the spirit of Select2.
+
+```tsx
+<Field label="Country">
+  <Select options={countries} value={country} onChange={setCountry} />
+</Field>
+
+<Select multiple options={skills} value={skills} onChange={setSkills} maxSelected={5} clearable />
+<Select loadOptions={(q) => api.searchRepos(q)} minSearchLength={2} />
+<Select multiple creatable options={labels} onCreateOption={(text) => api.createLabel(text)} />
+```
+
+Options: `{ value, label, description?, icon?, group?, disabled?, keywords? }`.
+
+Props: `options`, `value` / `defaultValue` / `onChange` (string | null, or string[] with
+`multiple`), `multiple`, `maxSelected`, `searchable` (default true), `searchPlaceholder`,
+`clearable`, `placeholder`, `loadOptions` + `minSearchLength` + `searchDelay`, `creatable` +
+`onCreateOption`, `renderOption`, `noOptionsMessage`, `closeOnSelect`, `onOpenChange`,
+`name` (hidden inputs for form posts), `size`, `rounded`, `invalid`, `disabled`, `required`.
+
+Keyboard: Enter/Space/↓ open, type to search, ↑ ↓ Home End move, Enter picks, Backspace removes
+the last chip, Escape closes (before a surrounding Modal), Tab closes and moves on.
 
 ## Modal
 

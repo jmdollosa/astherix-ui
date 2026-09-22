@@ -21,3 +21,5 @@ export { Input } from "./components/input/Input";
 export type { InputProps } from "./components/input/Input";
 export { Textarea } from "./components/input/Textarea";
 export type { TextareaProps } from "./components/input/Textarea";
+export { Select } from "./components/select/Select";
+export type { SelectProps, SelectOption } from "./components/select/Select";

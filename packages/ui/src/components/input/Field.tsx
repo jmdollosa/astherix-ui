@@ -9,6 +9,7 @@ import { cn } from "../../lib/cn";
 
 export type FieldContextValue = {
   id: string;
+  labelId: string;
   descriptionId?: string;
   errorId?: string;
   invalid: boolean;
@@ -79,6 +80,7 @@ export function Field({
   const hasError = error !== undefined && error !== null && error !== false && error !== "";
   const value: FieldContextValue = {
     id,
+    labelId: `${id}-label`,
     descriptionId: description ? `${id}-description` : undefined,
     errorId: hasError ? `${id}-error` : undefined,
     invalid: hasError,
@@ -89,7 +91,7 @@ export function Field({
   return (
     <FieldContext.Provider value={value}>
       <div className={cn("grid gap-1.5", className)} {...props}>
-        <label htmlFor={id} className="w-fit text-sm font-medium leading-snug text-fg">
+        <label id={value.labelId} htmlFor={id} className="w-fit text-sm font-medium leading-snug text-fg">
           {label}
           {required && (
             <span aria-hidden="true" className="ml-0.5 text-danger">
