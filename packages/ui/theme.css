@@ -800,3 +800,110 @@
     opacity: 0;
   }
 }
+
+/* ---------------------------------------------------------------------------
+ * Layout primitives (Stack, Grid, GridItem)
+ *
+ * The components set CSS custom properties; the rules below read them, including
+ * inside media queries. Doing it this way means a responsive prop needs no class
+ * names generated at runtime, so it survives a packaged build.
+ * ------------------------------------------------------------------------- */
+[data-ui-stack] {
+  display: flex;
+  flex-direction: var(--ui-dir, column);
+  gap: calc(var(--spacing) * var(--ui-gap, 4));
+  align-items: var(--ui-align, stretch);
+  justify-content: var(--ui-justify, flex-start);
+  flex-wrap: var(--ui-wrap, nowrap);
+}
+
+[data-ui-grid] {
+  display: grid;
+  grid-template-columns: var(--ui-cols, repeat(1, minmax(0, 1fr)));
+  gap: calc(var(--spacing) * var(--ui-gap, 4));
+  align-items: var(--ui-align, stretch);
+  justify-items: var(--ui-justify-items, stretch);
+}
+
+[data-ui-span] {
+  grid-column: span min(var(--ui-span, 1), var(--ui-cols-count, 12)) / span min(var(--ui-span, 1), var(--ui-cols-count, 12));
+  grid-row: span var(--ui-row-span, 1) / span var(--ui-row-span, 1);
+}
+
+@media (min-width: 40rem) {
+  [data-ui-stack] {
+    flex-direction: var(--ui-dir-sm, var(--ui-dir, column));
+    gap: calc(var(--spacing) * var(--ui-gap-sm, var(--ui-gap, 4)));
+    align-items: var(--ui-align-sm, var(--ui-align, stretch));
+    justify-content: var(--ui-justify-sm, var(--ui-justify, flex-start));
+  }
+  [data-ui-grid] {
+    grid-template-columns: var(--ui-cols-sm, var(--ui-cols, repeat(1, minmax(0, 1fr))));
+    gap: calc(var(--spacing) * var(--ui-gap-sm, var(--ui-gap, 4)));
+  }
+  [data-ui-span] {
+    grid-column: span min(var(--ui-span-sm, var(--ui-span, 1)), var(--ui-cols-count, 12)) / span min(var(--ui-span-sm, var(--ui-span, 1)), var(--ui-cols-count, 12));
+  }
+}
+
+@media (min-width: 48rem) {
+  [data-ui-stack] {
+    flex-direction: var(--ui-dir-md, var(--ui-dir-sm, var(--ui-dir, column)));
+    gap: calc(var(--spacing) * var(--ui-gap-md, var(--ui-gap-sm, var(--ui-gap, 4))));
+    align-items: var(--ui-align-md, var(--ui-align-sm, var(--ui-align, stretch)));
+    justify-content: var(--ui-justify-md, var(--ui-justify-sm, var(--ui-justify, flex-start)));
+  }
+  [data-ui-grid] {
+    grid-template-columns: var(--ui-cols-md, var(--ui-cols-sm, var(--ui-cols, repeat(1, minmax(0, 1fr)))));
+    gap: calc(var(--spacing) * var(--ui-gap-md, var(--ui-gap-sm, var(--ui-gap, 4))));
+  }
+  [data-ui-span] {
+    grid-column: span min(var(--ui-span-md, var(--ui-span-sm, var(--ui-span, 1))), var(--ui-cols-count, 12)) / span min(var(--ui-span-md, var(--ui-span-sm, var(--ui-span, 1))), var(--ui-cols-count, 12));
+  }
+}
+
+@media (min-width: 64rem) {
+  [data-ui-stack] {
+    flex-direction: var(--ui-dir-lg, var(--ui-dir-md, var(--ui-dir-sm, var(--ui-dir, column))));
+    gap: calc(var(--spacing) * var(--ui-gap-lg, var(--ui-gap-md, var(--ui-gap-sm, var(--ui-gap, 4)))));
+    align-items: var(--ui-align-lg, var(--ui-align-md, var(--ui-align-sm, var(--ui-align, stretch))));
+    justify-content: var(--ui-justify-lg, var(--ui-justify-md, var(--ui-justify-sm, var(--ui-justify, flex-start))));
+  }
+  [data-ui-grid] {
+    grid-template-columns: var(--ui-cols-lg, var(--ui-cols-md, var(--ui-cols-sm, var(--ui-cols, repeat(1, minmax(0, 1fr))))));
+    gap: calc(var(--spacing) * var(--ui-gap-lg, var(--ui-gap-md, var(--ui-gap-sm, var(--ui-gap, 4)))));
+  }
+  [data-ui-span] {
+    grid-column: span min(var(--ui-span-lg, var(--ui-span-md, var(--ui-span-sm, var(--ui-span, 1)))), var(--ui-cols-count, 12)) / span min(var(--ui-span-lg, var(--ui-span-md, var(--ui-span-sm, var(--ui-span, 1)))), var(--ui-cols-count, 12));
+  }
+}
+
+/* Hero: drifting aurora clouds, an endless logo strip, and a gentle float. */
+@keyframes ui-aurora {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(6%, -4%, 0) scale(1.12);
+  }
+  66% {
+    transform: translate3d(-5%, 5%, 0) scale(0.95);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+@keyframes ui-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes ui-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}

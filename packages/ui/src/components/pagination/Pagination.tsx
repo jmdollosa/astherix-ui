@@ -208,8 +208,12 @@ export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(functio
     ro?.observe(el);
     return () => ro?.disconnect();
   }, [responsive]);
-  const narrow = responsive && width < 440;
+  // Shed in stages as the space runs out: first the Previous/Next words, then the number
+  // neighbours, then First/Last, and finally the numbers themselves.
   const tiny = responsive && width < 300;
+  const narrow = responsive && width < 560;
+  const compact = responsive && width < 700;
+  const roomForEnds = !responsive || width >= 480;
   const mode = variant === "simple" || tiny ? "simple" : "numbers";
   const siblings = narrow ? 0 : siblingCount;
   const items = getPageItems(current, pageCount, siblings, boundaryCount);
@@ -260,15 +264,15 @@ export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(functio
       )}
 
       <div className={cn("flex min-w-0 items-center gap-1", !showSummary && "mx-auto", showSummary && "ms-auto")}>
-        {showFirstLast && !narrow && mode === "numbers" && (
+        {showFirstLast && roomForEnds && mode === "numbers" && (
           <PageControl ctx={ctx} target={1} label={L.first} title={L.first} disabled={current === 1}>
             <Arrow dir="left" double />
           </PageControl>
         )}
-        <PageControl ctx={ctx} target={current - 1} label={L.previous} title={L.previous} disabled={current === 1} className={cn(mode === "numbers" && !narrow && "gap-1 px-2.5")}>
+        <PageControl ctx={ctx} target={current - 1} label={L.previous} title={L.previous} disabled={current === 1} className={cn(mode === "numbers" && !compact && "gap-1 px-2.5")}>
           <span className="inline-flex items-center gap-1">
             <Arrow dir="left" />
-            {mode === "numbers" && !narrow && <span className="pe-0.5">{L.previous}</span>}
+            {mode === "numbers" && !compact && <span className="pe-0.5">{L.previous}</span>}
           </span>
         </PageControl>
 
@@ -318,13 +322,13 @@ export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(functio
           </ol>
         )}
 
-        <PageControl ctx={ctx} target={current + 1} label={L.next} title={L.next} disabled={current === pageCount} className={cn(mode === "numbers" && !narrow && "px-2.5")}>
+        <PageControl ctx={ctx} target={current + 1} label={L.next} title={L.next} disabled={current === pageCount} className={cn(mode === "numbers" && !compact && "px-2.5")}>
           <span className="inline-flex items-center gap-1">
-            {mode === "numbers" && !narrow && <span className="ps-0.5">{L.next}</span>}
+            {mode === "numbers" && !compact && <span className="ps-0.5">{L.next}</span>}
             <Arrow dir="right" />
           </span>
         </PageControl>
-        {showFirstLast && !narrow && mode === "numbers" && (
+        {showFirstLast && roomForEnds && mode === "numbers" && (
           <PageControl ctx={ctx} target={pageCount} label={L.last} title={L.last} disabled={current === pageCount}>
             <Arrow dir="right" double />
           </PageControl>

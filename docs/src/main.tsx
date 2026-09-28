@@ -33,11 +33,15 @@ import { IconButtonPage } from "./pages/IconButtonPage";
 import { SpotlightTextPage } from "./pages/SpotlightTextPage";
 import { SkeletonPage } from "./pages/SkeletonPage";
 import { SignaturePage } from "./pages/SignaturePage";
+import { AlertPage } from "./pages/AlertPage";
+import { LayoutPage } from "./pages/LayoutPage";
+import { HeroPage } from "./pages/HeroPage";
 
 // Add each new component page here; the nav and routing pick it up automatically.
 const pages = [
   { path: "getting-started", title: "Getting started", group: "Guide", Page: GettingStarted },
   { path: "theming", title: "Theming", group: "Guide", Page: ThemingPage },
+  { path: "alert", title: "Alert", group: "Components", Page: AlertPage },
   { path: "accordion", title: "Accordion", group: "Components", Page: AccordionPage },
   { path: "activity", title: "Activity indicators", group: "Components", Page: ActivityPage },
   { path: "autocomplete", title: "Autocomplete", group: "Components", Page: AutocompletePage },
@@ -51,7 +55,9 @@ const pages = [
   { path: "editor", title: "Editor", group: "Components", Page: EditorPage },
   { path: "upload", title: "File upload", group: "Components", Page: UploadPage },
   { path: "iconbutton", title: "Icon button", group: "Components", Page: IconButtonPage },
+  { path: "hero", title: "Hero", group: "Components", Page: HeroPage },
   { path: "input", title: "Input", group: "Components", Page: InputPage },
+  { path: "layout", title: "Layout", group: "Components", Page: LayoutPage },
   { path: "modal", title: "Modal", group: "Components", Page: ModalPage },
   { path: "pagination", title: "Pagination", group: "Components", Page: PaginationPage },
   { path: "pills", title: "Pills", group: "Components", Page: PillsPage },
@@ -69,7 +75,7 @@ const pages = [
   { path: "spotlight-text", title: "Spotlight text", group: "Animated components", Page: SpotlightTextPage },
 ];
 
-const VERSION = "0.37.0";
+const VERSION = "0.40.0";
 
 function useHashRoute() {
   const read = () => window.location.hash.replace(/^#\/?/, "") || pages[0].path;

@@ -28,7 +28,7 @@ export function Code({ code }: { code: string }) {
 
 export function Section({ title, desc, code, children, wide = false }: { title: string; desc: React.ReactNode; code: string; children: React.ReactNode; wide?: boolean }) {
   return (
-    <section className={`grid grid-cols-[minmax(0,1fr)] gap-4 border-t border-border py-9 ${wide ? "" : "md:grid-cols-[14rem_minmax(0,1fr)] md:gap-10"}`}>
+    <section className={`grid grid-cols-[minmax(0,1fr)] gap-4 border-t border-border py-9 ${wide ? "" : "lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-10"}`}>
       <div>
         <h2 className="text-[1.0625rem] font-semibold tracking-[-0.01em]">{title}</h2>
         <div className={`mt-1.5 text-sm leading-relaxed text-fg-muted ${wide ? "max-w-[70ch]" : "max-w-[34ch]"}`}>{desc}</div>

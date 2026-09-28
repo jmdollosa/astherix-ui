@@ -301,6 +301,27 @@ color; tokens `--ui-tone-secondary` / `--ui-tone-tertiary` + `-fg`), `colorForeg
 blue floods from the knob), `label`, `description`, `onCheckedChange` (may return a Promise:
 spinner, flips back on failure), `size`, `labelPosition`, `onLabel`, `offLabel`.
 
+## Alert
+
+A message that stays on the page. (For one that appears and leaves on its own, use Toast.)
+
+```tsx
+<Alert tone="success" title="Invoice sent to Northwind Traders" />
+<Alert tone="warning" variant="accent" title="Your card expires this month" dismissible onDismiss={hide}
+  actions={<Button size="sm">Update card</Button>}>
+  Update it before 30 September so invoices keep going out.
+</Alert>
+<Alert tone="danger" title="We couldn't save this invoice" items={Object.values(errors)} />
+<Alert banner size="sm" tone="warning" title="Your trial ends in 3 days" />
+```
+
+`tone` (`info` `success` `warning` `danger` `neutral`), `variant` (`soft` `outline` `accent`
+`solid`), `title`, `children`, `items` (a bulleted summary — the shape Laravel's validation errors
+arrive in), `actions`, `icon` (your own, or `false`), `dismissible` + `onDismiss`, `autoDismiss`
+(ms; pauses on hover or focus), `size`, `banner` (edge to edge, square corners), `live`
+(`auto` announces danger and warning immediately, everything else politely; `off` stays quiet).
+Dismissal fades and collapses the space instead of snapping the page up.
+
 ## Toast
 
 ```tsx
@@ -768,6 +789,63 @@ scroll where supported). `TimelineGroup`: `label` or `date`. `TimelineItem`: `ti
 `truncate`, `lineClamp`. `Link`: `variant` (`inline` `subtle` `standalone`), `external`,
 `asChild`. `Prose`: `size`, `html`. `Stat`: `label`, `value`, `change`, `trend`,
 `invertTrend`, `description`, `size`. Set `--font-heading` for a separate heading font.
+
+## Layout (Stack, Grid, Container…)
+
+Small pieces for arranging things. Every size prop takes a plain value or an object keyed by
+breakpoint, so a layout changes with the screen without you writing media queries.
+
+```tsx
+<Stack direction={{ base: "column", md: "row" }} gap={3} justify="between" align={{ md: "center" }}>…</Stack>
+<Stack direction="row" gap={2} wrap divider>…</Stack>
+
+<Grid columns={{ base: 1, sm: 2, lg: 4 }} gap={4}>…</Grid>
+<Grid minChildWidth="16rem" gap={4}>…</Grid>            {/* reacts to its own width */}
+<GridItem span={{ base: 1, md: 3 }} rowSpan={2}>…</GridItem>
+
+<Container size="xl" padding={{ base: 4, md: 8 }}>…</Container>
+<Center minHeight="60vh">…</Center>
+<Stack direction="row"><Logo /><Spacer /><Account /></Stack>
+<Divider dashed spacing={4} />   <Divider>or</Divider>
+<AspectRatio ratio="16/9"><img src={cover} alt="" /></AspectRatio>
+```
+
+`Stack`: `direction`, `gap`, `align`, `justify`, `wrap`, `divider`, `as`. `Grid`: `columns` or
+`minChildWidth`, `gap`, `align`, `as`. `GridItem`: `span` (never exceeds the column count, so
+nothing overflows on a phone), `rowSpan`. `Container`: `size` (`sm` `md` `lg` `xl` `2xl` `prose`
+`full`, or any length), `padding`, `align`. `gap` and `padding` count in spacing steps, so they
+follow the theme's density. Breakpoints follow the window, like Tailwind's own — for a layout that
+reacts to the space it's actually in, use `minChildWidth` or `wrap`.
+
+## Hero
+
+The top of a landing page, in separate pieces so it can be quiet or loud.
+
+```tsx
+<Hero background="aurora" size="lg">
+  <HeroEyebrow href="/changelog" icon="bi bi-stars">New · Recurring invoices</HeroEyebrow>
+  <HeroTitle gradient>Get paid without chasing anyone</HeroTitle>
+  <HeroSubtitle>Send an invoice in thirty seconds and let the reminders go out on their own.</HeroSubtitle>
+  <HeroActions>
+    <Button size="lg">Start free</Button>
+    <Button size="lg" variant="secondary">See a demo</Button>
+  </HeroActions>
+  <HeroStats stats={[{ value: "12,400", label: "invoices sent" }, { value: "₱48M", label: "collected" }]} />
+  <HeroLogos logos={["Northwind", "Blue Harbor", "Luzon Freight"]} marquee />
+</Hero>
+
+<Hero background="image" image="/img/warehouse.jpg" overlay={0.6} size="screen" align="start"
+  media={<HeroMedia frame url="app.example.com/invoices" tilt float><img src={shot} alt="" /></HeroMedia>}>
+  …
+</Hero>
+```
+
+`Hero`: `background` (`none` `aurora` `grid` `dots` `gradient` `image`), `image`, `overlay`, `dark`,
+`align`, `size` (`sm` `md` `lg` `screen` — `screen` uses `100svh`), `media` (two columns from medium
+screens), `colors`, `as`. `HeroTitle`: `as` (`h1` default), `gradient`, `size`, `colors`.
+`HeroEyebrow`: `href` (makes it a link), `icon`. `HeroStats`: `stats`. `HeroLogos`: `logos`,
+`label`, `marquee`, `speed` (pauses on hover). `HeroMedia`: `frame` (browser chrome), `url`,
+`tilt`, `float`. Aurora, float and the marquee all stop under `prefers-reduced-motion`.
 
 ## Theme config (ui.theme.json)
 
