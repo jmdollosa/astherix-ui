@@ -22,11 +22,11 @@ type ModalContextValue = {
   setHasDescription: (value: boolean) => void;
 };
 
-const ModalContext = React.createContext<ModalContextValue | null>(null);
+export const ModalContext = React.createContext<ModalContextValue | null>(null);
 
-function useModalContext(component: string) {
+export function useModalContext(component: string) {
   const ctx = React.useContext(ModalContext);
-  if (!ctx) throw new Error(`<${component}> must be used inside <Modal>.`);
+  if (!ctx) throw new Error(`<${component}> must be used inside <Modal> or <Drawer>.`);
   return ctx;
 }
 
@@ -242,11 +242,29 @@ const XIcon = () => (
   </svg>
 );
 
-export const ModalContent = React.forwardRef<HTMLDivElement, ModalContentProps>(
+/** Props shared by ModalContent and DrawerContent. */
+export interface DialogSurfaceProps extends React.HTMLAttributes<HTMLDivElement> {
+  dismissible?: boolean;
+  backdrop?: ModalBackdrop;
+  showCloseButton?: boolean;
+  closeLabel?: string;
+}
+
+/*
+ * The <dialog> behind ModalContent and DrawerContent: opening with showModal(), the
+ * exit animation, scroll lock, Escape and backdrop clicks, and focus in and back out.
+ * Each caller only decides where the panel sits (dialogClassName) and how it looks
+ * (panelClassName). Internal — not exported from the package.
+ */
+export const DialogSurface = React.forwardRef<
+  HTMLDivElement,
+  DialogSurfaceProps & { component: string; dialogClassName?: string; panelClassName?: string }
+>(
   (
     {
-      className,
-      size,
+      component,
+      dialogClassName,
+      panelClassName,
       backdrop = "default",
       dismissible = true,
       showCloseButton = true,
@@ -257,7 +275,7 @@ export const ModalContent = React.forwardRef<HTMLDivElement, ModalContentProps>(
     },
     ref
   ) => {
-    const { open, setOpen, titleId, descriptionId, hasDescription } = useModalContext("ModalContent");
+    const { open, setOpen, titleId, descriptionId, hasDescription } = useModalContext(component);
     const dialogRef = React.useRef<HTMLDialogElement>(null);
     const returnFocusRef = React.useRef<HTMLElement | null>(null);
     const pressedBackdrop = React.useRef(false);
@@ -330,9 +348,8 @@ export const ModalContent = React.forwardRef<HTMLDivElement, ModalContentProps>(
         data-state={state}
         className={cn(
           // The dialog fills the viewport so clicks outside the panel land on it (= backdrop).
-          "fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none overflow-y-auto overscroll-contain",
-          "bg-transparent p-4 text-fg sm:p-6 open:flex open:flex-col open:items-center",
-          size === "full" && "p-0 sm:p-0",
+          "fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none overscroll-contain bg-transparent text-fg",
+          dialogClassName,
           backdropClasses[backdrop],
           "data-[state=open]:backdrop:animate-[ui-fade-in_200ms_ease-out]",
           "data-[state=closing]:backdrop:animate-[ui-fade-out_140ms_ease-in_forwards]"
@@ -361,13 +378,7 @@ export const ModalContent = React.forwardRef<HTMLDivElement, ModalContentProps>(
         }}
       >
         {(state === "open" || state === "closing") && (
-          <div
-            ref={setPanelRef}
-            tabIndex={-1}
-            data-state={state}
-            className={cn(modalPanelVariants({ size }), className)}
-            {...props}
-          >
+          <div ref={setPanelRef} tabIndex={-1} data-state={state} className={panelClassName} {...props}>
             {children}
             {/* After the content in the DOM, so focus starts on the content, not on ×. */}
             {showCloseButton && dismissible && (
@@ -382,6 +393,22 @@ export const ModalContent = React.forwardRef<HTMLDivElement, ModalContentProps>(
       </dialog>
     );
   }
+);
+DialogSurface.displayName = "DialogSurface";
+
+export const ModalContent = React.forwardRef<HTMLDivElement, ModalContentProps>(
+  ({ className, size, ...props }, ref) => (
+    <DialogSurface
+      ref={ref}
+      component="ModalContent"
+      dialogClassName={cn(
+        "overflow-y-auto p-4 sm:p-6 open:flex open:flex-col open:items-center",
+        size === "full" && "p-0 sm:p-0"
+      )}
+      panelClassName={cn(modalPanelVariants({ size }), className)}
+      {...props}
+    />
+  )
 );
 ModalContent.displayName = "ModalContent";
 

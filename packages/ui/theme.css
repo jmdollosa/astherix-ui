@@ -279,6 +279,33 @@
   }
 }
 
+/* Drawer: slides from its edge. Each side sets --ui-drawer-from (e.g. translateX(-100%)). */
+@keyframes ui-drawer-in {
+  from {
+    transform: var(--ui-drawer-from);
+  }
+}
+@keyframes ui-drawer-out {
+  to {
+    transform: var(--ui-drawer-from);
+  }
+}
+
+/* OtpInput: the blinking caret in the active box */
+@keyframes ui-caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Tooltip */
+@keyframes ui-tooltip-in {
+  from {
+    opacity: 0;
+    transform: var(--ui-tooltip-from, translateY(2px));
+  }
+}
+
 /*
  * Experimental: progress loading indicator for Button (loadingIndicator="progress").
  * Without a `progress` value it creeps toward ~92% and completes when the work ends.

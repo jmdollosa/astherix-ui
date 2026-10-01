@@ -13,13 +13,18 @@ packages/ui/
   src/components/button/ Button
   src/components/card/   Card, ChoiceCard
   src/components/editor/ Editor (entry: @astherix/ui/editor)
-  src/components/input/  Field, Input, Textarea
+  src/components/input/  Field, Input, Textarea, OtpInput
   src/components/menu/   DropdownMenu, SplitButton
   src/components/modal/  Modal
+  src/components/drawer/ Drawer
   src/components/pill/   Pill, PillGroup, PillOption
   src/components/choice/ Checkbox, CheckboxGroup, RadioGroup, Radio, Switch
   src/components/select/ Select
   src/components/sidebar/ SidebarProvider, Sidebar, SidebarNav, SidebarTrigger …
+  src/components/navigation/ NavigationMenu
+  src/components/breadcrumbs/ Breadcrumbs
+  src/components/tooltip/ Tooltip
+  src/components/placeholder/ Placeholder
   src/components/table/  DataTable
   src/components/tabs/   Tabs
   src/components/timeline/ Timeline, Roadmap
@@ -381,6 +386,24 @@ controls can read it with `useField()`.
 `maxRows`, `showCount` (with `maxLength` shows "12 / 280"), `resize` (`vertical` `none`),
 `frameClassName`.
 
+## One-time code (OtpInput)
+
+```tsx
+<Field label="Authentication code" error={errors.code}>
+  <OtpInput value={code} onValueChange={setCode} onComplete={verify} />
+</Field>
+
+<OtpInput name="code" autoFocus />                       {/* posts with the form; a form reset clears it */}
+<OtpInput length={8} allow="alphanumeric" groupSize={4} />
+<OtpInput length={4} mask size="lg" />                  {/* a PIN */}
+```
+
+One real input behind the boxes, so SMS autofill (`autocomplete="one-time-code"`), pasting,
+password managers and form posts all work, and screen readers meet a single field. Props:
+`length` (6), `value` / `defaultValue` / `onValueChange`, `onComplete`, `allow` (`digits`
+`alphanumeric` or a RegExp per character), `groupSize`, `mask`, `size` (`sm` `md` `lg`), `invalid`,
+`frameClassName` + input props (`name`, `autoFocus`, `disabled`…). Reads a surrounding Field.
+
 ## Pagination
 
 ```tsx
@@ -625,6 +648,24 @@ Props: `icon`, `label` (required; spoken and tooltip), `variant` (`plain` `soft`
 `shape` (`circle` `square`), `pressed` / `defaultPressed` / `onPressedChange`, `pressedIcon`,
 `burst`, `badge` (number or dot), `loading`, `href`, `tooltip`, `disabled`.
 
+## Tooltip
+
+```tsx
+<Tooltip content="Archive">
+  <Button variant="ghost" iconOnly icon="bi bi-archive" aria-label="Archive" />
+</Tooltip>
+<Tooltip side="bottom" content="Save draft ⌘S">…</Tooltip>
+<Tooltip content={client.name} disabled={!isTruncated}>…</Tooltip>
+```
+
+Shows on hover (after `delay`, 400ms) and keyboard focus, never on touch; hides on Escape, blur and
+pointer leave (the tooltip itself is hoverable). Moving between tooltips shows the next at once.
+Shown with the Popover API, so it sits above modals and drawers and escapes `overflow: hidden` —
+no provider or z-index needed. Props: `content`, `side` (`top` `right` `bottom` `left`; flips),
+`align` (`start` `center` `end`), `delay`, `disabled`, `as` (`description` — read after the
+element's name, default; `label` — the tooltip is the name), `className`. The child must take a ref
+and focus/pointer handlers; disabled buttons get no events, so wrap them in a focusable span.
+
 ## Modal
 
 ```tsx
@@ -667,6 +708,30 @@ Built on the native `<dialog>`: focus moves in on open (honours `autoFocus`) and
 to the opener on close, Tab stays inside, the page behind is inert and doesn't scroll.
 Theme tokens: `--radius-modal`, `--ui-shadow-modal`, `--ui-backdrop`, `--ui-backdrop-dark`,
 `--ui-backdrop-blur`, `--ui-backdrop-blur-radius`, `--ui-backdrop-solid`.
+
+## Drawer
+
+```tsx
+const menu = useDrawer();                 // { isOpen, open, close, toggle, drawerProps }
+
+<Drawer {...menu.drawerProps}>
+  <DrawerTrigger asChild><Button iconOnly icon="bi bi-list" aria-label="Open menu" /></DrawerTrigger>
+  <DrawerContent side="left" size="sm">
+    <DrawerHeader>
+      <DrawerTitle>Northwind Billing</DrawerTitle>
+      <DrawerDescription>…</DrawerDescription>
+    </DrawerHeader>
+    <DrawerBody>…</DrawerBody>
+    <DrawerFooter><DrawerClose asChild><Button>Done</Button></DrawerClose></DrawerFooter>
+  </DrawerContent>
+</Drawer>
+```
+
+A Modal that slides in from an edge — the same native `<dialog>`, focus handling, scroll lock,
+Escape and backdrop clicks. `DrawerContent`: `side` (`left` `right` `top` `bottom`; default
+`right`), `size` (`sm` `md` `lg` — width for left/right, height for top/bottom), `dismissible`,
+`backdrop`, `showCloseButton`, `closeLabel`. `DrawerFooter` sits at the bottom. Reduced motion fades
+instead of sliding.
 
 ## Table (DataTable)
 
@@ -726,6 +791,45 @@ narrow: off-canvas drawer. Chosen by the layout's own width.
 `railBelow` (1024), `persistKey`, `shortcut` ("b" → Ctrl/⌘+B), `linkComponent`, `onNavigate`, `contained`.
 `Sidebar`: `width`, `railWidth`. `SidebarNav`: `items`, `activeHref`, `matchNested`. `SidebarGroup`:
 `label`, `action`. `useSidebar()` → `{ mode, collapsed, drawerOpen, toggle, setCollapsed, setDrawerOpen, side }`.
+
+## Navigation menu
+
+```tsx
+<NavigationMenu linkComponent={Link} activeHref={url} items={[
+  { label: "Dashboard", href: "/dashboard", icon: <LayoutGrid /> },
+  { label: "Reports", children: [
+    { label: "Sales", href: "/reports/sales", description: "Revenue by month and client" },
+    { label: "Aging", href: "/reports/aging", description: "Who owes what, and for how long" },
+  ] },
+  { label: "Docs", href: "https://example.com/docs", external: true },
+]} />
+
+// Phones: the same items in a Drawer
+<NavigationMenu orientation="vertical" items={items} activeHref={url} linkComponent={Link} onNavigate={menu.close} />
+```
+
+Items: `{ label, href?, icon?, description?, badge?, children?, external?, id? }` — `children` open
+a panel of links (one level). Props: `items`, `activeHref`, `matchNested` (default true; the most
+specific match wins), `orientation` (`horizontal` `vertical`), `indicator` (`pill` `underline` — give
+the menu `className="h-full"` in the header so the line sits on its edge), `linkComponent`,
+`onNavigate`, `aria-label` (default "Main"). Disclosure pattern: links stay in the Tab order;
+Enter/Space/↓ open a panel, ← → Home End move between top-level items, Escape closes; hover opens
+panels for mouse users.
+
+## Breadcrumbs
+
+```tsx
+<Breadcrumbs linkComponent={Link} items={[
+  { label: "Clients", href: "/clients" },
+  { label: "Northwind Traders", href: "/clients/7" },
+  { label: "Invoices" },                      // the current page: no href
+]} />
+```
+
+The last item is marked `aria-current="page"`. Past `maxItems` (default 4; 0 never folds) the middle
+folds into "…", which opens in place. Long labels truncate with the full text as a tooltip. Props:
+`items` (`label`, `href`, `icon`), `maxItems`, `separator` (`chevron` `slash` or an element),
+`size` (`sm` `md`), `linkComponent`, `aria-label` (default "Breadcrumb").
 
 ## Tabs
 
@@ -816,6 +920,19 @@ nothing overflows on a phone), `rowSpan`. `Container`: `size` (`sm` `md` `lg` `x
 `full`, or any length), `padding`, `align`. `gap` and `padding` count in spacing steps, so they
 follow the theme's density. Breakpoints follow the window, like Tailwind's own — for a layout that
 reacts to the space it's actually in, use `minChildWidth` or `wrap`.
+
+## Placeholder
+
+```tsx
+<Placeholder ratio="16/9" />
+<Placeholder className="h-80" label="Revenue chart" />
+<Placeholder pattern="dots" border="solid" className="text-primary" />
+```
+
+A patterned box that holds a layout slot before its content exists (wireframes, empty dashboard
+widgets). For content that is loading, use Skeleton. Props: `pattern` (`stripes` `dots` `grid`
+`none`), `label`, `ratio`, `border` (`dashed` `solid` `none`). Drawn with CSS gradients in the text
+color, so it follows the theme; decorative (hidden from screen readers) unless it has a label.
 
 ## Hero
 

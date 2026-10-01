@@ -269,3 +269,26 @@ export type {
   HeroLogosProps,
   HeroMediaProps,
 } from "./components/hero/Hero";
+export {
+  Drawer,
+  DrawerTrigger,
+  DrawerClose,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription,
+  DrawerBody,
+  DrawerFooter,
+  useDrawer,
+} from "./components/drawer/Drawer";
+export type { DrawerProps, DrawerContentProps, DrawerSide } from "./components/drawer/Drawer";
+export { Tooltip } from "./components/tooltip/Tooltip";
+export type { TooltipProps, TooltipSide } from "./components/tooltip/Tooltip";
+export { OtpInput } from "./components/input/OtpInput";
+export type { OtpInputProps } from "./components/input/OtpInput";
+export { Breadcrumbs } from "./components/breadcrumbs/Breadcrumbs";
+export type { BreadcrumbsProps, BreadcrumbItem } from "./components/breadcrumbs/Breadcrumbs";
+export { NavigationMenu } from "./components/navigation/NavigationMenu";
+export type { NavigationMenuProps, NavigationMenuItem } from "./components/navigation/NavigationMenu";
+export { Placeholder } from "./components/placeholder/Placeholder";
+export type { PlaceholderProps } from "./components/placeholder/Placeholder";

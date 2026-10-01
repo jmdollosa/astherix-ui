@@ -36,6 +36,12 @@ import { SignaturePage } from "./pages/SignaturePage";
 import { AlertPage } from "./pages/AlertPage";
 import { LayoutPage } from "./pages/LayoutPage";
 import { HeroPage } from "./pages/HeroPage";
+import { BreadcrumbsPage } from "./pages/BreadcrumbsPage";
+import { DrawerPage } from "./pages/DrawerPage";
+import { NavigationMenuPage } from "./pages/NavigationMenuPage";
+import { OtpInputPage } from "./pages/OtpInputPage";
+import { PlaceholderPage } from "./pages/PlaceholderPage";
+import { TooltipPage } from "./pages/TooltipPage";
 
 // Add each new component page here; the nav and routing pick it up automatically.
 const pages = [
@@ -46,11 +52,13 @@ const pages = [
   { path: "activity", title: "Activity indicators", group: "Components", Page: ActivityPage },
   { path: "autocomplete", title: "Autocomplete", group: "Components", Page: AutocompletePage },
   { path: "avatar", title: "Avatar", group: "Components", Page: AvatarPage },
+  { path: "breadcrumbs", title: "Breadcrumbs", group: "Components", Page: BreadcrumbsPage },
   { path: "button", title: "Button", group: "Components", Page: ButtonPage },
   { path: "card", title: "Card", group: "Components", Page: CardPage },
   { path: "carousel", title: "Carousel", group: "Components", Page: CarouselPage },
   { path: "choice", title: "Checkbox, radio & switch", group: "Components", Page: ChoicePage },
   { path: "widgets", title: "Dashboard widgets", group: "Components", Page: WidgetsPage },
+  { path: "drawer", title: "Drawer", group: "Components", Page: DrawerPage },
   { path: "dropdown", title: "Dropdown menu", group: "Components", Page: DropdownPage },
   { path: "editor", title: "Editor", group: "Components", Page: EditorPage },
   { path: "upload", title: "File upload", group: "Components", Page: UploadPage },
@@ -59,8 +67,11 @@ const pages = [
   { path: "input", title: "Input", group: "Components", Page: InputPage },
   { path: "layout", title: "Layout", group: "Components", Page: LayoutPage },
   { path: "modal", title: "Modal", group: "Components", Page: ModalPage },
+  { path: "navigation-menu", title: "Navigation menu", group: "Components", Page: NavigationMenuPage },
+  { path: "otp-input", title: "One-time code", group: "Components", Page: OtpInputPage },
   { path: "pagination", title: "Pagination", group: "Components", Page: PaginationPage },
   { path: "pills", title: "Pills", group: "Components", Page: PillsPage },
+  { path: "placeholder", title: "Placeholder", group: "Components", Page: PlaceholderPage },
   { path: "select", title: "Select", group: "Components", Page: SelectPage },
   { path: "table", title: "Table", group: "Components", Page: TablePage },
   { path: "sidebar", title: "Sidebar", group: "Components", Page: SidebarPage },
@@ -70,12 +81,13 @@ const pages = [
   { path: "textarea", title: "Textarea", group: "Components", Page: TextareaPage },
   { path: "timeline", title: "Timeline", group: "Components", Page: TimelinePage },
   { path: "toast", title: "Toast", group: "Components", Page: ToastPage },
+  { path: "tooltip", title: "Tooltip", group: "Components", Page: TooltipPage },
   { path: "typography", title: "Typography", group: "Components", Page: TypographyPage },
   { path: "skeleton", title: "Skeleton", group: "Animated components", Page: SkeletonPage },
   { path: "spotlight-text", title: "Spotlight text", group: "Animated components", Page: SpotlightTextPage },
 ];
 
-const VERSION = "0.40.0";
+const VERSION = "0.41.0";
 
 function useHashRoute() {
   const read = () => window.location.hash.replace(/^#\/?/, "") || pages[0].path;
