@@ -17,7 +17,7 @@ import {
   Stack,
   Grid,
   KpiCard,
-} from "@jm/ui";
+} from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 /** A fake app screenshot, so the demos don't need image files. */
@@ -77,7 +77,7 @@ export function HeroPage() {
       <PageHeader
         title="Hero"
         intro="The top of a landing page: an announcement pill, a headline, a sentence, the buttons, and whatever proof you have — numbers, logos, a screenshot. The pieces are separate, so a hero can be one quiet line of text or a full screen of drifting color. Every animated background stops for people who ask for less motion."
-        importLine={'import { Hero, HeroTitle, HeroSubtitle, HeroActions } from "@jm/ui";'}
+        importLine={'import { Hero, HeroTitle, HeroSubtitle, HeroActions } from "@astherix/ui";'}
       />
 
       <Section

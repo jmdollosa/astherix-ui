@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Pagination, LoadMore, Text, PillGroup, PillOption, Avatar, Pill } from "@jm/ui";
+import { Pagination, LoadMore, Text, PillGroup, PillOption, Avatar, Pill } from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 function BasicDemo() {
@@ -115,7 +115,7 @@ export function PaginationPage() {
       <PageHeader
         title="Pagination"
         intro="Move between pages of results. The highlight slides from page to page, gaps (…) are shortcuts that jump five pages, and it fits itself to the space it has — down to “Page 3 of 12” on a narrow phone. For feeds, LoadMore adds more items in place instead."
-        importLine={`import { Pagination, LoadMore } from "@jm/ui";`}
+        importLine={`import { Pagination, LoadMore } from "@astherix/ui";`}
       />
 
       <Section

@@ -26,7 +26,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-} from "@jm/ui";
+} from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 const workspace: SidebarNavItem[] = [
@@ -237,7 +237,7 @@ export function SidebarPage() {
         importLine={`import {
   SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarFooter,
   SidebarGroup, SidebarNav, SidebarTrigger, SidebarInset, useSidebar,
-} from "@jm/ui";`}
+} from "@astherix/ui";`}
       />
 
       <Section

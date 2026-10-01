@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Checkbox, CheckboxGroup, RadioGroup, Radio, Switch, Field, Button, Card, CardHeader, CardContent, Text, toast, PillGroup, PillOption, type SwitchVariant } from "@jm/ui";
+import { Checkbox, CheckboxGroup, RadioGroup, Radio, Switch, Field, Button, Card, CardHeader, CardContent, Text, toast, PillGroup, PillOption, type SwitchVariant } from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
@@ -180,7 +180,7 @@ export function ChoicePage() {
       <PageHeader
         title="Checkbox, radio & switch"
         intro="The small choices: tick boxes, pick-one options, and on/off switches. They're real form inputs underneath — the keyboard, screen readers and form posts all work as they should — dressed to match the rest: sunken when empty, filled like a button when on."
-        importLine={`import { Checkbox, CheckboxGroup, RadioGroup, Radio, Switch } from "@jm/ui";`}
+        importLine={`import { Checkbox, CheckboxGroup, RadioGroup, Radio, Switch } from "@astherix/ui";`}
       />
 
       <Section

@@ -14,7 +14,7 @@ import {
   Field as FormField,
   Input,
   Textarea,
-} from "@jm/ui";
+} from "@astherix/ui";
 
 const Field = ({ label, ...props }: { label: string } & React.ComponentProps<typeof Input>) => (
   <FormField label={label}>
@@ -326,7 +326,7 @@ export function ModalPage() {
         importLine={`import {
   Modal, ModalTrigger, ModalContent, ModalHeader, ModalTitle,
   ModalDescription, ModalBody, ModalFooter, ModalClose, useModal,
-} from "@jm/ui";`}
+} from "@astherix/ui";`}
       />
 
       <Section

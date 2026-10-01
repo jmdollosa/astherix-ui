@@ -11,7 +11,7 @@ import {
   PillGroup,
   PillOption,
   toast,
-} from "@jm/ui";
+} from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 function BasicDemo() {
@@ -112,7 +112,7 @@ export function SignaturePage() {
       <PageHeader
         title="Signature"
         intro="A pad for signing with a finger, stylus or mouse. The ink thickens and thins with your speed, so it looks like a pen rather than a wobbly line. Export it as a PNG or as vector SVG for contracts and PDFs, trimmed of empty space, and post it with a form like any other field."
-        importLine={`import { SignaturePad, type SignaturePadHandle } from "@jm/ui";`}
+        importLine={`import { SignaturePad, type SignaturePadHandle } from "@astherix/ui";`}
       />
 
       <Section

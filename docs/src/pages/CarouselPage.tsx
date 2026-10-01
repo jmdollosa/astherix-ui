@@ -13,7 +13,7 @@ import {
   Avatar,
   Pill,
   Text,
-} from "@jm/ui";
+} from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 /* A little landscape, drawn in SVG, so the guide needs no image files. */
@@ -122,7 +122,7 @@ export function CarouselPage() {
       <PageHeader
         title="Carousel"
         intro="Slides you swipe, drag or step through. It uses the browser's own scroll snapping, so swiping on phones has real momentum, trackpads and mouse wheels just work, and there's no jank. And it's not just for photos — here it's a gallery, an onboarding tour, stories, swipeable KPI cards, testimonials and a pricing picker."
-        importLine={`import { Carousel, CarouselSlide, type CarouselHandle } from "@jm/ui";`}
+        importLine={`import { Carousel, CarouselSlide, type CarouselHandle } from "@astherix/ui";`}
       />
 
       <Section

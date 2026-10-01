@@ -1,5 +1,5 @@
 import * as React from "react";
-import { IconButton, Avatar, Text, toast } from "@jm/ui";
+import { IconButton, Avatar, Text, toast } from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
@@ -57,7 +57,7 @@ export function IconButtonPage() {
       <PageHeader
         title="Icon button"
         intro="When the icon itself is the button — like, save, share, delete. Press it and the icon squishes while a ripple spreads out from it; as a toggle, it swaps to a filled icon and pops with a little burst. (For an icon inside a button-shaped box, use Button with iconOnly.)"
-        importLine={`import { IconButton } from "@jm/ui";`}
+        importLine={`import { IconButton } from "@astherix/ui";`}
       />
 
       <Section

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, Pill, PillGroup, PillOption, type PillTone } from "@jm/ui";
+import { Button, Pill, PillGroup, PillOption, type PillTone } from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 const tones: PillTone[] = ["neutral", "primary", "success", "warning", "danger", "info"];
@@ -88,7 +88,7 @@ export function PillsPage() {
       <PageHeader
         title="Pills"
         intro="Small rounded labels for statuses, tags and counts — and selectable pills for filters and quick choices. For switching between views, use Tabs with variant=&quot;pills&quot;."
-        importLine={`import { Pill, PillGroup, PillOption } from "@jm/ui";`}
+        importLine={`import { Pill, PillGroup, PillOption } from "@astherix/ui";`}
       />
 
       <Section

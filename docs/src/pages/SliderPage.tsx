@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Slider, Field, Text, Card, CardContent, toast } from "@jm/ui";
+import { Slider, Field, Text, Card, CardContent, toast } from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 const peso = (v: number) => `₱${v.toLocaleString("en-PH")}`;
@@ -76,7 +76,7 @@ export function SliderPage() {
       <PageHeader
         title="Slider"
         intro="Pick a number or a range by dragging. At rest the thumb is a simple raised knob; press it and it swells into a frosted glass lens, with the value floating in a glass bubble above your finger — so the number is never hidden under your thumb."
-        importLine={`import { Slider, Field } from "@jm/ui";`}
+        importLine={`import { Slider, Field } from "@astherix/ui";`}
       />
 
       <Section

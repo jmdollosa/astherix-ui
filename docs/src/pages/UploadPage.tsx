@@ -8,7 +8,7 @@ import {
   Text,
   type UploadFn,
   type UploadItem,
-} from "@jm/ui";
+} from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 /*
@@ -137,7 +137,7 @@ export function UploadPage() {
       <PageHeader
         title="File upload"
         intro="Three ways to add files: a dropzone for several at once, a redesigned file field for forms, and a button that uploads one file and shows its progress. They share one engine — checks, progress, cancel, retry — and upload with any endpoint."
-        importLine={`import { FileDropzone, FileInput, FileUploadButton, xhrUpload } from "@jm/ui";`}
+        importLine={`import { FileDropzone, FileInput, FileUploadButton, xhrUpload } from "@astherix/ui";`}
       />
 
       <Section

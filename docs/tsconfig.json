@@ -4,13 +4,13 @@
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "@jm/ui": [
+      "@astherix/ui": [
         "../packages/ui/src/index.ts"
       ],
-      "@jm/ui/editor": [
+      "@astherix/ui/editor": [
         "../packages/ui/src/editor.ts"
       ],
-      "@jm/ui/theme": [
+      "@astherix/ui/theme": [
         "../packages/ui/src/theme-entry.ts"
       ]
     }

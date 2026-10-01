@@ -13,7 +13,7 @@ export default defineConfig([
     banner: { js: '"use client";' },
   },
   {
-    // "@jm/ui/theme": pure theme helpers, no "use client" — usable on the server and in build tools.
+    // "@astherix/ui/theme": pure theme helpers, no "use client" — usable on the server and in build tools.
     entry: { theme: "src/theme-entry.ts" },
     format: ["esm"],
     dts: true,

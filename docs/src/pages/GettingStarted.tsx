@@ -17,7 +17,7 @@ export function GettingStarted() {
     <>
       <PageHeader
         title="Getting started"
-        intro="@jm/ui is a set of React components styled with Tailwind CSS. The same package works in Next.js and in Laravel apps that use React with Inertia."
+        intro="@astherix/ui is a set of React components styled with Tailwind CSS. The same package works in Next.js and in Laravel apps that use React with Inertia."
       />
 
       <Step title="Install">
@@ -35,13 +35,13 @@ export function GettingStarted() {
           code={`
 /* Next.js: app/globals.css */
 @import "tailwindcss";
-@import "@jm/ui/theme.css";
-@source "../node_modules/@jm/ui/dist";
+@import "@astherix/ui/theme.css";
+@source "../node_modules/@astherix/ui/dist";
 
 /* Laravel: resources/css/app.css */
 @import "tailwindcss";
-@import "@jm/ui/theme.css";
-@source "../../node_modules/@jm/ui/dist";`}
+@import "@astherix/ui/theme.css";
+@source "../../node_modules/@astherix/ui/dist";`}
         />
       </Step>
 

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { SpotlightText, Button, Pill, Text, PillGroup, PillOption, Slider, Field, ActivityIndicator } from "@jm/ui";
+import { SpotlightText, Button, Pill, Text, PillGroup, PillOption, Slider, Field, ActivityIndicator } from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 /** A dark stage so the light has something to shine against (in light and dark mode). */
@@ -121,7 +121,7 @@ export function SpotlightTextPage() {
       <PageHeader
         title="Spotlight text"
         intro="Text lit by a moving spotlight: the lit part glows and the rest sits in shadow. It can follow the pointer, sweep across on its own, or reveal words hidden in the dark. It's real text — selectable, readable by screen readers — and people who prefer reduced motion see it simply, fully lit."
-        importLine={`import { SpotlightText } from "@jm/ui";`}
+        importLine={`import { SpotlightText } from "@astherix/ui";`}
       />
 
       <Section

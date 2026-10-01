@@ -1,5 +1,5 @@
 import * as React from "react";
-import type { ToasterPosition } from "@jm/ui";
+import type { ToasterPosition } from "@astherix/ui";
 
 // Lets the Toast page change the guide's single Toaster.
 type Settings = { position: ToasterPosition; richColors: boolean; expand: boolean };

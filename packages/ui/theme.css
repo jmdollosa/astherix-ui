@@ -1,10 +1,10 @@
 /*
- * @jm/ui theme
+ * @astherix/ui theme
  * Import after Tailwind in your app's main stylesheet:
  *
  *   @import "tailwindcss";
- *   @import "@jm/ui/theme.css";
- *   @source "../node_modules/@jm/ui/dist";
+ *   @import "@astherix/ui/theme.css";
+ *   @source "../node_modules/@astherix/ui/dist";
  */
 
 /* Dark mode follows a `.dark` class on <html> (works with next-themes and Laravel starter kits). */

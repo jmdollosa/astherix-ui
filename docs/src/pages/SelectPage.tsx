@@ -13,7 +13,7 @@ import {
   ModalBody,
   ModalFooter,
   ModalClose,
-} from "@jm/ui";
+} from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
@@ -156,7 +156,7 @@ export function SelectPage() {
       <PageHeader
         title="Select"
         intro="A dropdown for choosing from a list, in the spirit of Select2: type to search, pick one or many, group options, load them from a server, or add new ones. Works with the keyboard and screen readers."
-        importLine={`import { Field, Select } from "@jm/ui";`}
+        importLine={`import { Field, Select } from "@astherix/ui";`}
       />
 
       <Section

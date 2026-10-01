@@ -14,7 +14,7 @@ import {
   Stat,
   StatGroup,
   type HeadingSize,
-} from "@jm/ui";
+} from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 const scale: Array<[HeadingSize, string, string]> = [
@@ -60,7 +60,7 @@ export function TypographyPage() {
         importLine={`import {
   Heading, Text, Lead, Link, Code, Kbd, Mark,
   Blockquote, List, ListItem, Prose, Stat, StatGroup,
-} from "@jm/ui";`}
+} from "@astherix/ui";`}
       />
 
       <Section

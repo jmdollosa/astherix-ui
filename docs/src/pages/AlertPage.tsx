@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Alert, Button, Field, Input, Text, Tabs, TabList, Tab, toast } from "@jm/ui";
+import { Alert, Button, Field, Input, Text, Tabs, TabList, Tab, toast } from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 const seed = [
@@ -110,7 +110,7 @@ export function AlertPage() {
       <PageHeader
         title="Alert"
         intro="A message that stays on the page: something needs attention, something went wrong, something worked. (For a message that appears and leaves on its own, use Toast.) Five tones, four looks, optional actions, and dismissal that collapses the space smoothly instead of snapping the page up."
-        importLine={'import { Alert } from "@jm/ui";'}
+        importLine={'import { Alert } from "@astherix/ui";'}
       />
 
       <Section

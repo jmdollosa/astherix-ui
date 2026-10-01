@@ -15,7 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuGroup,
   SplitButton,
-} from "@jm/ui";
+} from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
@@ -202,7 +202,7 @@ export function DropdownPage() {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuCheckboxItem, DropdownMenuRadioGroup, DropdownMenuRadioItem,
   DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuGroup, SplitButton,
-} from "@jm/ui";`}
+} from "@astherix/ui";`}
       />
 
       <Section

@@ -9,7 +9,7 @@ import {
   Field,
   Input,
   type AvatarSize,
-} from "@jm/ui";
+} from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 /*
@@ -87,7 +87,7 @@ export function AvatarPage() {
       <PageHeader
         title="Avatar"
         intro="A picture for a person, team or company — with friendly fallbacks when there's no photo. Includes stacked groups, name labels, and a photo uploader for profile pages."
-        importLine={`import { Avatar, AvatarGroup, AvatarLabel, AvatarUpload } from "@jm/ui";`}
+        importLine={`import { Avatar, AvatarGroup, AvatarLabel, AvatarUpload } from "@astherix/ui";`}
       />
 
       <Section

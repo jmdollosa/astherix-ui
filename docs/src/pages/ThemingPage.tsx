@@ -17,8 +17,8 @@ import {
   PillGroup,
   PillOption,
   type ThemeConfig,
-} from "@jm/ui";
-import { validateTheme } from "@jm/ui/theme";
+} from "@astherix/ui";
+import { validateTheme } from "@astherix/ui/theme";
 import { Code, PageHeader, Section } from "../components/Doc";
 
 const presets: Record<string, { label: string; theme: ThemeConfig }> = {
@@ -187,7 +187,7 @@ export function ThemingPage() {
         desc="Pick a preset or edit the JSON. From one primary color the framework works out the hover shade, the pressed edge, readable text on top, and a dark-mode version. Switch the guide to dark mode to see those."
         code={`
 {
-  "$schema": "./node_modules/@jm/ui/ui.theme.schema.json",
+  "$schema": "./node_modules/@astherix/ui/ui.theme.schema.json",
   "colors": { "primary": "#c2410c", "secondary": "#be185d", "tertiary": "#7c3aed" },
   "fonts": {
     "sans": "\\"Nunito Sans\\", ui-sans-serif, system-ui, sans-serif",
@@ -245,9 +245,9 @@ npx jm-ui theme ui.theme.json --out resources/css/ui-theme.css   # Laravel
             code={`
 /* app/globals.css (Next.js) or resources/css/app.css (Laravel) */
 @import "tailwindcss";
-@import "@jm/ui/theme.css";
+@import "@astherix/ui/theme.css";
 @import "./ui-theme.css";          /* ← your theme */
-@source "../node_modules/@jm/ui/dist";`}
+@source "../node_modules/@astherix/ui/dist";`}
           />
         </div>
       </Section>
@@ -257,7 +257,7 @@ npx jm-ui theme ui.theme.json --out resources/css/ui-theme.css   # Laravel
         desc="Import the JSON (Next.js and Vite both can) or load it from your API, and wrap your app in ThemeProvider. Use a selector to theme just one part of a page, like the preview above."
         code={`
 import theme from "../ui.theme.json";
-import { ThemeProvider } from "@jm/ui";
+import { ThemeProvider } from "@astherix/ui";
 
 export default function RootLayout({ children }) {
   return (
@@ -279,7 +279,7 @@ export default function RootLayout({ children }) {
         title="From code"
         desc="The same engine is available as functions — for server rendering, a Laravel-side cache, or your own build step."
         code={`
-import { createThemeCss, validateTheme, defineTheme } from "@jm/ui/theme";
+import { createThemeCss, validateTheme, defineTheme } from "@astherix/ui/theme";
 
 const theme = defineTheme({ colors: { primary: "#047857" }, density: "compact" });
 const problems = validateTheme(theme);            // [] when it's fine

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, Field, Input } from "@jm/ui";
+import { Button, Field, Input } from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
@@ -84,7 +84,7 @@ export function InputPage() {
       <PageHeader
         title="Input"
         intro="A single-line text field. Put it inside a Field to give it a label, help text and an error message — the ids and screen-reader wiring are handled for you."
-        importLine={`import { Field, Input } from "@jm/ui";`}
+        importLine={`import { Field, Input } from "@astherix/ui";`}
       />
 
       <Section

@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Button, Field } from "@jm/ui";
-import { Editor } from "@jm/ui/editor";
+import { Button, Field } from "@astherix/ui";
+import { Editor } from "@astherix/ui/editor";
 import { Code, PageHeader, Section } from "../components/Doc";
 
 const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
@@ -71,7 +71,7 @@ export function EditorPage() {
       <PageHeader
         title="Editor"
         intro="A basic rich-text editor for comments, descriptions and announcements. It edits HTML, supports the usual shortcuts, and matches the look of the other form controls. It's built on Tiptap and lives in its own entry point, so apps that don't use it don't load it."
-        importLine={`import { Editor } from "@jm/ui/editor";`}
+        importLine={`import { Editor } from "@astherix/ui/editor";`}
       />
 
       <Section

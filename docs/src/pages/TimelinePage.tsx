@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardContent,
   Button,
-} from "@jm/ui";
+} from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 const ago = (minutes: number) => new Date(Date.now() - minutes * 60000);
@@ -97,7 +97,7 @@ export function TimelinePage() {
       <PageHeader
         title="Timeline"
         intro="A thread with beads: events hang on a line that draws itself as it scrolls into view. Use it for activity and history, for step-by-step progress, for a story told on both sides of the thread — and Roadmap for milestones laid out across the page."
-        importLine={`import { Timeline, TimelineGroup, TimelineItem, TimelineCollapse, Roadmap } from "@jm/ui";`}
+        importLine={`import { Timeline, TimelineGroup, TimelineItem, TimelineCollapse, Roadmap } from "@astherix/ui";`}
       />
 
       <Section

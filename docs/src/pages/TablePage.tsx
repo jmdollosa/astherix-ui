@@ -14,7 +14,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-} from "@jm/ui";
+} from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 type Invoice = { id: number; no: string; client: string; issued: string; due: string; amount: number; status: "paid" | "due" | "overdue" | "draft" };
@@ -378,7 +378,7 @@ export function TablePage() {
       <PageHeader
         title="Table"
         intro="A light DataTable: sort, search, page, select rows and act on them. On narrow screens each row becomes a readable card instead of a squeezed grid — or the table scrolls sideways with its first column pinned."
-        importLine={`import { DataTable, type DataTableColumn } from "@jm/ui";`}
+        importLine={`import { DataTable, type DataTableColumn } from "@astherix/ui";`}
       />
 
       <Section

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { toast, Button, Text, PillGroup, PillOption, type ToasterPosition } from "@jm/ui";
+import { toast, Button, Text, PillGroup, PillOption, type ToasterPosition } from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 import { useToasterSettings } from "../toasterSettings";
 
@@ -14,7 +14,7 @@ export function ToastPage() {
       <PageHeader
         title="Toast"
         intro="Short messages about something that just happened — saved, sent, failed. Put one <Toaster /> in your app and call toast() from anywhere. They stack neatly, pause while you read them, and get out of the way."
-        importLine={`import { Toaster, toast } from "@jm/ui";`}
+        importLine={`import { Toaster, toast } from "@astherix/ui";`}
       />
 
       <Section

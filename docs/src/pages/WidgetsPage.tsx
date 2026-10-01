@@ -18,7 +18,7 @@ import {
   PillOption,
   Button,
   Text,
-} from "@jm/ui";
+} from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 const peso = (v: number) => `₱${v.toLocaleString("en-PH")}`;
@@ -284,7 +284,7 @@ export function WidgetsPage() {
         importLine={`import {
   DashboardGrid, KpiCard, WidgetCard,
   LineChart, AreaChart, BarChart, DonutChart, Gauge, BarList, CalendarHeatmap, Sparkline,
-} from "@jm/ui";`}
+} from "@astherix/ui";`}
       />
 
       <Section

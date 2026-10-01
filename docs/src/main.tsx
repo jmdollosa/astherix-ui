@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createRoot } from "react-dom/client";
-import { Button, Toaster } from "@jm/ui";
+import { Button, Toaster } from "@astherix/ui";
 import { useToasterSettings } from "./toasterSettings";
 import { GettingStarted } from "./pages/GettingStarted";
 import { ButtonPage } from "./pages/ButtonPage";
@@ -144,7 +144,7 @@ function App() {
     document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
   }, [dark]);
   React.useEffect(() => {
-    document.title = `${current.title} · @jm/ui`;
+    document.title = `${current.title} · @astherix/ui`;
   }, [current]);
 
   const themeButton = (
@@ -157,7 +157,7 @@ function App() {
     <div className="mx-auto max-w-6xl md:grid md:grid-cols-[13rem_minmax(0,1fr)] md:gap-10 md:px-8">
       {/* Mobile top bar */}
       <div className="sticky top-[env(safe-area-inset-top,0px)] z-10 flex items-center justify-between border-b border-border bg-bg px-5 py-2.5 md:hidden">
-        <a href="#/getting-started" className="font-semibold tracking-[-0.01em]">@jm/ui</a>
+        <a href="#/getting-started" className="font-semibold tracking-[-0.01em]">@astherix/ui</a>
         <div className="flex items-center gap-1">
           {themeButton}
           <Button
@@ -183,7 +183,7 @@ function App() {
         <div className="sticky top-0 flex max-h-screen flex-col gap-8 overflow-y-auto pb-10 pt-10">
           <div className="flex items-center justify-between px-3">
             <div>
-              <a href="#/getting-started" className="font-semibold tracking-[-0.01em]">@jm/ui</a>
+              <a href="#/getting-started" className="font-semibold tracking-[-0.01em]">@astherix/ui</a>
               <p className="text-[0.8125rem] text-fg-muted">Version {VERSION}</p>
             </div>
             {themeButton}

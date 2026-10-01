@@ -20,7 +20,7 @@ import {
   Avatar,
   ProgressBar,
   Text,
-} from "@jm/ui";
+} from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 // Illustrations as inline SVG (the published docs can't load remote images).
@@ -78,7 +78,7 @@ export function CardPage() {
         importLine={`import {
   Card, CardHeader, CardTitle, CardDescription, CardContent,
   CardFooter, CardMedia, CardLink, CardBody, ChoiceCardGroup, ChoiceCard,
-} from "@jm/ui";`}
+} from "@astherix/ui";`}
       />
 
       <Section

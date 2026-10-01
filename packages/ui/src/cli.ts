@@ -35,7 +35,7 @@ function build(input: string, output: string) {
 }
 
 const starter = {
-  $schema: "./node_modules/@jm/ui/ui.theme.schema.json",
+  $schema: "./node_modules/@astherix/ui/ui.theme.schema.json",
   colors: { primary: "#0d6efd", secondary: "#15803d", tertiary: "#ea580c" },
   fonts: { sans: '"Schibsted Grotesk", ui-sans-serif, system-ui, sans-serif' },
   radius: "md",

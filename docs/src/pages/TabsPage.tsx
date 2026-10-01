@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, Field, Input, Textarea, Tabs, TabList, Tab, TabPanel } from "@jm/ui";
+import { Button, Field, Input, Textarea, Tabs, TabList, Tab, TabPanel } from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 function Panel({ children }: { children: React.ReactNode }) {
@@ -154,7 +154,7 @@ export function TabsPage() {
       <PageHeader
         title="Tabs"
         intro="Switch between related views without leaving the page. Tabs can run across the top or down the side, and can be moved, renamed, added and closed when people manage their own set — like documents or pages."
-        importLine={`import { Tabs, TabList, Tab, TabPanel } from "@jm/ui";`}
+        importLine={`import { Tabs, TabList, Tab, TabPanel } from "@astherix/ui";`}
       />
 
       <Section

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, Field, Textarea } from "@jm/ui";
+import { Button, Field, Textarea } from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 function Stack({ children }: { children: React.ReactNode }) {
@@ -52,7 +52,7 @@ export function TextareaPage() {
       <PageHeader
         title="Textarea"
         intro="A multi-line text field for messages, notes and descriptions. It shares its look, sizes and Field wiring with Input, and can grow with its content."
-        importLine={`import { Field, Textarea } from "@jm/ui";`}
+        importLine={`import { Field, Textarea } from "@astherix/ui";`}
       />
 
       <Section

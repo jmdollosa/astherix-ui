@@ -15,7 +15,7 @@ import {
   Pill,
   Slider,
   Text,
-} from "@jm/ui";
+} from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 const Box = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
@@ -54,7 +54,7 @@ export function LayoutPage() {
       <PageHeader
         title="Layout"
         intro="Small pieces for arranging things: Stack for rows and columns, Grid for grids, plus Container, Center, Spacer, Divider and AspectRatio. Every size prop can change by screen size — direction={{ base: 'column', md: 'row' }} — so a form's buttons stack on a phone and sit side by side on a laptop, without writing media queries."
-        importLine={'import { Stack, Grid, GridItem, Container, Center, Spacer, Divider, AspectRatio } from "@jm/ui";'}
+        importLine={'import { Stack, Grid, GridItem, Container, Center, Spacer, Divider, AspectRatio } from "@astherix/ui";'}
       />
 
       <Section

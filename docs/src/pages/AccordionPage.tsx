@@ -15,7 +15,7 @@ import {
   Pill,
   Text,
   toast,
-} from "@jm/ui";
+} from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 const peso = (v: number) => `₱${v.toLocaleString("en-PH")}`;
@@ -247,7 +247,7 @@ export function AccordionPage() {
       <PageHeader
         title="Accordion"
         intro="Sections that open and close — and more than FAQs. It can be a searchable help center, a one-page checkout, a settings panel with switches in the headers, a filter sidebar, or a drill-down cost breakdown. Closed sections stay findable with the browser's Ctrl/⌘+F."
-        importLine={`import { Accordion, AccordionItem, AccordionToggleAll, useAccordion } from "@jm/ui";`}
+        importLine={`import { Accordion, AccordionItem, AccordionToggleAll, useAccordion } from "@astherix/ui";`}
       />
 
       <Section

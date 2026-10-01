@@ -19,7 +19,7 @@ import {
   PillOption,
   WidgetCard,
   KpiCard,
-} from "@jm/ui";
+} from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
@@ -75,7 +75,7 @@ export function SkeletonPage() {
       <PageHeader
         title="Skeleton"
         intro="Placeholder shapes that stand in for content while it loads, so the page keeps its shape instead of jumping. A soft shimmer travels across them, rippling down a stack of rows. Ready-made pieces and whole blocks — cards, lists, tables, charts — plus a swap that only shows a skeleton when loading actually takes a moment."
-        importLine={`import { Skeleton, SkeletonText, SkeletonCard, SkeletonList, SkeletonTable, SkeletonSwap } from "@jm/ui";`}
+        importLine={`import { Skeleton, SkeletonText, SkeletonCard, SkeletonList, SkeletonTable, SkeletonSwap } from "@astherix/ui";`}
       />
 
       <Section

@@ -9,7 +9,7 @@ import {
   Button,
   Pill,
   type ActivityStep,
-} from "@jm/ui";
+} from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 const Row = ({ children }: { children: React.ReactNode }) => <div className="flex flex-wrap items-center gap-6">{children}</div>;
@@ -207,7 +207,7 @@ export function ActivityPage() {
         importLine={`import {
   ActivityIndicator, ProgressBar, ProgressRing,
   Skeleton, ActivitySteps, LoadingOverlay,
-} from "@jm/ui";`}
+} from "@astherix/ui";`}
       />
 
       <Section

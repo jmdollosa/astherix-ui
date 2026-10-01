@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "@jm/ui theme",
-  "description": "Theme settings for @jm/ui. Turn into CSS with `npx jm-ui theme`, or apply at runtime with <ThemeProvider>.",
+  "title": "@astherix/ui theme",
+  "description": "Theme settings for @astherix/ui. Turn into CSS with `npx jm-ui theme`, or apply at runtime with <ThemeProvider>.",
   "type": "object",
   "additionalProperties": false,
   "properties": {

@@ -13,7 +13,7 @@ import { controlFrame, type ControlRounded } from "../input/controlStyles";
  * It edits and returns HTML. Formatting shortcuts work as expected (Ctrl/⌘+B, I, U, K…),
  * and Markdown-style typing too: "## " starts a heading, "- " a list, "> " a quote.
  *
- * Imported from "@jm/ui/editor" so apps that don't use it don't load Tiptap.
+ * Imported from "@astherix/ui/editor" so apps that don't use it don't load Tiptap.
  */
 
 export type EditorTool =

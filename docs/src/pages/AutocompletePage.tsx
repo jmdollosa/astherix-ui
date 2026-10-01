@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Autocomplete, Field, Text, type AutocompleteItem } from "@jm/ui";
+import { Autocomplete, Field, Text, type AutocompleteItem } from "@astherix/ui";
 import { PageHeader, Section } from "../components/Doc";
 
 const cities = [
@@ -108,7 +108,7 @@ export function AutocompletePage() {
       <PageHeader
         title="Autocomplete"
         intro="A text field that suggests as you type. People can always type their own answer — suggestions are shortcuts, not rules. When the answer must come from a list (a country, an assignee), use Select instead."
-        importLine={`import { Autocomplete, Field } from "@jm/ui";`}
+        importLine={`import { Autocomplete, Field } from "@astherix/ui";`}
       />
 
       <Section

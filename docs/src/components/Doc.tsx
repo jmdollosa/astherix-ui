@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button } from "@jm/ui";
+import { Button } from "@astherix/ui";
 
 export function Code({ code }: { code: string }) {
   const [copied, setCopied] = React.useState(false);

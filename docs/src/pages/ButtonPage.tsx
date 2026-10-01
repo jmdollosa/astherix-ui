@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button } from "@jm/ui";
+import { Button } from "@astherix/ui";
 import { Code, Section, PageHeader } from "../components/Doc";
 
 /* ---------- helpers ---------- */
@@ -106,7 +106,7 @@ export function ButtonPage() {
       <PageHeader
         title="Button"
         intro="Starts an action. Use one primary button per view for the main thing a person came to do, and secondary or ghost buttons for everything around it."
-        importLine={`import { Button } from "@jm/ui";`}
+        importLine={`import { Button } from "@astherix/ui";`}
       />
 
       <Section
